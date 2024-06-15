@@ -44,9 +44,10 @@
 <script setup>
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { nextTick, onMounted, onUnmounted, reactive } from 'vue';
+import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive } from 'vue';
 import Block from '@/components/Block.vue'
 
+const { proxy } = getCurrentInstance()
 const id = utils.get_url_end_node()
 const info = MindStore().get_mind(id)
 const mind = reactive(info)
@@ -72,6 +73,7 @@ const onblockdirection = (block_id, direction) => {
 const onsave = e => {
   if (e.shiftKey && e.key.toLocaleLowerCase() === 's') {
     MindStore().save_mind(mind.id)
+    proxy.$message('保存成功', 'warn')
   }
 }
 onMounted(() => window.addEventListener('keydown', onsave))
