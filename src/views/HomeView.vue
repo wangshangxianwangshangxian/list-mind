@@ -1,5 +1,5 @@
 <template>
-  <main class="px-8 w-scree pb-8">
+  <main class="px-8 pb-8">
     <header class="text-4xl py-8">List Mind</header>
     <div class="flex flex-wrap gap-6">
       <div 
@@ -29,32 +29,31 @@
 
 <script setup>
 import router from '@/router';
+import MainData from '@/stores/MainData';
+import MindStore from '@/stores/MindStore';
 import { ref } from 'vue';
 
-const arrs = ref([])
-arrs.value = new Array(100).fill(0).map((t, index) => {
-  if (index === 0) {
-    return {
-     id: null,
-     title: '' 
-    }
-  }
-  return {
-    id         : index,
+const arrs = ref([{ id: 'na' }])
+new Array(0).fill(0).forEach((t, index) => {
+  arrs.value.push({
+    id         : index + 1,
     title      : '学习以太坊知识，信息管理与信息系统',
     create_time: '2024-06-15 14:04:23'
-  }
+  })
 })
 
-const is_add_carr = id => id === null
+const is_add_carr = id => id === 'na'
 
 const oncardclick = info => {
-  router.push({
-    name: 'mind',
-    params: {
-      id: info.id
-    }
-  })
+  if (info.id === 'na') {
+    const data = MindStore().create_mind()
+    router.push({
+      name: 'mind',
+      params: {
+        id: data.id
+      }
+    })
+  }
 }
 
 </script>
