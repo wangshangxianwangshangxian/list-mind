@@ -17,8 +17,8 @@
           <div class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105">+</div>
         </div>
       </div>
-      <div class="flex-1 bg-orange-50 overflow-scroll">
-        <div class="flex flex-col items-center">
+      <div class="flex-1 overflow-scroll">
+        <div class="flex flex-col items-center justify-center min-h-screen">
           <Block v-for="item in mind.minds" :key="item.id" :block="item"></Block>
         </div>
       </div>
