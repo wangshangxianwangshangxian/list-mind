@@ -17,7 +17,26 @@ const MindStore = defineStore('MindStore', {
         create_time: utils.get_time(),
         minds: [
           {
-            content: ''
+            id: '1',
+            content: 'block',
+            children: [
+              {
+                id: '2',
+                content: 'nihao',
+                children: [
+                  {
+                    id: '3',
+                    content: 'haha',
+                    children: []
+                  },
+                  {
+                    id: '4',
+                    content: 'haha 2',
+                    children: []
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

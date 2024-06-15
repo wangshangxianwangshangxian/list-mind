@@ -17,7 +17,11 @@
           <div class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105">+</div>
         </div>
       </div>
-      <div class="flex-1">center</div>
+      <div class="flex-1 bg-orange-50 overflow-scroll">
+        <div class="flex flex-col items-center">
+          <Block v-for="item in mind.minds" :key="item.id" :block="item"></Block>
+        </div>
+      </div>
       <div class="w-40">right</div>
     </div>
   </main>
@@ -27,6 +31,7 @@
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
 import { reactive } from 'vue';
+import Block from '@/components/Block.vue'
 
 const id = utils.get_url_end_node()
 const info = MindStore().get_mind(id)
