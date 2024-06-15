@@ -18,7 +18,7 @@
           v-if="!is_add_carr(item.id)"
           id="box-option" 
           class="bg-red-400 flex justify-end px-4 items-center text-xs h-0 opacity-0">
-          <p class="hover:text-white">
+          <p class="hover:text-white" @click.stop="ondelete(item)">
             删除
           </p>
         </div>
@@ -29,18 +29,19 @@
 
 <script setup>
 import router from '@/router';
-import MainData from '@/stores/MainData';
 import MindStore from '@/stores/MindStore';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
-new Array(0).fill(0).forEach((t, index) => {
-  arrs.value.push({
-    id         : index + 1,
-    title      : '学习以太坊知识，信息管理与信息系统',
-    create_time: '2024-06-15 14:04:23'
-  })
-})
+MindStore().init().then(() => MindStore().list.forEach(t => arrs.value.push(t)))
+watch(
+  () => MindStore().list,
+  () => {
+    arrs.value.length = 1
+    MindStore().list.forEach(t => arrs.value.push(t))
+  },
+  { deep: true }
+)
 
 const is_add_carr = id => id === 'na'
 
@@ -53,7 +54,22 @@ const oncardclick = info => {
         id: data.id
       }
     })
+    return
   }
+
+  router.push({
+    name: 'mind',
+    params: {
+      id: info.id
+    }
+  })
+}
+
+const ondelete = item => {
+  const flag = confirm(`确认删除?`)
+  if (!flag)
+   return
+  MindStore().delete_mind(item.id)
 }
 
 </script>
