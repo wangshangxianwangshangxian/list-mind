@@ -1,6 +1,7 @@
 import { keccak256 } from "js-sha3";
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
+import { DIRECTION } from "./constant";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -90,13 +91,13 @@ const MindStore = defineStore('MindStore', {
     },
 
     get_direction_block(id, direction) {
-      if (direction === 'left') {
+      if (direction === DIRECTION.LEFT) {
         const block = this.get_block(id)
         const p_block = this.get_block(block.pid)
         return p_block ? p_block : block
       }
       
-      if (direction === 'right') {
+      if (direction === DIRECTION.RIGHT) {
         const block = this.get_block(id)
         if (!block?.children?.length)
           return null
@@ -104,7 +105,7 @@ const MindStore = defineStore('MindStore', {
         return block.children[index]
       }
 
-      if (direction === 'up') {
+      if (direction === DIRECTION.UP) {
         let block   = this.get_block(id)
         let p_block, index
 
@@ -123,7 +124,7 @@ const MindStore = defineStore('MindStore', {
         }
       }
 
-      if (direction === 'down') {
+      if (direction === DIRECTION.DOWN) {
         let block   = this.get_block(id)
         let p_block, index
 
