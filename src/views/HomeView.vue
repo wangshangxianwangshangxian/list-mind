@@ -63,6 +63,8 @@ const ondelete = item => {
   if (!flag)
    return
   MindStore().delete_mind(item.id)
+  const list = MindStore().request_mind_list()
+  list.forEach(t => arrs.value.push(t))
 }
 
 </script>
