@@ -1,7 +1,7 @@
 import { keccak256 } from "js-sha3";
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { DIRECTION } from "./constant";
+import { COLOR, DIRECTION } from "./constant";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -17,16 +17,9 @@ const MindStore = defineStore('MindStore', {
         id: keccak256(Date.now().toString()),
         title: '请在这里输入标题',
         create_time: utils.get_time(),
-        children: [
-          {
-            pid: '',
-            id: keccak256(Date.now().toString()),
-            content: '章节名称',
-            children: []
-          }
-        ]
+        children: []
       }
-      data.children[0].pid = data.id
+      data.children[0] = this.new_block(data.id)
       this.mind = data
       this.save_mind(data.id)
       return data
@@ -37,7 +30,10 @@ const MindStore = defineStore('MindStore', {
         pid,
         id      : keccak256(Date.now().toString()),
         content : '',
-        children: []
+        children: [],
+        style: {
+          backgroundColor: utils.get_color()
+        }
       }
       return data
     },

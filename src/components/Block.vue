@@ -2,7 +2,7 @@
   <div class="flex relative">
     <!-- left -->
     <div class="flex rounded-lg justify-center items-center z-50">
-      <div :id="`block-l-${props.block.id}`" class="bg-orange-200 p-2 rounded-lg">
+      <div :id="`block-l-${props.block.id}`" :class="['p-2', 'rounded-lg', props.block.style.backgroundColor]">
         <div></div>
         <div
           :id="`block-content-${props.block.id}`"

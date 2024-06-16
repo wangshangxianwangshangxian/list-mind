@@ -1,3 +1,5 @@
+import { COLOR } from "@/stores/constant"
+
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss.ms') => {
   const d       = new Date(time_stamp)
   const year    = String(d.getFullYear())    .padStart(4, '0')
@@ -26,7 +28,15 @@ const get_url_end_node = () => {
   return wenh
 }
 
+const get_color = () => {
+  const keys = Object.keys(COLOR)
+  const r = Math.floor(Math.random() * keys.length)
+  const target = keys[r]
+  return COLOR[target]
+}
+
 export default {
   get_time,
-  get_url_end_node
+  get_url_end_node,
+  get_color
 }
