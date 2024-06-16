@@ -8,16 +8,17 @@
           :id="`block-content-${props.block.id}`"
           contenteditable="true"
           class="min-w-12 min-h-4 text-center focus:outline-none"
+          v-html="props.block.content"
           @blur="onblur"
+          @input="oninput"
           @keydown.tab.prevent="ontab"
-          @keydown.up.prevent="e => ondirection(e, 'up')"
-          @keydown.down.prevent="e => ondirection(e, 'down')"
-          @keydown.right.prevent="e => ondirection(e, 'right')"
-          @keydown.left.prevent="e => ondirection(e, 'left')"
+          @keydown.enter="onenter"
+          @keydown.up="e => ondirection(e, 'up')"
+          @keydown.down="e => ondirection(e, 'down')"
+          @keydown.right="e => ondirection(e, 'right')"
+          @keydown.left="e => ondirection(e, 'left')"
           @keydown.delete="ondelete"
-        >
-          {{ props.block.content }}
-        </div>
+        ></div>
         <div></div>
       </div>
     </div>
@@ -43,7 +44,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
+import MainData from '@/stores/MainData';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 
 const props = defineProps({
@@ -63,9 +65,10 @@ const has_children = computed(() => props.block.children.length > 0)
 
 const paths = ref([])
 watch(
-  () => props.block.children,
-  children => {
+  () => MainData().reszing,
+  () => {
     nextTick(() => {
+      const children = props.block.children
       paths.value.length = 0
       const left         = document.getElementById(`block-l-${props.block.id}`)?.getBoundingClientRect() || {}
       const center_box   = document.getElementById(`block-c-box-${props.block.id}`)?.getBoundingClientRect() || {}
@@ -91,14 +94,26 @@ watch(
 )
 
 const emits = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete'])
-const onblur       = e   => emits('block-content',   props.block.id, e.target.textContent)
-const ontab        = ()  => emits('block-addchild',  props.block.id)
-const ondirection  = (e, dir) => e.shiftKey && emits('block-direction', props.block.id, dir)
-const ondelete     = e   => e.shiftKey && emits('block-delete', props.block.id)
+const oninput      = ()  => MainData().resize()
+const onblur       = e   => emits('block-content',   props.block.id, e.target.innerHTML)
+const ontab        = ()  => { 
+  MainData().resize()
+  emits('block-addchild',  props.block.id)
+}
+const ondirection  = (e, dir) => e.ctrlKey && emits('block-direction', props.block.id, dir)
+const ondelete     = e   => e.ctrlKey && emits('block-delete', props.block.id)
+const onenter      = e   => e.ctrlKey && onblur(e)
 
 const onblockcontent   = (block_id, content)   => emits('block-content',   block_id, content)
 const onblockaddchild  = block_id              => emits('block-addchild',  block_id)
 const onblockdirection = (block_id, direction) => emits('block-direction', block_id, direction)
 const onblockdelete    = block_id              => emits('block-delete',  block_id)
+
+onMounted(() => {
+  window.addEventListener('resize', MainData().resize)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', MainData().resize)
+})
 </script>
 

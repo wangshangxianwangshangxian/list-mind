@@ -33,15 +33,8 @@ import MindStore from '@/stores/MindStore';
 import { ref, watch } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
-MindStore().init().then(() => MindStore().list.forEach(t => arrs.value.push(t)))
-watch(
-  () => MindStore().list,
-  () => {
-    arrs.value.length = 1
-    MindStore().list.forEach(t => arrs.value.push(t))
-  },
-  { deep: true }
-)
+const list = MindStore().request_mind_list()
+list.forEach(t => arrs.value.push(t))
 
 const is_add_carr = id => id === 'na'
 

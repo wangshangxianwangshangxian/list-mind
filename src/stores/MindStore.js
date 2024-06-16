@@ -5,6 +5,7 @@ import utils from '@/utils/utils'
 const MindStore = defineStore('MindStore', {
   state () {
     return {
+      // 存放打开过的导图
       list  : []
     }
   },
@@ -40,7 +41,7 @@ const MindStore = defineStore('MindStore', {
           }
         ]
       }
-      this.list.push(data) 
+      this.list.push(data)
       return data
     },
 
@@ -56,6 +57,16 @@ const MindStore = defineStore('MindStore', {
     get_mind(id) {
       const target = this.list.find(t => id === t.id)
       return target
+    },
+
+    request_mind(id) {
+      const key       = `mind_${id}`
+      const target    = localStorage.getItem(key)
+      const mind      = JSON.parse(target)
+      const old_index = this.list.findIndex(t => t.id === id)
+      old_index > -1 && this.list.splice(old_index, 1)
+      this.list.push(mind)
+      return mind
     },
 
     get_block(mind_id, block_id, return_parent = false) {
@@ -166,13 +177,6 @@ const MindStore = defineStore('MindStore', {
       const index = this.list.findIndex(t => t.id === id)
       this.list.splice(index, 1)
       localStorage.removeItem(`mind_${id}`)
-    },
-
-    init() {
-      return new Promise(succ => {
-        this.list = this.request_mind_list()
-        succ(true)
-      })
     }
   }
 })

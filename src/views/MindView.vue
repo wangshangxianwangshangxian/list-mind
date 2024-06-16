@@ -11,10 +11,9 @@
           <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
+              v-html="item.content"
               class="p-2 rounded-lg bg-orange-50 text-center cursor-pointer min-h-10 text-sm"
-            >
-              {{ item.content }}
-            </div>
+            ></div>
           </div>
           <div 
             class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105 text-lg"
@@ -50,19 +49,30 @@ import Block from '@/components/Block.vue'
 
 const { proxy } = getCurrentInstance()
 const id = utils.get_url_end_node()
-const info = MindStore().get_mind(id)
+const info = MindStore().request_mind(id)
 const mind = reactive(info)
+
+const onaddchapter = () => {
+  const child = MindStore().add_chapter(mind.id)
+  child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
+}
+
+const onsave = e => {
+  if (e.ctrlKey && e.key.toLocaleLowerCase() === 's') {
+    MindStore().save_mind(mind.id)
+    proxy.$message('保存成功', 'warn')
+  }
+}
+onMounted(() => window.addEventListener('keydown', onsave))
+onUnmounted(() => window.removeEventListener('keydown', onsave))
+
 
 const onblockcontent = (block_id, content) => {
   MindStore().set_block_content(mind.id, block_id, content)
 }
+
 const onblockaddchild = block_id => {
   const child = MindStore().add_block_child(mind.id, block_id)
-  child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
-}
-
-const onaddchapter = () => {
-  const child = MindStore().add_chapter(mind.id)
   child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
 }
 
@@ -74,15 +84,6 @@ const onblockdirection = (block_id, direction) => {
 const onblockdelete = block_id => {
   MindStore().delete_block(mind.id, block_id)
 }
-
-const onsave = e => {
-  if (e.shiftKey && e.key.toLocaleLowerCase() === 's') {
-    MindStore().save_mind(mind.id)
-    proxy.$message('保存成功', 'warn')
-  }
-}
-onMounted(() => window.addEventListener('keydown', onsave))
-onUnmounted(() => window.removeEventListener('keydown', onsave))
 </script>
 
 <style scoped>
