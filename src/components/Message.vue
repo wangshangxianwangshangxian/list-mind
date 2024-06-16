@@ -29,7 +29,7 @@ const props = defineProps({
 })
 
 const box_classes = computed(() => {
-  const arrs = ['fixed', 'top-10', 'left-1/2', 'p-2', 'rounded', 'min-w-60', 'text-center', '-translate-x-1/2']
+  const arrs = ['fixed', 'top-10', 'left-1/2', 'p-2', 'rounded', 'min-w-60', 'text-center', '-translate-x-1/2', 'z-50']
   if (props.type === 'success') {
     arrs.push('bg-green-300')
   }

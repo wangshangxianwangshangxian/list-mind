@@ -22,8 +22,8 @@
         </div>
       </div>
       <!-- 中间容器 -->
-      <div class="flex-1 overflow-x-auto overflow-y-auto flex justify-center items-center">
-        <div class="flex flex-col justify-center gap-4 items-center">
+      <div class="flex-1 overflow-x-auto overflow-y-auto p-8">
+        <div class="flex flex-col justify-center gap-4 items-center min-h-full">
           <Block 
             v-for="item in mind.children" 
             :key="item.id" 
@@ -61,7 +61,7 @@ const onsave = e => {
   if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
     e.preventDefault()
     MindStore().save_mind(mind.id)
-    proxy.$message('保存成功', 'warn')
+    proxy.$message('保存成功')
   }
 }
 onMounted(() => window.addEventListener('keydown', onsave))
