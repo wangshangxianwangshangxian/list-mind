@@ -53,7 +53,7 @@ const info = MindStore().request_mind(id)
 const mind = reactive(info)
 
 const onaddchapter = () => {
-  const child = MindStore().add_chapter(mind.id)
+  const child = MindStore().add_block_child(id)
   child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
 }
 
@@ -68,22 +68,22 @@ onMounted(() => window.addEventListener('keydown', onsave))
 onUnmounted(() => window.removeEventListener('keydown', onsave))
 
 
-const onblockcontent = (block_id, content) => {
-  MindStore().set_block_content(mind.id, block_id, content)
+const onblockcontent = (id, content) => {
+  MindStore().set_block_content(id, content)
 }
 
-const onblockaddchild = block_id => {
-  const child = MindStore().add_block_child(mind.id, block_id)
+const onblockaddchild = id => {
+  const child = MindStore().add_block_child(id)
   child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
 }
 
-const onblockdirection = (block_id, direction) => {
-  const target = MindStore().get_direction_block(mind.id, block_id, direction)
+const onblockdirection = (id, direction) => {
+  const target = MindStore().get_direction_block(id, direction)
   target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
 }
 
-const onblockdelete = block_id => {
-  MindStore().delete_block(mind.id, block_id)
+const onblockdelete = id => {
+  MindStore().delete_block(id)
 }
 </script>
 

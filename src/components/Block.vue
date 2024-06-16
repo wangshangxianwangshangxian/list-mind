@@ -109,10 +109,16 @@ const ondirection  = (e, dir) => {
 const ondelete     = e   => e.metaKey && emits('block-delete', props.block.id)
 const onenter      = e   => e.metaKey && onblur(e)
 
-const onblockcontent   = (block_id, content)   => emits('block-content',   block_id, content)
-const onblockaddchild  = block_id              => emits('block-addchild',  block_id)
-const onblockdirection = (block_id, direction) => emits('block-direction', block_id, direction)
-const onblockdelete    = block_id              => emits('block-delete',  block_id)
+const onblockcontent   = (id, content)   => emits('block-content',   id, content)
+const onblockaddchild  = id => {
+  emits('block-addchild',  id)
+  MainData().resize()
+}
+const onblockdirection = (id, direction) => emits('block-direction', id, direction)
+const onblockdelete    = id => {
+  emits('block-delete',  id)
+  MainData().resize()
+}
 
 onMounted(() => {
   window.addEventListener('resize', MainData().resize)

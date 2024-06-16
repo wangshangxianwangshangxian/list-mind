@@ -5,8 +5,7 @@ import utils from '@/utils/utils'
 const MindStore = defineStore('MindStore', {
   state () {
     return {
-      // 存放打开过的导图
-      list  : []
+      mind: null
     }
   },
 
@@ -43,7 +42,7 @@ const MindStore = defineStore('MindStore', {
           }
         ]
       }
-      this.list.push(data)
+      this.mind = data
       this.save_mind(data.id)
       return data
     },
@@ -59,26 +58,21 @@ const MindStore = defineStore('MindStore', {
     },
     
     get_mind(id) {
-      const target = this.list.find(t => id === t.id)
-      return target
+      this.mind
     },
 
     request_mind(id) {
-      const key       = `mind_${id}`
-      const target    = localStorage.getItem(key)
-      const mind      = JSON.parse(target)
-      const old_index = this.list.findIndex(t => t.id === id)
-      old_index > -1 && this.list.splice(old_index, 1)
-      this.list.push(mind)
-      return mind
+      const key    = `mind_${id}`
+      const target = localStorage.getItem(key)
+      this.mind    = JSON.parse(target)
+      return this.mind
     },
 
-    get_block(mind_id, block_id, return_parent = false) {
-      const mind = this.get_mind(mind_id)
+    get_block(id, return_parent = false) {
       let block, p_block
       function search(self, children = []) {
         children.some(c => {
-          if (c.id === block_id) {
+          if (c.id === id) {
             block = c
             p_block = self
             return true
@@ -90,41 +84,34 @@ const MindStore = defineStore('MindStore', {
           return false
         })
       }
-      search(null, mind.children)
+      search(null, this.mind.children)
       if (!return_parent)
         return block
       return [block, p_block]
     },
 
-    set_block_content(mind_id, block_id, content) {
-      const block = this.get_block(mind_id, block_id)
+    set_block_content(id, content) {
+      const block = this.get_block(id)
       if (!block)
         return
       block.content = content
     },
     
-    add_block_child(mind_id, block_id) {
-      const block = this.get_block(mind_id, block_id)
-      const child = this.new_block(block_id)
+    add_block_child(id) {
+      const block = this.get_block(id)
+      const child = this.new_block(id)
       block.children.push(child)
       return child
     },
 
-    add_chapter(mind_id) {
-      const mind  = this.get_mind(mind_id)
-      const child = this.new_block(mind_id)
-      mind.children.push(child)
-      return child
-    },
-
-    get_direction_block(mind_id, block_id, direction) {
+    get_direction_block(id, direction) {
       if (direction === 'left') {
-        const [block, p_block] = this.get_block(mind_id, block_id, true)
+        const [block, p_block] = this.get_block(id, true)
         return p_block
       }
       
       if (direction === 'right') {
-        const block = this.get_block(mind_id, block_id)
+        const block = this.get_block(id)
         if (!block?.children?.length)
           return null
         const index = Math.floor(block.children.length / 2)
@@ -132,21 +119,39 @@ const MindStore = defineStore('MindStore', {
       }
 
       if (direction === 'up') {
-        // const [a, p_block] = this.get_block(mind_id, block_id, true)
-        // const [b, g_block] = this.get_block(mind_id, p_block.id, true)
-        // const p_block_index = g_block.children.findIndex(p_block)
-        // const b_block_index = p_block_index - 1
-        // const 
+        let block   = this.get_block(id),
+            p_block = this.get_block(block.pid),
+            index   = p_block.children.indexOf(block)
+        
+        while(index === 0) {
+          block   = p_block
+          p_block = this.get_block(p_block.pid)
+          index   =  p_block.children.indexOf(block)
+        }
+
+        const target  = p_block.children[index - 1]
+        return target
+      }
+
+      if (direction === 'down') {
+        let block   = this.get_block(id),
+            p_block = this.get_block(block.pid),
+            index   = p_block.children.indexOf(block)
+        
+        while(index === p_block.length - 1) {
+          block   = p_block
+          p_block = this.get_block(p_block.pid)
+          index   =  p_block.children.indexOf(block)
+        }
+
+        const target  = p_block.children[index + 1]
+        return target
       }
     },
 
-    save_mind(mind_id) {
-      const mind = this.get_mind(mind_id)
-      if (!mind) {
-        throw new Error(`找不到 id 为 ${mind_id} 的思维导图`)
-      }
-
-      localStorage.setItem(`mind_${mind_id}`, JSON.stringify(mind))
+    save_mind() {
+      const mind = this.mind
+      localStorage.setItem(`mind_${mind.id}`, JSON.stringify(mind))
     },
 
     request_mind_list() {
@@ -166,22 +171,21 @@ const MindStore = defineStore('MindStore', {
       return list
     },
 
-    delete_block(mind_id, block_id) {
-      const [block, p_block] = this.get_block(mind_id, block_id, true)
+    delete_block(id) {
+      const [block, p_block] = this.get_block(id, true)
       if (!p_block) {
-        const mind  = this.get_mind(mind_id)
-        const index = mind.children.findIndex(c => c.id === block_id)
+        const mind  = this.mind
+        const index = mind.children.findIndex(c => c.id === id)
         mind.children.splice(index, 1)
         return 
       }
 
-      const index            = p_block.children.findIndex(c => c.id === block_id)
+      const index            = p_block.children.findIndex(c => c.id === id)
       p_block.children.splice(index, 1)
     },
 
     delete_mind(id) {
-      const index = this.list.findIndex(t => t.id === id)
-      this.list.splice(index, 1)
+      this.mind = null
       localStorage.removeItem(`mind_${id}`)
     }
   }
