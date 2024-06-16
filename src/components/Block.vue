@@ -94,15 +94,20 @@ watch(
 )
 
 const emits = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete'])
-const oninput      = ()  => MainData().resize()
+const oninput      = e  => {MainData().resize()}
+
 const onblur       = e   => emits('block-content',   props.block.id, e.target.innerHTML)
 const ontab        = ()  => { 
   MainData().resize()
   emits('block-addchild',  props.block.id)
 }
-const ondirection  = (e, dir) => e.ctrlKey && emits('block-direction', props.block.id, dir)
-const ondelete     = e   => e.ctrlKey && emits('block-delete', props.block.id)
-const onenter      = e   => e.ctrlKey && onblur(e)
+const ondirection  = (e, dir) => {
+  if (!e.metaKey)
+    return
+  emits('block-direction', props.block.id, dir)
+}
+const ondelete     = e   => e.metaKey && emits('block-delete', props.block.id)
+const onenter      = e   => e.metaKey && onblur(e)
 
 const onblockcontent   = (block_id, content)   => emits('block-content',   block_id, content)
 const onblockaddchild  = block_id              => emits('block-addchild',  block_id)

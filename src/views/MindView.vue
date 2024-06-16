@@ -58,7 +58,8 @@ const onaddchapter = () => {
 }
 
 const onsave = e => {
-  if (e.ctrlKey && e.key.toLocaleLowerCase() === 's') {
+  if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
+    e.preventDefault()
     MindStore().save_mind(mind.id)
     proxy.$message('保存成功', 'warn')
   }
