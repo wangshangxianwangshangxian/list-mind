@@ -6,8 +6,8 @@
         <div></div>
         <div
           :id="`block-content-${props.block.id}`"
-          contenteditable="true"
-          class="min-w-12 min-h-4 text-center focus:outline-none"
+          :contenteditable="props.edit"
+          :class="content_class"
           v-html="props.block.content"
           @blur="onblur"
           @input="oninput"
@@ -18,6 +18,7 @@
           @keydown.right="e => ondirection(e, 'right')"
           @keydown.left="e => ondirection(e, 'left')"
           @keydown.delete="ondelete"
+          @click="onclick"
         ></div>
         <div></div>
       </div>
@@ -41,6 +42,7 @@
         v-for="child in props.block.children" 
         :key="child.id" 
         :block="child"
+        :edit="props.edit"
         @block-content="onblockcontent"
         @block-addchild="onblockaddchild"
         @block-direction="onblockdirection"
@@ -67,6 +69,11 @@ const props = defineProps({
         children: []
       }
     }
+  },
+
+  edit: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -155,8 +162,19 @@ const expand_class = computed(() => {
   return cls
 })
 
-const show_block_content = computed(() => {
-  return props.block.content
+const content_class = computed(() => {
+  const arrs = ['min-w-12', 'min-h-6', 'text-center', 'focus:outline-none']
+  if (MindStore().is_exam_mode() && !MindStore().is_open_in_exam(props.block.id)) {
+    arrs.push('opacity-0')
+    arrs.push('cursor-pointer')
+  }
+  return arrs
 })
+const onclick = () => {
+  if (!MindStore().is_exam_mode()) {
+    return
+  }
+  MindStore().toggle_in_exam(props.block.id)
+}
 </script>
 

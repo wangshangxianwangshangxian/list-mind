@@ -1,7 +1,7 @@
 import { keccak256 } from "js-sha3";
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { COLOR, DIRECTION, MODE } from "./constant";
+import { DIRECTION, MODE } from "./constant";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -201,6 +201,24 @@ const MindStore = defineStore('MindStore', {
     init_exam_mode() {
       this.exams.length = 0
       this.mode = MODE.EXAM
+    },
+
+    is_exam_mode() {
+      return this.mode === MODE.EXAM
+    },
+
+    is_open_in_exam(id) {
+      return this.exams.includes(id)
+    },
+
+    toggle_in_exam(id) {
+      const index = this.exams.indexOf(id)
+      if (index > -1) {
+        this.exams.splice(index, 1)
+      }
+      else {
+        this.exams.push(id)
+      }
     }
   }
 })

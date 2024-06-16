@@ -27,7 +27,8 @@
           <Block
             v-for="item in mind.children" 
             :key="item.id" 
-            :block="item" 
+            :block="item"
+            :edit="contenteditable"
             @block-content="onblockcontent"
             @block-addchild="onblockaddchild"
             @block-direction="onblockdirection"
@@ -51,12 +52,12 @@
 <script setup>
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
 import MainData from '@/stores/MainData';
 import router from '@/router';
-import { MESSAGE_TYPE } from '@/stores/constant';
+import { MESSAGE_TYPE, MODE } from '@/stores/constant';
 
 const { proxy } = getCurrentInstance()
 const id = utils.get_url_end_node()
@@ -139,8 +140,13 @@ const onoptionselect = item => {
     MindStore().init_exam_mode()
     proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO)
     show_option.value = false
+    MainData().resize()
   }
 }
+
+const contenteditable = computed(() => {
+  return MindStore().mode === MODE.COMMON
+})
 </script>
 
 <style scoped>
