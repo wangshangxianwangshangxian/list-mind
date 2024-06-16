@@ -1,7 +1,7 @@
 <template>
-  <div class="flex">
+  <div class="flex relative">
     <!-- left -->
-    <div class="flex rounded-lg justify-center items-center">
+    <div class="flex rounded-lg justify-center items-center z-50">
       <div :id="`block-l-${props.block.id}`" class="bg-orange-200 p-2 rounded-lg">
         <div></div>
         <div
@@ -14,6 +14,7 @@
           @keydown.down.prevent="e => ondirection(e, 'down')"
           @keydown.right.prevent="e => ondirection(e, 'right')"
           @keydown.left.prevent="e => ondirection(e, 'left')"
+          @keydown.delete="ondelete"
         >
           {{ props.block.content }}
         </div>
@@ -21,13 +22,13 @@
       </div>
     </div>
     <!-- center -->
-    <div v-if="has_children" :id="`block-c-box-${props.block.id}`" class=" w-8">
-      <svg width="100%" height="100%">
+    <div v-if="has_children" :id="`block-c-box-${props.block.id}`" class="w-8 z-20">
+      <svg width="100%" height="100%" class="absolute top-0 left-0">
         <path v-for="child in paths" :key="child.child_id" :d="child.path" fill="none" stroke="black" stroke-width="2"></path>
       </svg>
     </div>
     <!-- right -->
-    <div v-if="has_children" class="flex flex-col gap-2">
+    <div v-if="has_children" class="flex flex-col gap-2 justify-center z-50">
       <Block
         v-for="child in props.block.children" 
         :key="child.id" 
@@ -35,6 +36,7 @@
         @block-content="onblockcontent"
         @block-addchild="onblockaddchild"
         @block-direction="onblockdirection"
+        @block-delete="onblockdelete"
       ></Block>
     </div>
   </div>
@@ -65,16 +67,17 @@ watch(
   children => {
     nextTick(() => {
       paths.value.length = 0
+      const left         = document.getElementById(`block-l-${props.block.id}`)?.getBoundingClientRect() || {}
+      const center_box   = document.getElementById(`block-c-box-${props.block.id}`)?.getBoundingClientRect() || {}
+
       children.forEach(c => {
-        const left       = document.getElementById(`block-l-${props.block.id}`)?.getBoundingClientRect() || {}
-        const center_box = document.getElementById(`block-c-box-${props.block.id}`)?.getBoundingClientRect() || {}
         const child      = document.getElementById(`block-l-${c.id}`)?.getBoundingClientRect() || {}
         
         const path = 
-          `M 0 ${left.y - center_box.y + left.height / 2}
-           H ${center_box.width / 2}
+          `M ${left.width} ${left.y - center_box.y + left.height / 2}
+           H ${left.width + center_box.width / 2}
            V ${child.y - center_box.y + child.height / 2}
-           H ${child.x - center_box.x}
+           H ${left.width + child.x - center_box.x}
            `
         const data = {
           id: c.id,
@@ -87,13 +90,15 @@ watch(
   { immediate: true, deep: true }
 )
 
-const emits = defineEmits(['block-content', 'block-addchild', 'block-direction'])
+const emits = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete'])
 const onblur       = e   => emits('block-content',   props.block.id, e.target.textContent)
 const ontab        = ()  => emits('block-addchild',  props.block.id)
 const ondirection  = (e, dir) => e.shiftKey && emits('block-direction', props.block.id, dir)
+const ondelete     = e   => e.shiftKey && emits('block-delete', props.block.id)
 
 const onblockcontent   = (block_id, content)   => emits('block-content',   block_id, content)
 const onblockaddchild  = block_id              => emits('block-addchild',  block_id)
 const onblockdirection = (block_id, direction) => emits('block-direction', block_id, direction)
+const onblockdelete    = block_id              => emits('block-delete',  block_id)
 </script>
 

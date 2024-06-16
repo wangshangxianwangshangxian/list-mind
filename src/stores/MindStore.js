@@ -18,7 +18,7 @@ const MindStore = defineStore('MindStore', {
         children: [
           {
             id: keccak256(Date.now().toString()),
-            content: '',
+            content: '章节名称',
             children: [
               // {
               //   id: '2',
@@ -147,6 +147,19 @@ const MindStore = defineStore('MindStore', {
         }
       }
       return list
+    },
+
+    delete_block(mind_id, block_id) {
+      const [block, p_block] = this.get_block(mind_id, block_id, true)
+      if (!p_block) {
+        const mind  = this.get_mind(mind_id)
+        const index = mind.children.findIndex(c => c.id === block_id)
+        mind.children.splice(index, 1)
+        return 
+      }
+
+      const index            = p_block.children.findIndex(c => c.id === block_id)
+      p_block.children.splice(index, 1)
     },
 
     delete_mind(id) {

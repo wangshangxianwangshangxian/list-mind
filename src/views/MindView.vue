@@ -7,24 +7,24 @@
     <div class="flex flex-1 overflow-y-hidden">
       <!-- 左侧容器 -->
       <div class="w-40 flex justify-center items-center flex-col p-4">
-        <div class="flex flex-col gap-2 bg-red-100 p-2 rounded-lg min-w-28">
-          <div class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
+        <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28 bg-red-100">
+          <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
-              class="p-2 rounded-lg bg-orange-50 text-center cursor-pointer hover:scale-105 min-h-10 text-sm"
+              class="p-2 rounded-lg bg-orange-50 text-center cursor-pointer min-h-10 text-sm"
             >
               {{ item.content }}
             </div>
           </div>
           <div 
-            class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105"
+            class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105 text-lg"
             @click="onaddchapter"
           >+</div>
         </div>
       </div>
       <!-- 中间容器 -->
       <div class="flex-1 overflow-x-auto overflow-y-auto flex justify-center items-center">
-        <div class="flex flex-col justify-center gap-20">
+        <div class="flex flex-col justify-center gap-4 items-center">
           <Block 
             v-for="item in mind.children" 
             :key="item.id" 
@@ -32,6 +32,7 @@
             @block-content="onblockcontent"
             @block-addchild="onblockaddchild"
             @block-direction="onblockdirection"
+            @block-delete="onblockdelete"
           ></Block>
         </div>
       </div>
@@ -68,6 +69,10 @@ const onaddchapter = () => {
 const onblockdirection = (block_id, direction) => {
   const target = MindStore().get_direction_block(mind.id, block_id, direction)
   target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+}
+
+const onblockdelete = block_id => {
+  MindStore().delete_block(mind.id, block_id)
 }
 
 const onsave = e => {

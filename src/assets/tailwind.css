@@ -592,6 +592,14 @@ video {
   position: fixed;
 }
 
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -612,6 +620,14 @@ video {
   top: 2.5rem;
 }
 
+.z-20 {
+  z-index: 20;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -622,6 +638,10 @@ video {
 
 .\!block {
   display: block !important;
+}
+
+.inline-block {
+  display: inline-block;
 }
 
 .flex {
@@ -666,6 +686,10 @@ video {
 
 .h-20 {
   height: 5rem;
+}
+
+.h-auto {
+  height: auto;
 }
 
 .max-h-60 {
@@ -800,6 +824,10 @@ video {
 
 .gap-16 {
   gap: 4rem;
+}
+
+.gap-10 {
+  gap: 2.5rem;
 }
 
 .overflow-hidden {
