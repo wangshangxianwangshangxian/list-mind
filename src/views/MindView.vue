@@ -23,8 +23,8 @@
       </div>
       <!-- 中间容器 -->
       <div class="flex-1 overflow-x-auto overflow-y-auto p-8">
-        <div class="flex flex-col justify-center gap-4 items-center min-h-full">
-          <Block 
+        <div class="flex flex-col gap-8 items-center justify-center min-h-full">
+          <Block
             v-for="item in mind.children" 
             :key="item.id" 
             :block="item" 
