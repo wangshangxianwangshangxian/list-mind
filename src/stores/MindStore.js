@@ -13,11 +13,13 @@ const MindStore = defineStore('MindStore', {
   actions: {
     create_mind() {
       const data = {
+        pid        : null,
         id: keccak256(Date.now().toString()),
         title: '请在这里输入标题',
         create_time: utils.get_time(),
         children: [
           {
+            pid: null,
             id: keccak256(Date.now().toString()),
             content: '章节名称',
             children: [
@@ -42,11 +44,13 @@ const MindStore = defineStore('MindStore', {
         ]
       }
       this.list.push(data)
+      this.save_mind(data.id)
       return data
     },
 
-    new_block() {
+    new_block(pid) {
       const data = {
+        pid,
         id      : keccak256(Date.now().toString()),
         content : '',
         children: []
@@ -94,19 +98,21 @@ const MindStore = defineStore('MindStore', {
 
     set_block_content(mind_id, block_id, content) {
       const block = this.get_block(mind_id, block_id)
+      if (!block)
+        return
       block.content = content
     },
     
     add_block_child(mind_id, block_id) {
       const block = this.get_block(mind_id, block_id)
-      const child = this.new_block()
+      const child = this.new_block(block_id)
       block.children.push(child)
       return child
     },
 
     add_chapter(mind_id) {
       const mind  = this.get_mind(mind_id)
-      const child = this.new_block()
+      const child = this.new_block(mind_id)
       mind.children.push(child)
       return child
     },
