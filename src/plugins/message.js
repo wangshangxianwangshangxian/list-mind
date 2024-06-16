@@ -2,7 +2,7 @@ import { createApp } from "vue"
 import Message from '@/components/Message.vue'
 
 export default {
-  install: (app, options) => {
+  install: app => {
     let   timer    = null
     const messages = []
 

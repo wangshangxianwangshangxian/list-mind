@@ -9,7 +9,16 @@ export const DIRECTION = {
   UP   : 'up',
   DOWN : 'down',
   RIGHT: 'right',
-  LEFT : 'left'
+  LEFT : 'left',
+}
+
+export const POSITION = {
+  LEFT_BOTTOM: 'left_bottom'
+}
+
+export const MODE = {
+  COMMON: 'common',
+  EXAM  : 'exam'
 }
 
 export const COLOR = {

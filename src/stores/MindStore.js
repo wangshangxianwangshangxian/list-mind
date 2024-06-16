@@ -1,12 +1,14 @@
 import { keccak256 } from "js-sha3";
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { COLOR, DIRECTION } from "./constant";
+import { COLOR, DIRECTION, MODE } from "./constant";
 
 const MindStore = defineStore('MindStore', {
   state () {
     return {
-      mind: null
+      mind: null,
+      mode: MODE.COMMON,
+      exams: []
     }
   },
 
@@ -194,6 +196,11 @@ const MindStore = defineStore('MindStore', {
     set_expand(id, value) {
       const block = this.get_block(id)
       block.expand = value
+    },
+
+    init_exam_mode() {
+      this.exams.length = 0
+      this.mode = MODE.EXAM
     }
   }
 })

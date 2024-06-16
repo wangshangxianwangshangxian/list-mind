@@ -16,7 +16,7 @@ const props = defineProps({
 
   type: {
     type: String,
-    default: 'success'
+    default: MESSAGE_TYPE.SUCCESS
   },
 
   options: {

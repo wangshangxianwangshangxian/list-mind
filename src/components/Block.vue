@@ -103,7 +103,9 @@ watch(
 )
 
 const emits = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete'])
-const oninput      = e  => {MainData().resize()}
+const oninput      = e  => {
+  MainData().resize()
+}
 
 const onblur       = e   => emits('block-content',   props.block.id, e.target.innerHTML)
 const ontab        = ()  => { 
@@ -151,6 +153,10 @@ const expand_class = computed(() => {
     cls.push(mouse_in_path_box.value ? 'opacity-100' : 'opacity-0')
   }
   return cls
+})
+
+const show_block_content = computed(() => {
+  return props.block.content
 })
 </script>
 
