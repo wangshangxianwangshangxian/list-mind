@@ -18,30 +18,14 @@ const MindStore = defineStore('MindStore', {
         create_time: utils.get_time(),
         children: [
           {
-            pid: null,
+            pid: '',
             id: keccak256(Date.now().toString()),
             content: '章节名称',
-            children: [
-              // {
-              //   id: '2',
-              //   content: 'nihao',
-              //   children: [
-              //     {
-              //       id: '3',
-              //       content: 'haha',
-              //       children: []
-              //     },
-              //     {
-              //       id: '4',
-              //       content: 'haha 2',
-              //       children: []
-              //     }
-              //   ]
-              // }
-            ]
+            children: []
           }
         ]
       }
+      data.children[0].pid = data.id
       this.mind = data
       this.save_mind(data.id)
       return data
@@ -68,26 +52,27 @@ const MindStore = defineStore('MindStore', {
       return this.mind
     },
 
-    get_block(id, return_parent = false) {
-      let block, p_block
-      function search(self, children = []) {
+    get_block(id) {
+      if (this.mind.id === id) {
+        return this.mind
+      }
+
+      let block
+      function search(children = []) {
         children.some(c => {
           if (c.id === id) {
             block = c
-            p_block = self
             return true
           }
           if (c.children?.length) {
-            search(c, c.children)
+            search(c.children)
             return false
           }
           return false
         })
       }
-      search(null, this.mind.children)
-      if (!return_parent)
-        return block
-      return [block, p_block]
+      search(this.mind.children)
+      return block
     },
 
     set_block_content(id, content) {
@@ -106,8 +91,9 @@ const MindStore = defineStore('MindStore', {
 
     get_direction_block(id, direction) {
       if (direction === 'left') {
-        const [block, p_block] = this.get_block(id, true)
-        return p_block
+        const block = this.get_block(id)
+        const p_block = this.get_block(block.pid)
+        return p_block ? p_block : block
       }
       
       if (direction === 'right') {
@@ -119,33 +105,41 @@ const MindStore = defineStore('MindStore', {
       }
 
       if (direction === 'up') {
-        let block   = this.get_block(id),
-            p_block = this.get_block(block.pid),
-            index   = p_block.children.indexOf(block)
-        
-        while(index === 0) {
-          block   = p_block
-          p_block = this.get_block(p_block.pid)
-          index   =  p_block.children.indexOf(block)
-        }
+        let block   = this.get_block(id)
+        let p_block, index
 
-        const target  = p_block.children[index - 1]
-        return target
+        while(1) {
+          p_block = this.get_block(block.pid)
+          index   = p_block.children.indexOf(block)
+          if (this.is_root(p_block.id) && index === 0) {
+            return block
+          }
+
+          if (index !== 0) {
+            return p_block.children[index - 1]
+          }
+
+          block = p_block
+        }
       }
 
       if (direction === 'down') {
-        let block   = this.get_block(id),
-            p_block = this.get_block(block.pid),
-            index   = p_block.children.indexOf(block)
-        
-        while(index === p_block.length - 1) {
-          block   = p_block
-          p_block = this.get_block(p_block.pid)
-          index   =  p_block.children.indexOf(block)
-        }
+        let block   = this.get_block(id)
+        let p_block, index
 
-        const target  = p_block.children[index + 1]
-        return target
+        while(1) {
+          p_block = this.get_block(block.pid)
+          index   = p_block.children.indexOf(block)
+          if (this.is_root(p_block.id) && index === p_block.children.length - 1) {
+            return block
+          }
+
+          if (index !== p_block.children.length - 1) {
+            return p_block.children[index + 1]
+          }
+
+          block = p_block
+        }
       }
     },
 
@@ -172,7 +166,8 @@ const MindStore = defineStore('MindStore', {
     },
 
     delete_block(id) {
-      const [block, p_block] = this.get_block(id, true)
+      const block = this.get_block(id)
+      const p_block = this.get_block(block.pid, true)
       if (!p_block) {
         const mind  = this.mind
         const index = mind.children.findIndex(c => c.id === id)
@@ -187,6 +182,10 @@ const MindStore = defineStore('MindStore', {
     delete_mind(id) {
       this.mind = null
       localStorage.removeItem(`mind_${id}`)
+    },
+
+    is_root(id) {
+      return this.mind.id === id
     }
   }
 })
