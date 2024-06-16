@@ -1,4 +1,4 @@
-import { COLOR } from "@/stores/constant"
+import { COLOR, TIMESTAMP } from "@/stores/constant"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss.ms') => {
   const d       = new Date(time_stamp)
@@ -20,6 +20,23 @@ const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss.ms') =>
   return date_str
 }
 
+const get_left_time = (start_time = Date.now(), end_time = Date.now(), format = 'hh:mm:ss') => {
+  let total = new Date(end_time).getTime() - new Date(start_time).getTime()
+
+  const hour = Math.floor(total / TIMESTAMP.HOUR)
+  total      = total - TIMESTAMP.HOUR * hour
+  
+  const mins = Math.floor(total / TIMESTAMP.MINUTE)
+  total      = total - TIMESTAMP.MINUTE * mins
+
+  const secs = Math.floor(total / TIMESTAMP.SECOND)
+  
+  return format
+    .replace('hh', hour.toString().padStart(2, '0'))
+    .replace('mm', mins.toString().padStart(2, '0'))
+    .replace('ss', secs.toString().padStart(2, '0'))
+}
+
 const get_url_end_node = () => {
   const hash = location.hash
   const arrs = hash.split('/')
@@ -38,5 +55,6 @@ const get_color = () => {
 export default {
   get_time,
   get_url_end_node,
-  get_color
+  get_color,
+  get_left_time
 }

@@ -203,6 +203,11 @@ const MindStore = defineStore('MindStore', {
       this.mode = MODE.EXAM
     },
 
+    exit_exam_mode() {
+      this.exams.length = 0
+      this.mode = MODE.COMMON
+    },
+
     is_exam_mode() {
       return this.mode === MODE.EXAM
     },

@@ -1,13 +1,21 @@
 <template>
   <main class="h-screen flex flex-col scrollbar-hide">
-    <header class="h-11 px-8 flex items-center bg-white gap-1">
-      <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">三</span>
-      <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none font-bold text-lg" v-model="mind.title" /> 
+    <header class="h-11 px-8 flex items-center bg-white">
+      <div class="h-full flex gap-1 flex-1">
+        <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">三</span>
+        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none font-bold text-lg" v-model="mind.title" /> 
+      </div>
+      <div class="flex-1 text-right">
+        <p v-if="MindStore().is_exam_mode()">
+          <span class="cursor-pointer hover:text-red-600" @click="onquizexam">「 退出 」</span>
+          |&nbsp;&nbsp;{{ exam_info.message }}
+        </p>
+      </div>
     </header>
     <div class="flex flex-1 overflow-y-hidden">
       <!-- 左侧容器 -->
       <div class="w-40 flex justify-center items-center flex-col p-4">
-        <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28">
+        <!-- <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28">
           <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
@@ -15,11 +23,11 @@
               :class="['p-2', 'rounded-lg', 'bg-orange-50', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', item.style.backgroundColor]"
             ></div>
           </div>
-          <div 
-            class="p-2 min-h-10 rounded-lg bg-white cursor-pointer text-center hover:scale-105 text-lg bg-gray-100"
+          <div
+            class="p-2 min-h-10 rounded-lg cursor-pointer text-center hover:scale-105 text-lg bg-gray-100"
             @click="onaddchapter"
           >+</div>
-        </div>
+        </div> -->
       </div>
       <!-- 中间容器 -->
       <div class="flex-1 overflow-x-auto overflow-y-auto p-8">
@@ -117,6 +125,11 @@ const options = [
   },
   {
     key  : '3',
+    label: '常规模式',
+    tips : ''
+  },
+  {
+    key  : '4',
     label: '考试模式',
     tips : '学生党利器'
   }
@@ -137,16 +150,48 @@ const onoptionselect = item => {
     proxy.$message('保存成功')
   }
   else if (item.key === '3') {
+    onquizexam()
+    show_option.value = false
+  }
+  else if (item.key === '4') {
+    if (MindStore().is_exam_mode()) {
+      return
+    }
     MindStore().init_exam_mode()
     proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO)
     show_option.value = false
     MainData().resize()
+    start_exam()
   }
 }
 
 const contenteditable = computed(() => {
   return MindStore().mode === MODE.COMMON
 })
+
+const exam_info = reactive({
+  timer     : null,
+  start_time: null,
+  end_time  : null,
+  message   : ''
+})
+const exam_tip = () => {
+  exam_info.end_time = Date.now()
+  exam_info.message = `考试中, 用时 ${utils.get_left_time(exam_info.start_time, exam_info.end_time)}`
+}
+const start_exam = () => {
+  exam_info.start_time = Date.now()
+  exam_tip()
+  exam_info.timer = setInterval(exam_tip, 100)
+}
+const onquizexam = () => {
+  clearInterval(exam_info.timer)
+  exam_info.start_time = null
+  exam_info.end_time   = null
+  exam_info.message    = ''
+  MindStore().exit_exam_mode()
+}
+onUnmounted(() => clearInterval(exam_info.timer))
 </script>
 
 <style scoped>

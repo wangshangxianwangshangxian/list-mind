@@ -21,6 +21,13 @@ export const MODE = {
   EXAM  : 'exam'
 }
 
+export const TIMESTAMP = {
+  DAY   : 1000 * 60 * 60 * 24,
+  HOUR  : 1000 * 60 * 60,
+  MINUTE: 1000 * 60,
+  SECOND: 1000
+}
+
 export const COLOR = {
   SLATE   : 'bg-slate-200',
   GRAY    : 'bg-gray-200',
