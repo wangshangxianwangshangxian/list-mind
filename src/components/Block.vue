@@ -23,13 +23,20 @@
       </div>
     </div>
     <!-- center -->
-    <div v-if="has_children" :id="`block-c-box-${props.block.id}`" class="w-8 z-20">
-      <svg width="100%" height="100%" class="absolute top-0 left-0">
+    <div :id="`block-c-box-${props.block.id}`" class="w-8 z-20 flex justify-center items-center" @mouseenter="onpathenter" @mouseleave="onpathleave">
+      <svg v-if="show_children" width="100%" height="100%" class="absolute top-0 left-0">
         <path v-for="child in paths" :key="child.child_id" :d="child.path" fill="none" stroke="black" stroke-width="2"></path>
       </svg>
+      <div 
+        v-if="props.block.children.length > 0" 
+        :class="expand_class"
+        @click="onexpand"
+      >
+        {{  props.block.expand ? '-' : props.block.children.length }}
+      </div>
     </div>
     <!-- right -->
-    <div v-if="has_children" class="flex flex-col gap-2 justify-center z-50">
+    <div v-if="show_children" class="flex flex-col gap-2 justify-center z-50">
       <Block
         v-for="child in props.block.children" 
         :key="child.id" 
@@ -45,6 +52,7 @@
 
 <script setup>
 import MainData from '@/stores/MainData';
+import MindStore from '@/stores/MindStore';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 
@@ -55,13 +63,14 @@ const props = defineProps({
       return {
         id: 'da',
         content: 'content',
+        expand: false,
         children: []
       }
     }
   }
 })
 
-const has_children = computed(() => props.block.children.length > 0)
+const show_children = computed(() => props.block.expand && props.block.children.length > 0)
 
 const paths = ref([])
 watch(
@@ -125,6 +134,23 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('resize', MainData().resize)
+})
+
+const onexpand = () => {
+  MindStore().toggle_expand(props.block.id)
+  MainData().resize()
+}
+
+const mouse_in_path_box = ref(false)
+const onpathenter = () => mouse_in_path_box.value = true
+const onpathleave = () => mouse_in_path_box.value = false
+
+const expand_class = computed(() => {
+  const cls = ['w-5', 'h-5', 'border', 'rounded-full', 'bg-white', 'z-50', 'text-xs', 'flex', 'justify-center', 'items-center', 'cursor-pointer']
+  if (props.block.expand) {
+    cls.push(mouse_in_path_box.value ? 'opacity-100' : 'opacity-0')
+  }
+  return cls
 })
 </script>
 

@@ -46,6 +46,7 @@ import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
 import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive } from 'vue';
 import Block from '@/components/Block.vue'
+import MainData from '@/stores/MainData';
 
 const { proxy } = getCurrentInstance()
 const id = utils.get_url_end_node()
@@ -74,7 +75,11 @@ const onblockcontent = (id, content) => {
 
 const onblockaddchild = id => {
   const child = MindStore().add_block_child(id)
-  child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
+  child && nextTick(() => {
+    document.getElementById(`block-content-${child.id}`)?.focus()
+    MindStore().set_expand(id, true)
+    MainData().resize()
+  })
 }
 
 const onblockdirection = (id, direction) => {

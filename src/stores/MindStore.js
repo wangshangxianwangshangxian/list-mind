@@ -29,6 +29,7 @@ const MindStore = defineStore('MindStore', {
       const data = {
         pid,
         id      : keccak256(Date.now().toString()),
+        expand  : true,
         content : '',
         children: [],
         style: {
@@ -183,6 +184,16 @@ const MindStore = defineStore('MindStore', {
 
     is_root(id) {
       return this.mind.id === id
+    },
+
+    toggle_expand(id) {
+      const block = this.get_block(id)
+      block.expand = !block.expand
+    },
+
+    set_expand(id, value) {
+      const block = this.get_block(id)
+      block.expand = value
     }
   }
 })
