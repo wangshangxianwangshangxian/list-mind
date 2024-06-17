@@ -6,9 +6,9 @@ import { DIRECTION, MODE } from "./constant";
 const MindStore = defineStore('MindStore', {
   state () {
     return {
-      mind: null,
-      mode: MODE.COMMON,
-      exams: []
+      mind  : null,
+      blocks: [],
+      mode: MODE.COMMON
     }
   },
 
@@ -16,28 +16,38 @@ const MindStore = defineStore('MindStore', {
     create_mind() {
       const data = {
         pid        : null,
-        id: keccak256(Date.now().toString()),
-        title: '请在这里输入标题',
+        id         : keccak256(Date.now().toString()),
+        title      : '请在这里输入标题',
         create_time: utils.get_time(),
-        children: []
+        expand     : true,
+        editable   : true,
+        visible    : true,
+        children   : []
       }
-      data.children[0] = this.new_block(data.id)
       this.mind = data
+      this.blocks.push(data)
+      this.new_block(data.id)
       this.save_mind(data.id)
       return data
     },
 
+    // 创建块，并添加到父节点上
     new_block(pid) {
       const data = {
         pid,
-        id      : keccak256(Date.now().toString()),
+        id      : keccak256(Date.now().toString()).slice(-10),
         expand  : true,
+        visible : true,
+        editable: true,
         content : '',
         children: [],
         style: {
           backgroundColor: utils.get_color()
         }
       }
+      const block = this.get_block(pid)
+      block.children.push(data)
+      this.blocks.push(data)
       return data
     },
     
@@ -49,10 +59,28 @@ const MindStore = defineStore('MindStore', {
       const key    = `mind_${id}`
       const target = localStorage.getItem(key)
       this.mind    = JSON.parse(target)
+
+      const handler = (children = []) => {
+        children.forEach(c => {
+          this.blocks.push(c)
+          this.blocks.push(...c.children)
+          c.children.forEach(tmp => handler(tmp.children))
+        })
+      }
+
+      this.blocks.push(this.mind)
+      handler(this.mind.children)
+
       return this.mind
     },
 
     get_block(id) {
+      // if (this.mind.id === id) {
+      //   return this.mind
+      // }
+      // const block = this.blocks.find(t => t.id === id)
+      // return block
+
       if (this.mind.id === id) {
         return this.mind
       }
@@ -80,13 +108,6 @@ const MindStore = defineStore('MindStore', {
       if (!block)
         return
       block.content = content
-    },
-    
-    add_block_child(id) {
-      const block = this.get_block(id)
-      const child = this.new_block(id)
-      block.children.push(child)
-      return child
     },
 
     get_direction_block(id, direction) {
@@ -175,12 +196,15 @@ const MindStore = defineStore('MindStore', {
         return 
       }
 
-      const index            = p_block.children.findIndex(c => c.id === id)
+      let index            = p_block.children.findIndex(c => c.id === id)
       p_block.children.splice(index, 1)
+      index = this.blocks.indexOf(block)
+      this.blocks.splice(index, 1)
     },
 
     delete_mind(id) {
       this.mind = null
+      this.blocks.length = 0
       localStorage.removeItem(`mind_${id}`)
     },
 
@@ -199,31 +223,32 @@ const MindStore = defineStore('MindStore', {
     },
 
     init_exam_mode() {
-      this.exams.length = 0
       this.mode = MODE.EXAM
+      this.blocks.forEach(b => {
+        if (this.is_root(b.id))
+          return
+        b.editable = false
+        b.visible = false
+      })
     },
 
     exit_exam_mode() {
-      this.exams.length = 0
       this.mode = MODE.COMMON
+      this.blocks.forEach(b => {
+        if (this.is_root(b.id))
+          return
+        b.editable = true
+        b.visible = true
+      })
     },
 
     is_exam_mode() {
       return this.mode === MODE.EXAM
     },
 
-    is_open_in_exam(id) {
-      return this.exams.includes(id)
-    },
-
     toggle_in_exam(id) {
-      const index = this.exams.indexOf(id)
-      if (index > -1) {
-        this.exams.splice(index, 1)
-      }
-      else {
-        this.exams.push(id)
-      }
+      const block = this.get_block(id)
+      block.visible = !block.visible
     }
   }
 })

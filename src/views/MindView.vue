@@ -34,14 +34,15 @@
         <div class="flex flex-col gap-8 items-center justify-center min-h-full">
           <Block
             v-for="item in mind.children" 
-            :key="item.id" 
-            :block="item"
-            :edit="contenteditable"
-            @block-content="onblockcontent"
-            @block-addchild="onblockaddchild"
-            @block-direction="onblockdirection"
-            @block-delete="onblockdelete"
-            @block-expand="onblockexpand"
+            :key             = "item.id" 
+            :block           = "item"
+            :refresh         = "refresh"
+            @block-content   = "onblockcontent"
+            @block-addchild  = "onblockaddchild"
+            @block-direction = "onblockdirection"
+            @block-delete    = "onblockdelete"
+            @block-expand    = "onblockexpand"
+            @block-click     = "onblockclick"
           ></Block>
         </div>
       </div>
@@ -50,10 +51,10 @@
     </div>
     <Options 
       v-if="show_option" 
-      :options="options"
-      selector="#mind-option"
-      @cancel="onoptioncancel"
-      @select="onoptionselect"
+      :options = "options"
+      selector = "#mind-option"
+      @cancel  = "onoptioncancel"
+      @select  = "onoptionselect"
     ></Options>
   </main>
 </template>
@@ -61,20 +62,21 @@
 <script setup>
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
-import MainData from '@/stores/MainData';
 import router from '@/router';
-import { MESSAGE_TYPE, MODE } from '@/stores/constant';
+import { MESSAGE_TYPE } from '@/stores/constant';
 
 const { proxy } = getCurrentInstance()
-const id = utils.get_url_end_node()
-const info = MindStore().request_mind(id)
-const mind = reactive(info)
+const id        = utils.get_url_end_node()
+const info      = MindStore().request_mind(id)
+const mind      = reactive(info)
+const refresh   = ref(0)
+const update_refresh = () => refresh.value = Date.now()
 
 const onaddchapter = () => {
-  const child = MindStore().add_block_child(id)
+  const child = MindStore().new_block(id)
   child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
 }
 
@@ -90,17 +92,12 @@ const onsave = e => {
 onMounted(() => window.addEventListener('keydown', onsave))
 onUnmounted(() => window.removeEventListener('keydown', onsave))
 
-
-const onblockcontent = (id, content) => {
-  MindStore().set_block_content(id, content)
-}
-
+const onblockcontent  = (id, content) => MindStore().set_block_content(id, content)
 const onblockaddchild = id => {
-  const child = MindStore().add_block_child(id)
+  const child = MindStore().new_block(id)
   child && nextTick(() => {
     document.getElementById(`block-content-${child.id}`)?.focus()
     MindStore().set_expand(id, true)
-    MainData().resize()
   })
 }
 
@@ -115,7 +112,14 @@ const onblockdelete = id => {
 
 const onblockexpand = id => {
   MindStore().toggle_expand(id)
-  MainData().resize()
+  update_refresh()
+}
+
+const onblockclick = id => {
+  // 考试模式
+  if (MindStore().is_exam_mode()) {
+    MindStore().toggle_in_exam(id)
+  }
 }
 
 const options = [
@@ -166,14 +170,9 @@ const onoptionselect = item => {
     MindStore().init_exam_mode()
     proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO)
     show_option.value = false
-    MainData().resize()
     start_exam()
   }
 }
-
-const contenteditable = computed(() => {
-  return MindStore().mode === MODE.COMMON
-})
 
 const exam_info = reactive({
   timer     : null,
