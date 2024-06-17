@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import MindView from '../views/MindView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,7 +13,7 @@ const router = createRouter({
     {
       path: '/mind/:id',
       name: 'mind',
-      component: import('@/views/MindView.vue')
+      component: MindView
     }
   ]
 })

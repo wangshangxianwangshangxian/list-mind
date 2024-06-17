@@ -15,7 +15,7 @@
     <div class="flex flex-1 overflow-y-hidden">
       <!-- 左侧容器 -->
       <div class="w-40 flex justify-center items-center flex-col p-4">
-        <!-- <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28">
+        <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28">
           <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
@@ -27,7 +27,7 @@
             class="p-2 min-h-10 rounded-lg cursor-pointer text-center hover:scale-105 text-lg bg-gray-100"
             @click="onaddchapter"
           >+</div>
-        </div> -->
+        </div>
       </div>
       <!-- 中间容器 -->
       <div class="flex-1 overflow-x-auto overflow-y-auto p-8">
@@ -41,6 +41,7 @@
             @block-addchild="onblockaddchild"
             @block-direction="onblockdirection"
             @block-delete="onblockdelete"
+            @block-expand="onblockexpand"
           ></Block>
         </div>
       </div>
@@ -110,6 +111,11 @@ const onblockdirection = (id, direction) => {
 
 const onblockdelete = id => {
   MindStore().delete_block(id)
+}
+
+const onblockexpand = id => {
+  MindStore().toggle_expand(id)
+  MainData().resize()
 }
 
 const options = [
