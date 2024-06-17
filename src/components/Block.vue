@@ -2,14 +2,15 @@
   <div class="flex relative">
     <!-- left -->
     <div class="flex rounded-lg justify-center items-center z-50">
-      <div :id="`block-l-${props.block.id}`" :class="['p-2', 'rounded-lg', 'flex', 'items-center', 'gap-2', props.block.style.backgroundColor]">
+      <div :id="`block-l-${props.block.id}`" :class="box_class">
         <div></div>
         <div
           :id                  = "`block-content-${props.block.id}`"
           :class               = "content_class"
-          v-html               = "props.block.id"
+          v-html               = "props.block.content"
           :contenteditable     = "props.block.editable"
           @keydown.tab.prevent = "ontab"
+          @focus               = "onfocus"
           @blur                = "onblur"
           @input               = "oninput"
           @keydown.enter       = "onenter"
@@ -116,7 +117,7 @@ watch(
 
 // 一堆转发事件
 const emits       = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete', 'block-expand', 'block-click'])
-const onblur      = e => emits('block-content', props.block.id, e.target.innerHTML)
+const onblur      = e => (active.value = false) && emits('block-content', props.block.id, e.target.innerHTML)
 const ondelete    = e => e.metaKey && emits('block-delete', props.block.id)
 const onenter     = e => e.metaKey && onblur(e)
 const oninput     = () => update_refresh()
@@ -155,5 +156,23 @@ const content_class = computed(() => {
   props.block.visible  ? arrs.push('opacity-100') : arrs.push(...['opacity-0', 'cursor-pointer'])
   return arrs
 })
+
+const box_class = computed(() => {
+  const arrs = ['border-solid', 'border-0', 'p-2', 'rounded-lg', 'flex', 'items-center', 'gap-2', props.block.style.backgroundColor]
+  if (active.value) {
+    arrs.push('active')
+  }
+  return arrs
+})
+const active = ref(false)
+const onfocus = () => {
+  active.value = true
+}
 </script>
+
+<style scoped>
+.active {
+  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.2)
+}
+</style>
 
