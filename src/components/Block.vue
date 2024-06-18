@@ -15,11 +15,13 @@
           @input               = "oninput"
           @keydown.enter       = "onenter"
           @keydown.delete      = "ondelete"
+          @keydown             = "onkeydown"
+          @click               = "onclick"
+          @dblclick            = "ondbclick"
           @keydown.up          = "e => ondirection(e, 'up')"
           @keydown.down        = "e => ondirection(e, 'down')"
           @keydown.right       = "e => ondirection(e, 'right')"
           @keydown.left        = "e => ondirection(e, 'left')"
-          @click="onclick"
         ></div>
         <div></div>
       </div>
@@ -50,6 +52,8 @@
         @block-delete    = "onblockdelete"
         @block-expand    = "onblockexpand"
         @block-click     = "onblockclick"
+        @block-dbclick   = "onblockdbclick"
+        @block-keydown   = "onblockkeydown"
       ></Block>
     </div>
   </div>
@@ -116,20 +120,23 @@ watch(
 )
 
 // 一堆转发事件
-const emits       = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete', 'block-expand', 'block-click'])
-const onblur      = e => (active.value = false) && emits('block-content', props.block.id, e.target.innerHTML)
+const emits       = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown'])
+const onblur      = e => (active.value = false, emits('block-content', props.block.id, e.target.innerHTML))
 const ondelete    = e => e.metaKey && emits('block-delete', props.block.id)
 const onenter     = e => e.metaKey && onblur(e)
-const oninput     = () => update_refresh()
-const ontab       = () => update_refresh() && emits('block-addchild',  props.block.id)
-const onexpand    = () => emits('block-expand', props.block.id)
-const onclick     = () => emits('block-click', props.block.id)
+const onkeydown   = e => (update_refresh(), emits('block-keydown',  e, props.block.id))
+const ontab       = () => (update_refresh(), emits('block-addchild',  props.block.id))
+const onexpand    = () => emits('block-expand',  props.block.id)
+const onclick     = () => emits('block-click',   props.block.id)
+const ondbclick   = () => emits('block-dbclick', props.block.id)
 const ondirection = (e, dir) => e.metaKey && emits('block-direction', props.block.id, dir)
 
 const onblockclick     = id => emits('block-click', id)
+const onblockdbclick   = id => emits('block-dbclick', id)
 const onblockdelete    = id => emits('block-delete', id) && update_refresh()
 const onblockexpand    = id => emits('block-expand', id)
 const onblockaddchild  = id => emits('block-addchild', id) && update_refresh()
+const onblockkeydown   = (e, id) => emits('block-keydown', e, id)
 const onblockcontent   = (id, content) => emits('block-content', id, content)
 const onblockdirection = (id, direction) => emits('block-direction', id, direction)
 
@@ -152,7 +159,7 @@ const expand_class = computed(() => {
 
 // 编辑box样式
 const content_class = computed(() => {
-  const arrs = ['min-w-12', 'min-h-6', 'text-center', 'focus:outline-none']
+  const arrs = ['min-w-12', 'min-h-6', 'focus:outline-none']
   props.block.visible  ? arrs.push('opacity-100') : arrs.push(...['opacity-0', 'cursor-pointer'])
   return arrs
 })

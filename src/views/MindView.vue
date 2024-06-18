@@ -43,6 +43,7 @@
             @block-delete    = "onblockdelete"
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
+            @block-keydown   = "onblockkeydown"
           ></Block>
         </div>
       </div>
@@ -98,6 +99,7 @@ const onblockaddchild = id => {
   child && nextTick(() => {
     document.getElementById(`block-content-${child.id}`)?.focus()
     MindStore().set_expand(id, true)
+    update_refresh()
   })
 }
 
@@ -197,6 +199,15 @@ const onquizexam = () => {
   MindStore().exit_exam_mode()
 }
 onUnmounted(() => clearInterval(exam_info.timer))
+
+const onblockkeydown = (e, id) => {
+  if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
+    e.preventDefault()
+    const block = MindStore().get_block(id)
+    const el    = document.getElementById(`block-content-${block.id}`)
+    el.blur()
+  }
+}
 </script>
 
 <style scoped>

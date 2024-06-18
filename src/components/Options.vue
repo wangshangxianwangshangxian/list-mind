@@ -1,5 +1,5 @@
 <template>
-  <BackgroundMask @click.stop="oncancel">
+  <BackgroundMask @bgclick="oncancel">
     <div class="inline-block bg-white border rounded-lg absolute top-0 left-0" :style="option_style">
       <ul class="p-1">
         <li 
@@ -19,7 +19,7 @@
 <script setup>
 import BackgroundMask from '@/components/BackgroundMask.vue'
 import { POSITION } from '@/stores/constant';
-import { computed, reactive, ref, watch } from 'vue';
+import { reactive, watch } from 'vue';
 
 const props = defineProps({
   options: {
