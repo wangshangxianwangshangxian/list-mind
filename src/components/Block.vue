@@ -18,10 +18,6 @@
           @keydown             = "onkeydown"
           @click               = "onclick"
           @dblclick            = "ondbclick"
-          @keydown.up          = "e => ondirection(e, 'up')"
-          @keydown.down        = "e => ondirection(e, 'down')"
-          @keydown.right       = "e => ondirection(e, 'right')"
-          @keydown.left        = "e => ondirection(e, 'left')"
         ></div>
         <div></div>
       </div>
@@ -48,7 +44,6 @@
         :refresh         = "props.refresh"
         @block-content   = "onblockcontent"
         @block-addchild  = "onblockaddchild"
-        @block-direction = "onblockdirection"
         @block-delete    = "onblockdelete"
         @block-expand    = "onblockexpand"
         @block-click     = "onblockclick"
@@ -120,7 +115,7 @@ watch(
 )
 
 // 一堆转发事件
-const emits       = defineEmits(['block-content', 'block-addchild', 'block-direction', 'block-delete', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown'])
+const emits       = defineEmits(['block-content', 'block-addchild', 'block-delete', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-move'])
 const onblur      = e => (active.value = false, emits('block-content', props.block.id, e.target.innerHTML))
 const ondelete    = e => e.metaKey && emits('block-delete', props.block.id)
 const onenter     = e => e.metaKey && onblur(e)
@@ -129,7 +124,6 @@ const ontab       = () => (update_refresh(), emits('block-addchild',  props.bloc
 const onexpand    = () => emits('block-expand',  props.block.id)
 const onclick     = () => emits('block-click',   props.block.id)
 const ondbclick   = () => emits('block-dbclick', props.block.id)
-const ondirection = (e, dir) => e.metaKey && emits('block-direction', props.block.id, dir)
 
 const onblockclick     = id => emits('block-click', id)
 const onblockdbclick   = id => emits('block-dbclick', id)
@@ -138,7 +132,6 @@ const onblockexpand    = id => emits('block-expand', id)
 const onblockaddchild  = id => emits('block-addchild', id) && update_refresh()
 const onblockkeydown   = (e, id) => emits('block-keydown', e, id)
 const onblockcontent   = (id, content) => emits('block-content', id, content)
-const onblockdirection = (id, direction) => emits('block-direction', id, direction)
 
 // 修改页面尺寸
 onMounted(() => window.addEventListener('resize', update_refresh))

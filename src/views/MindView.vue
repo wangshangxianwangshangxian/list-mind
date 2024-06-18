@@ -39,7 +39,6 @@
             :refresh         = "refresh"
             @block-content   = "onblockcontent"
             @block-addchild  = "onblockaddchild"
-            @block-direction = "onblockdirection"
             @block-delete    = "onblockdelete"
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
@@ -67,7 +66,7 @@ import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } f
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
 import router from '@/router';
-import { MESSAGE_TYPE } from '@/stores/constant';
+import { DIRECTION, MESSAGE_TYPE } from '@/stores/constant';
 
 const { proxy } = getCurrentInstance()
 const id        = utils.get_url_end_node()
@@ -101,11 +100,6 @@ const onblockaddchild = id => {
     MindStore().set_expand(id, true)
     update_refresh()
   })
-}
-
-const onblockdirection = (id, direction) => {
-  const target = MindStore().get_direction_block(id, direction)
-  target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
 }
 
 const onblockdelete = id => {
@@ -206,6 +200,24 @@ const onblockkeydown = (e, id) => {
     const block = MindStore().get_block(id)
     const el    = document.getElementById(`block-content-${block.id}`)
     el.blur()
+  }
+  else if(e.metaKey && e.shiftKey && e.key.toLocaleLowerCase() === 'arrowup') {
+  }
+  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowup') {
+    const target = MindStore().get_direction_block(id, DIRECTION.UP)
+    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+  }
+  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowdown') {
+    const target = MindStore().get_direction_block(id, DIRECTION.DOWN)
+    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+  }
+  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowleft') {
+    const target = MindStore().get_direction_block(id, DIRECTION.LEFT)
+    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+  }
+  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowright') {
+    const target = MindStore().get_direction_block(id, DIRECTION.RIGHT)
+    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
   }
 }
 </script>
