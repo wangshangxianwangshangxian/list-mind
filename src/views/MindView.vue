@@ -30,8 +30,8 @@
         </div>
       </div>
       <!-- 中间容器 -->
-      <div class="flex-1 overflow-x-auto overflow-y-auto p-8">
-        <div class="flex flex-col gap-8 items-center justify-center min-h-full">
+      <div class="flex-1 overflow-x-auto overflow-y-auto p-8 shrink-0">
+        <div class="flex flex-col gap-8 items-center justify-center min-h-full shrink-0">
           <Block
             v-for="item in mind.children" 
             :key             = "item.id" 
@@ -40,6 +40,7 @@
             @block-blur      = "onblockblur"
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
+            @block-dbclick   = "onblockdbclick"
             @block-keydown   = "onblockkeydown"
             @block-dragstart = "onblockdragstart"
           ></Block>
@@ -60,6 +61,7 @@
       :block     = "move_info.move_el" 
       @c_mouseup ="onmouseup"
     ></MoveOption>
+    <Addition v-if="addition_info.show" :id="addition_info.id" @c_close="onadditionclose"></Addition>
   </main>
 </template>
 
@@ -70,6 +72,7 @@ import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } f
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
 import MoveOption from '@/components/MoveOption.vue'
+import Addition from '@/components/Addition.vue'
 import router from '@/router';
 import { DIRECTION, MESSAGE_TYPE } from '@/stores/constant';
 
@@ -194,7 +197,6 @@ const onblockkeydown = (e, id) => {
     const child = MindStore().new_block(id)
     child && nextTick(() => {
       document.getElementById(`block-content-${child.id}`)?.focus()
-
       update_refresh()
     })
   }
@@ -228,7 +230,10 @@ const onblockkeydown = (e, id) => {
   }
 }
 
-const onblockblur = (id, content) => (update_refresh(), MindStore().set_block_content(id, content))
+const onblockblur = (id, content) => {
+  update_refresh()
+  MindStore().set_block_content(id, content)
+}
 
 const move_info = reactive({
   show    : false,
@@ -250,6 +255,19 @@ const onmouseup = (move_parent_id, move_index) => {
     update_refresh()
   }
 }
+
+const addition_info = reactive({
+  show: false,
+  id  : null
+})
+const onblockdbclick = id => {
+  addition_info.id   = id
+  addition_info.show = true
+}
+const onadditionclose = () => {
+  addition_info.show = false
+}
+
 </script>
 
 <style scoped>

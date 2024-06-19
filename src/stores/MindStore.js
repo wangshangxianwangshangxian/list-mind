@@ -41,6 +41,10 @@ const MindStore = defineStore('MindStore', {
         editable: true,
         content : '',
         children: [],
+        addition: {
+          link  : '',
+          remark: ''
+        },
         style: {
           backgroundColor: utils.get_color()
         }

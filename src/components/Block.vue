@@ -21,7 +21,16 @@
           @click               = "onclick"
           @dblclick            = "ondbclick"
         ></div>
-        <div></div>
+        <div class="flex">
+          <a 
+            v-if="props.block.addition.link" 
+            class="hover:bg-black-30 px-1 rounded cursor-pointer" 
+            :href="props.block.addition.link" 
+            target="_blank" 
+            :title="props.block.addition.link"
+          >🔗</a>
+          <div v-if="props.block.addition.remark" class="hover:bg-black-30 px-1 rounded cursor-pointer">🖊️</div>
+        </div>
       </div>
     </div>
     <!-- center -->
@@ -38,7 +47,7 @@
       </div>
     </div>
     <!-- right -->
-    <div v-if="show_children" class="flex flex-col gap-2 justify-center z-50">
+    <div v-if="show_children" class="flex flex-col gap-2 justify-center z-50 shrink-0">
       <Block
         v-for="child in props.block.children" 
         :key             = "child.id" 
@@ -50,6 +59,7 @@
         @block-dbclick   = "onblockdbclick"
         @block-keydown   = "onblockkeydown"
         @block-dragstart = "onblockdragstart"
+        @block-focus     = "onblockfocus"
       ></Block>
     </div>
   </div>
@@ -116,13 +126,13 @@ watch(
 )
 
 // 一堆转发事件
-const emits       = defineEmits(['block-blur', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-mousedown', 'block-dragstart'])
+const emits       = defineEmits(['block-focus', 'block-blur', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-mousedown', 'block-dragstart'])
 const onblur      = e => (active.value = false, emits('block-blur', props.block.id, e.target.innerHTML))
 const onkeydown   = e => (update_refresh(), emits('block-keydown',  e, props.block.id))
 const onexpand    = () => emits('block-expand',  props.block.id)
 const onclick     = () => emits('block-click',   props.block.id)
 const ondbclick   = () => emits('block-dbclick', props.block.id)
-const oninput     = () => update_refresh()
+const oninput     = () => nextTick(update_refresh)
 const ondragstart = e => emits('block-dragstart', props.block.id, e.offsetX, e.offsetY)
 
 const onblockclick      = id => emits('block-click', id)
@@ -166,7 +176,9 @@ const box_class = computed(() => {
 const active = ref(false)
 const onfocus = () => {
   active.value = true
+  emits('block-focus', props.block.id)
 }
+const onblockfocus = id => emits('block-focus', id)
 </script>
 
 <style scoped>
