@@ -249,6 +249,30 @@ const MindStore = defineStore('MindStore', {
     toggle_in_exam(id) {
       const block = this.get_block(id)
       block.visible = !block.visible
+    },
+
+    get_block_index(id) {
+      const block   = this.get_block(id)
+      const p_block = this.get_block(block.pid)
+      return p_block.children.indexOf(block)
+    },
+
+    is_last_block(id) {
+      const block   = this.get_block(id)
+      const p_block = this.get_block(block.pid)
+      const index   = p_block.children.indexOf(block)
+      return index === p_block.children.length - 1
+    },
+
+    move(id, new_pid, new_index) {
+      const block   = this.get_block(id)
+      const p_block = this.get_block(block.pid)
+      const n_block = this.get_block(new_pid)
+      const index   = p_block.children.findIndex(b => b.id === id)
+      block.pid     = new_pid
+
+      p_block.children.splice(index, 1)
+      n_block.children.splice(new_index, 0, block)
     }
   }
 })

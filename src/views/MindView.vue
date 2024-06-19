@@ -41,7 +41,7 @@
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
             @block-keydown   = "onblockkeydown"
-            @block-mousedown = "onblockmoudsedown"
+            @block-dragstart = "onblockdragstart"
           ></Block>
         </div>
       </div>
@@ -55,6 +55,11 @@
       @cancel  = "onoptioncancel"
       @select  = "onoptionselect"
     ></Options>
+    <MoveOption
+      v-if="move_info.show"
+      :move_el   = "move_info.move_el" 
+      @c_mouseup ="onmouseup"
+    ></MoveOption>
   </main>
 </template>
 
@@ -64,6 +69,7 @@ import utils from '@/utils/utils';
 import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
+import MoveOption from '@/components/MoveOption.vue'
 import router from '@/router';
 import { DIRECTION, MESSAGE_TYPE } from '@/stores/constant';
 
@@ -223,8 +229,31 @@ const onblockkeydown = (e, id) => {
 }
 
 const onblockblur = (id, content) => (update_refresh(), MindStore().set_block_content(id, content))
-const onblockmoudsedown = id => {
-  console.log(id)
+
+const move_info = reactive({
+  show    : false,
+  move_el : {
+    id      : null,
+    el      : null,
+    offset_x: 0,
+    offset_y: 0
+  }
+})
+const onblockdragstart = (id, offset_x, offset_y) => {
+  move_info.move_el  = {
+    el      : document.getElementById(`block-l-${id}`),
+    id,
+    offset_x,
+    offset_y
+  }
+  move_info.show     = true
+}
+const onmouseup = (move_parent_id, move_index) => {
+  move_info.show    = false
+  MindStore().move(move_info.move_el.id, move_parent_id, move_index)
+  move_info.move_el = null
+  move_info.id      = null
+  update_refresh()
 }
 </script>
 

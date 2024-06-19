@@ -52,3 +52,6 @@ export const COLOR = {
   PINK    : 'bg-pink-200',
   ROSE    : 'bg-rose-200'
 }
+
+// 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
+export const MOVE_MAX_DSITANCE = 100

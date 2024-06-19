@@ -52,9 +52,24 @@ const get_color = () => {
   return COLOR[target]
 }
 
+const calc_distance = (x1, y1, x2, y2) => {
+  const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+  return distance
+}
+
+const calc_angle = (x1, y1, x2, y2) => {
+  const dx    = x2 - x1
+  const dy    = y2 - y1
+  const theta = Math.atan2(dy, dx)
+  const angle = theta * (180 / Math.PI)
+  return angle
+}
+
 export default {
   get_time,
   get_url_end_node,
   get_color,
-  get_left_time
+  get_left_time,
+  calc_distance,
+  calc_angle
 }

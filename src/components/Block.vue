@@ -2,8 +2,15 @@
   <div class="flex relative">
     <!-- left -->
     <div class="flex rounded-lg justify-center items-center z-50">
-      <div :id="`block-l-${props.block.id}`" :class="box_class">
-        <div></div>
+      <div 
+        :id        = "`block-l-${props.block.id}`" 
+        :class     = "box_class"
+        draggable  = "true"
+        @dragstart = "ondragstart"
+      >
+        <div>
+          <span>三</span>
+        </div>
         <div
           :id                  = "`block-content-${props.block.id}`"
           :class               = "content_class"
@@ -15,7 +22,6 @@
           @keydown             = "onkeydown"
           @click               = "onclick"
           @dblclick            = "ondbclick"
-          @mousedown           = "onmousedown"
         ></div>
         <div></div>
       </div>
@@ -45,7 +51,7 @@
         @block-click     = "onblockclick"
         @block-dbclick   = "onblockdbclick"
         @block-keydown   = "onblockkeydown"
-        @block-mousedown = "onblockmoudsedown"
+        @block-dragstart = "onblockdragstart"
       ></Block>
     </div>
   </div>
@@ -112,21 +118,21 @@ watch(
 )
 
 // 一堆转发事件
-const emits       = defineEmits(['block-blur', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-mousedown'])
+const emits       = defineEmits(['block-blur', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-mousedown', 'block-dragstart'])
 const onblur      = e => (active.value = false, emits('block-blur', props.block.id, e.target.innerHTML))
 const onkeydown   = e => (update_refresh(), emits('block-keydown',  e, props.block.id))
 const onexpand    = () => emits('block-expand',  props.block.id)
 const onclick     = () => emits('block-click',   props.block.id)
 const ondbclick   = () => emits('block-dbclick', props.block.id)
-const onmousedown = () => emits('block-mousedown', props.block.id)
 const oninput     = () => update_refresh()
+const ondragstart = e => emits('block-dragstart', props.block.id, e.offsetX, e.offsetY)
 
 const onblockclick      = id => emits('block-click', id)
 const onblockdbclick    = id => emits('block-dbclick', id)
 const onblockexpand     = id => emits('block-expand', id)
 const onblockkeydown    = (e, id) => emits('block-keydown', e, id)
 const onblockblur       = (id, content) => emits('block-blur', id, content)
-const onblockmoudsedown = (id, content) => emits('block-mousedown', id, content)
+const onblockdragstart  = (id, offsetX, offsetY) => emits('block-dragstart', id, offsetX, offsetY)
 
 // 修改页面尺寸
 onMounted(() => window.addEventListener('resize', update_refresh))
