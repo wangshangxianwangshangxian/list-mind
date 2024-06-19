@@ -57,7 +57,7 @@
     ></Options>
     <MoveOption
       v-if="move_info.show"
-      :move_el   = "move_info.move_el" 
+      :block     = "move_info.move_el" 
       @c_mouseup ="onmouseup"
     ></MoveOption>
   </main>
@@ -234,25 +234,17 @@ const move_info = reactive({
   show    : false,
   move_el : {
     id      : null,
-    el      : null,
     offset_x: 0,
     offset_y: 0
   }
 })
 const onblockdragstart = (id, offset_x, offset_y) => {
-  move_info.move_el  = {
-    el      : document.getElementById(`block-l-${id}`),
-    id,
-    offset_x,
-    offset_y
-  }
+  move_info.move_el  = { id, offset_x, offset_y }
   move_info.show     = true
 }
 const onmouseup = (move_parent_id, move_index) => {
   move_info.show    = false
   MindStore().move(move_info.move_el.id, move_parent_id, move_index)
-  move_info.move_el = null
-  move_info.id      = null
   update_refresh()
 }
 </script>

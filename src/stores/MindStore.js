@@ -279,6 +279,21 @@ const MindStore = defineStore('MindStore', {
         new_index--
       }
       n_p_block.children.splice(new_index, 0, block)
+    },
+
+    get_children_ids(id, deep = false) {
+      const block = this.get_block(id)
+      const arrs  = block.children.map(c => c.id)
+
+      function handler(children) {
+        children.forEach(c => {
+          arrs.push(c.id)
+          deep && c.children.forEach(t => handler(t.children))
+        })
+      }
+      handler(block.children)
+
+      return arrs
     }
   }
 })

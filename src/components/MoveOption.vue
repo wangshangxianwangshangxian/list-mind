@@ -1,9 +1,9 @@
 <template>
-  <BackgroundMask @mousemove="onmousemove" @mouseup="onmouseup" bg="bg-black-30">
+  <BackgroundMask @mousemove="onmousemove" @mouseup="onmouseup">
     <svg width="100%" height="100%">
-      <path :d="path" fill="none" stroke="red" stroke-width="2"></path>
+      <path :d="path" fill="none" stroke="red" stroke-width="4"></path>
     </svg>
-    <div id="target" style="position: absolute;" class="pointer-events-none"></div>
+    <div id="target" style="position: absolute; opacity: 0.5;" class="pointer-events-none"></div>
   </BackgroundMask>
 </template>
 
@@ -16,11 +16,11 @@ import { DIRECTION, MOVE_MAX_DSITANCE } from '@/stores/constant';
 
 
 const props = defineProps({
-  move_el: {
+  block: {
     typeo: Object,
     default() {
       return {
-        el      : document.body,
+        id      : null,
         offset_x: 0,
         offset_y: 0
       }
@@ -29,7 +29,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  const el            = props.move_el.el
+  const el            = document.getElementById(`block-l-${props.block.id}`)
   const rect          = el.getBoundingClientRect()
   const target        = document.getElementById('target')
   target.innerHTML    = el.innerHTML
@@ -43,10 +43,13 @@ onMounted(() => {
 
 const emits = defineEmits(['c_mouseup'])
 const onmouseup = () => {
+  if (move_index.value === -1) return
   emits('c_mouseup', move_parent_id.value, move_index.value)
 }
 
 const onmousemove = e => {
+  path.value        = ''
+  move_index.value  = -1
   const target      = document.getElementById('target')
   target.style.left = `${e.clientX}px`
   target.style.top  = `${e.clientY}px`
@@ -57,6 +60,8 @@ const onmousemove = e => {
   const valid_block = { distance: 0, target: null, rect: null }
   for (let i = 0; i < blocks.length; i++) {
     const block    = blocks[i]
+    if (block.id === props.block.id) continue
+    if (MindStore().get_children_ids(props.block.id).includes(block.id)) continue
     const el       = document.getElementById(`block-l-${block.id}`)
     if (!el) continue
     const el_rect  = el.getBoundingClientRect()
