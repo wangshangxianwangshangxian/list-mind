@@ -239,13 +239,16 @@ const move_info = reactive({
   }
 })
 const onblockdragstart = (id, offset_x, offset_y) => {
+  document.getElementById(`block-content-${id}`).blur()
   move_info.move_el  = { id, offset_x, offset_y }
   move_info.show     = true
 }
 const onmouseup = (move_parent_id, move_index) => {
   move_info.show    = false
-  MindStore().move(move_info.move_el.id, move_parent_id, move_index)
-  update_refresh()
+  if (move_index > -1) {
+    MindStore().move(move_info.move_el.id, move_parent_id, move_index)
+    update_refresh()
+  }
 }
 </script>
 

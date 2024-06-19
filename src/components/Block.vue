@@ -8,9 +8,7 @@
         draggable  = "true"
         @dragstart = "ondragstart"
       >
-        <div>
-          <span>三</span>
-        </div>
+        <div></div>
         <div
           :id                  = "`block-content-${props.block.id}`"
           :class               = "content_class"

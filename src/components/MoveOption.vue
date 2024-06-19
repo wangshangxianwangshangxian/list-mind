@@ -43,7 +43,6 @@ onMounted(() => {
 
 const emits = defineEmits(['c_mouseup'])
 const onmouseup = () => {
-  if (move_index.value === -1) return
   emits('c_mouseup', move_parent_id.value, move_index.value)
 }
 
