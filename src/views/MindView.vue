@@ -37,12 +37,11 @@
             :key             = "item.id" 
             :block           = "item"
             :refresh         = "refresh"
-            @block-content   = "onblockcontent"
-            @block-addchild  = "onblockaddchild"
-            @block-delete    = "onblockdelete"
+            @block-blur      = "onblockblur"
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
             @block-keydown   = "onblockkeydown"
+            @block-mousedown = "onblockmoudsedown"
           ></Block>
         </div>
       </div>
@@ -91,20 +90,6 @@ const onsave = e => {
 }
 onMounted(() => window.addEventListener('keydown', onsave))
 onUnmounted(() => window.removeEventListener('keydown', onsave))
-
-const onblockcontent  = (id, content) => MindStore().set_block_content(id, content)
-const onblockaddchild = id => {
-  const child = MindStore().new_block(id)
-  child && nextTick(() => {
-    document.getElementById(`block-content-${child.id}`)?.focus()
-    MindStore().set_expand(id, true)
-    update_refresh()
-  })
-}
-
-const onblockdelete = id => {
-  MindStore().delete_block(id)
-}
 
 const onblockexpand = id => {
   MindStore().toggle_expand(id)
@@ -195,7 +180,19 @@ const onquizexam = () => {
 onUnmounted(() => clearInterval(exam_info.timer))
 
 const onblockkeydown = (e, id) => {
-  if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
+  if (e.metaKey && e.key.toLocaleLowerCase() === 'backspace') {
+    MindStore().delete_block(id)
+  }
+  else if (e.key.toLocaleLowerCase() === 'tab') {
+    e.preventDefault()
+    const child = MindStore().new_block(id)
+    child && nextTick(() => {
+      document.getElementById(`block-content-${child.id}`)?.focus()
+
+      update_refresh()
+    })
+  }
+  else if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
     e.preventDefault()
     const block = MindStore().get_block(id)
     const el    = document.getElementById(`block-content-${block.id}`)
@@ -206,19 +203,28 @@ const onblockkeydown = (e, id) => {
   else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowup') {
     const target = MindStore().get_direction_block(id, DIRECTION.UP)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+    nextTick(update_refresh)
   }
   else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowdown') {
     const target = MindStore().get_direction_block(id, DIRECTION.DOWN)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+    nextTick(update_refresh)
   }
   else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowleft') {
     const target = MindStore().get_direction_block(id, DIRECTION.LEFT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+    nextTick(update_refresh)
   }
   else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowright') {
     const target = MindStore().get_direction_block(id, DIRECTION.RIGHT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
+    nextTick(update_refresh)
   }
+}
+
+const onblockblur = (id, content) => (update_refresh(), MindStore().set_block_content(id, content))
+const onblockmoudsedown = id => {
+  console.log(id)
 }
 </script>
 

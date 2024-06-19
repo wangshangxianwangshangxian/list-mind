@@ -9,15 +9,13 @@
           :class               = "content_class"
           v-html               = "props.block.content"
           :contenteditable     = "props.block.editable"
-          @keydown.tab.prevent = "ontab"
           @focus               = "onfocus"
           @blur                = "onblur"
           @input               = "oninput"
-          @keydown.enter       = "onenter"
-          @keydown.delete      = "ondelete"
           @keydown             = "onkeydown"
           @click               = "onclick"
           @dblclick            = "ondbclick"
+          @mousedown           = "onmousedown"
         ></div>
         <div></div>
       </div>
@@ -42,13 +40,12 @@
         :key             = "child.id" 
         :block           = "child"
         :refresh         = "props.refresh"
-        @block-content   = "onblockcontent"
-        @block-addchild  = "onblockaddchild"
-        @block-delete    = "onblockdelete"
+        @block-blur      = "onblockblur"
         @block-expand    = "onblockexpand"
         @block-click     = "onblockclick"
         @block-dbclick   = "onblockdbclick"
         @block-keydown   = "onblockkeydown"
+        @block-mousedown = "onblockmoudsedown"
       ></Block>
     </div>
   </div>
@@ -115,23 +112,21 @@ watch(
 )
 
 // 一堆转发事件
-const emits       = defineEmits(['block-content', 'block-addchild', 'block-delete', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-move'])
-const onblur      = e => (active.value = false, emits('block-content', props.block.id, e.target.innerHTML))
-const ondelete    = e => e.metaKey && emits('block-delete', props.block.id)
-const onenter     = e => e.metaKey && onblur(e)
+const emits       = defineEmits(['block-blur', 'block-expand', 'block-click', 'block-dbclick', 'block-keydown', 'block-mousedown'])
+const onblur      = e => (active.value = false, emits('block-blur', props.block.id, e.target.innerHTML))
 const onkeydown   = e => (update_refresh(), emits('block-keydown',  e, props.block.id))
-const ontab       = () => (update_refresh(), emits('block-addchild',  props.block.id))
 const onexpand    = () => emits('block-expand',  props.block.id)
 const onclick     = () => emits('block-click',   props.block.id)
 const ondbclick   = () => emits('block-dbclick', props.block.id)
+const onmousedown = () => emits('block-mousedown', props.block.id)
+const oninput     = () => update_refresh()
 
-const onblockclick     = id => emits('block-click', id)
-const onblockdbclick   = id => emits('block-dbclick', id)
-const onblockdelete    = id => emits('block-delete', id) && update_refresh()
-const onblockexpand    = id => emits('block-expand', id)
-const onblockaddchild  = id => emits('block-addchild', id) && update_refresh()
-const onblockkeydown   = (e, id) => emits('block-keydown', e, id)
-const onblockcontent   = (id, content) => emits('block-content', id, content)
+const onblockclick      = id => emits('block-click', id)
+const onblockdbclick    = id => emits('block-dbclick', id)
+const onblockexpand     = id => emits('block-expand', id)
+const onblockkeydown    = (e, id) => emits('block-keydown', e, id)
+const onblockblur       = (id, content) => emits('block-blur', id, content)
+const onblockmoudsedown = (id, content) => emits('block-mousedown', id, content)
 
 // 修改页面尺寸
 onMounted(() => window.addEventListener('resize', update_refresh))
