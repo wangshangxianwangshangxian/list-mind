@@ -188,18 +188,21 @@ const MindStore = defineStore('MindStore', {
 
     delete_block(id) {
       const block = this.get_block(id)
-      const p_block = this.get_block(block.pid, true)
+      const p_block = this.get_block(block.pid)
       if (!p_block) {
         const mind  = this.mind
         const index = mind.children.findIndex(c => c.id === id)
         mind.children.splice(index, 1)
-        return 
+        index = this.blocks.indexOf(block)
+        this.blocks.splice(index, 1)
+        return block
       }
 
-      let index            = p_block.children.findIndex(c => c.id === id)
+      let index = p_block.children.findIndex(c => c.id === id)
       p_block.children.splice(index, 1)
       index = this.blocks.indexOf(block)
       this.blocks.splice(index, 1)
+      return block
     },
 
     delete_mind(id) {
@@ -267,12 +270,15 @@ const MindStore = defineStore('MindStore', {
     move(id, new_pid, new_index) {
       const block   = this.get_block(id)
       const p_block = this.get_block(block.pid)
-      const n_block = this.get_block(new_pid)
-      const index   = p_block.children.findIndex(b => b.id === id)
-      block.pid     = new_pid
-
+      const index   = this.get_block_index(id)
       p_block.children.splice(index, 1)
-      n_block.children.splice(new_index, 0, block)
+      
+      const n_p_block = this.get_block(new_pid)
+      block.pid      = new_pid
+      if (p_block === n_p_block && index < new_index) {
+        new_index--
+      }
+      n_p_block.children.splice(new_index, 0, block)
     }
   }
 })

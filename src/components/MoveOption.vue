@@ -81,11 +81,9 @@ const onmousemove = e => {
   const angle = utils.calc_angle(valid_block.rect.x, valid_block.rect.y, rect.x, rect.y)
   const ranges = [
     [0   ,   45, DIRECTION.RIGHT],
-    [45  ,  135, DIRECTION.DOWN ],
-    [135 ,  180, DIRECTION.LEFT ],
+    [45  ,  180, DIRECTION.DOWN ],
     [-45  ,   0, DIRECTION.RIGHT],
-    [-135 , -45, DIRECTION.UP   ],
-    [-181, -135, DIRECTION.LEFT ]
+    [-181 , -45, DIRECTION.UP   ]
   ]
   const range = ranges.find(r => (angle >= r[0] && angle < r[1]))
   if (!range) return
@@ -105,10 +103,9 @@ const show_path = (block, dir) => {
 
   const block_rect   = block_el.getBoundingClientRect()
   const p_block_rect = p_block_el.getBoundingClientRect()
+  const index = MindStore().get_block_index(block.id)
   
   if (dir === DIRECTION.DOWN) {
-    const index = MindStore().get_block_index(block.id)
-    const p_block = MindStore().get_block(block.pid)
     const next_block = p_block.children[index + 1]
     let offset_y = 0
     if (next_block) {
@@ -132,7 +129,56 @@ const show_path = (block, dir) => {
       `
     
     move_parent_id.value = p_block.id
-    move_index.value     = Math.min(p_block.children.length, index + 1)
+    move_index.value     = index + 1
+    return
+  }
+  if (dir === DIRECTION.UP) {
+    const last_block = p_block.children[index -1]
+    let offset_y = 0
+    if (last_block) {
+      const tmp_rect = document.getElementById(`block-l-${last_block.id}`).getBoundingClientRect()
+      offset_y = (block_rect.y - tmp_rect.y) / 2
+    }
+    else {
+      offset_y = block_rect.height
+    }
+
+    const start_x = p_block_rect.x + p_block_rect.width
+    const start_y = p_block_rect.y + p_block_rect.height / 2
+    const end_x   = block_rect.x
+    const end_y   = block_rect.y + block_rect.height / 2 - offset_y
+    const turn_x  = (start_x + end_x) / 2
+    path.value = 
+      `M ${start_x} ${start_y}
+       H ${turn_x}
+       V ${end_y}
+       H ${end_x} 
+      `
+    
+    move_parent_id.value = p_block.id
+    move_index.value     = index
+    return
+  }
+
+  // 只会在block没有children的情况下触发
+  if (dir === DIRECTION.RIGHT && block.children.length === 0) {
+    const start_block = block
+    const start_rect  = document.getElementById(`block-l-${start_block.id}`).getBoundingClientRect()
+
+    const start_x = start_rect.x + start_rect.width
+    const start_y = start_rect.y + start_rect.height / 2
+    const end_x   = start_x + 32
+    const end_y   = start_y
+    const turn_x  = (start_x + end_x) / 2
+    path.value    = 
+                    `M ${start_x} ${start_y}
+                    H ${turn_x}
+                    V ${end_y}
+                    H ${end_x} 
+                    `
+    move_parent_id.value = start_block.id
+    move_index.value     = 0
+    return
   }
 }
 </script>
