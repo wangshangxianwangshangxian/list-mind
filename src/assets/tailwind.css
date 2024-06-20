@@ -1235,3 +1235,13 @@ video {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
+.disabled\:bg-white:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.disabled\:outline-none:disabled {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}

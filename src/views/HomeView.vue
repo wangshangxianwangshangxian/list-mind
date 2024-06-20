@@ -54,7 +54,7 @@ const oncardclick = info => {
   router.push({
     name: 'mind',
     params: {
-      id: info.id
+      id: info.id || info.address
     }
   })
 }
@@ -63,7 +63,7 @@ const ondelete = item => {
   const flag = confirm(`确认删除?`)
   if (!flag)
    return
-  MindStore().delete_mind(item.id)
+  MindStore().delete_mind(item.address)
   arrs.value.length = 1
   const list = MindStore().request_mind_list()
   list.forEach(t => arrs.value.push(t))

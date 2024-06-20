@@ -3,19 +3,19 @@
     <header class="h-11 px-8 flex items-center bg-white">
       <div class="h-full flex gap-1 flex-1">
         <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">三</span>
-        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none font-bold text-lg" v-model="mind.title" /> 
+        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" disabled="!mind.editable"/> 
       </div>
       <div class="flex-1 text-right">
         <p v-if="MindStore().is_exam_mode()">
           <span class="cursor-pointer hover:text-red-600" @click="onquizexam">「 退出 」</span>
-          |&nbsp;&nbsp;{{ exam_info.message }}
+          |&nbsp;&nbsp;{{ MindStore().exam_info.message }}
         </p>
       </div>
     </header>
     <div class="flex flex-1 overflow-y-hidden">
       <!-- 左侧容器 -->
       <div class="w-40 flex justify-center items-center flex-col p-4">
-        <div class="flex flex-col gap-2 p-2 rounded-lg min-w-28">
+        <div class="flex flex-col gap-2 p-1 rounded-lg min-w-28">
           <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
@@ -24,6 +24,7 @@
             ></div>
           </div>
           <div
+            v-if="MindStore().is_common_mode()"
             class="p-2 min-h-10 rounded-lg cursor-pointer text-center hover:scale-105 text-lg bg-gray-100"
             @click="onaddchapter"
           >+</div>
@@ -68,13 +69,13 @@
 <script setup>
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
 import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
-import { DIRECTION, MESSAGE_TYPE } from '@/stores/constant';
+import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS } from '@/stores/constant';
 
 const { proxy } = getCurrentInstance()
 const id        = utils.get_url_end_node()
@@ -82,6 +83,10 @@ const info      = MindStore().request_mind(id)
 const mind      = reactive(info)
 const refresh   = ref(0)
 const update_refresh = () => refresh.value = Date.now()
+if (utils.is_public_key(id)) {
+  MindStore().switch_mode(MODE.GUEST)
+}
+else MindStore().switch_mode(MODE.COMMON)
 
 const onaddchapter = () => {
   const child = MindStore().new_block(id)
@@ -112,81 +117,61 @@ const onblockclick = id => {
   }
 }
 
-const options = [
-  {
-    key  : '1',
-    label: '回到主页',
-    tips : ''
-  },
-  {
-    key  : '2',
-    label: '保存',
-    tips : 'command + s'
-  },
-  {
-    key  : '3',
-    label: '常规模式',
-    tips : ''
-  },
-  {
-    key  : '4',
-    label: '考试模式',
-    tips : '学生党利器'
+const options = computed(() => {
+  const arrs = []
+  const a    = { key: OPTIONS.HOME,  label: '回到主页', tips: '' }
+  const b    = { key: OPTIONS.SAVE,  label: '保存',    tips: '' }
+  const c    = { key: OPTIONS.EXAM,  label: '考试模式', tips: '学生党利器'}
+  const d    = { key: OPTIONS.GUEST, label: '读者模式', tips: '别人看到的状态'}
+  
+  if (MindStore().is_guest_mode()) {
+    arrs.push(...[a, c])
   }
-]
+  else if (MindStore().is_exam_mode()) {
+    arrs.push(...[a])
+  }
+  else {
+    arrs.push(...[a, b, c, d])
+  }
+  return arrs
+})
+
 const show_option = ref(false)
 const onmenu = () => show_option.value = true
 const onoptioncancel = () => show_option.value = false
 const onoptionselect = item => {
-  if (item.key === '1') {
-    MindStore().save_mind()
-    show_option.value = false
-    proxy.$message('保存成功')
+  show_option.value = false
+  if (item.key === OPTIONS.HOME) {
     router.push({ name: 'home' })
   }
-  else if (item.key === '2') {
+  else if (item.key === OPTIONS.SAVE) {
     MindStore().save_mind()
-    show_option.value = false
     proxy.$message('保存成功')
   }
-  else if (item.key === '3') {
-    onquizexam()
-    show_option.value = false
-  }
-  else if (item.key === '4') {
+  else if (item.key === OPTIONS.EXAM) {
     if (MindStore().is_exam_mode()) {
       return
     }
-    MindStore().init_exam_mode()
+    MindStore().switch_mode(MODE.EXAM)
     proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO, { timeout: 5000 })
-    show_option.value = false
-    start_exam()
+  }
+  else if (item.key === OPTIONS.GUEST) {
+    if (MindStore().is_guest_mode()) {
+      return
+    }
+    MindStore().switch_mode(MODE.GUEST)
   }
 }
-
-const exam_info = reactive({
-  timer     : null,
-  start_time: null,
-  end_time  : null,
-  message   : ''
-})
-const exam_tip = () => {
-  exam_info.end_time = Date.now()
-  exam_info.message = `考试中, 用时 ${utils.get_left_time(exam_info.start_time, exam_info.end_time)}`
-}
-const start_exam = () => {
-  exam_info.start_time = Date.now()
-  exam_tip()
-  exam_info.timer = setInterval(exam_tip, 100)
-}
 const onquizexam = () => {
-  clearInterval(exam_info.timer)
-  exam_info.start_time = null
-  exam_info.end_time   = null
-  exam_info.message    = ''
-  MindStore().exit_exam_mode()
+  if (utils.is_public_key(id)) {
+    MindStore().switch_mode(MODE.GUEST)
+  }
+  else {
+    MindStore().switch_mode(MODE.COMMON)
+  }
 }
-onUnmounted(() => clearInterval(exam_info.timer))
+// 如果当前处于exam模式退出，则清除定时器
+onUnmounted(() => MindStore().switch_mode(null))
 
 const onblockkeydown = (e, id) => {
   if (e.metaKey && e.key.toLocaleLowerCase() === 'backspace') {

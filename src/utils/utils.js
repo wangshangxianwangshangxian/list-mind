@@ -9,7 +9,6 @@ const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
   const hours   = String(d.getHours())       .padStart(2, '0')
   const minutes = String(d.getMinutes())     .padStart(2, '0')
   const seconds = String(d.getSeconds())     .padStart(2, '0')
-  const millsec = String(d.getMilliseconds()).padEnd(3, '0')
 
   const date_str = format.replace('YYYY', year)
     .replace('MM', month)
@@ -80,6 +79,26 @@ const generate_public_key = private_key => {
   return key
 }
 
+const is_private_key = key => typeof key === 'string' && key.length === PRIVATE_LEN
+const is_public_key  = key => typeof key === 'string' && key.length === PUBLIC_LEN + 1 + key.startsWith('0x')
+
+const get_mind_by_private_key_local = id => {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    const mind = JSON.parse(localStorage.getItem(key))
+    if (mind && mind.id === id) {
+      return mind
+    }
+  }
+  return null
+}
+
+const get_mind_by_public_key_local = key => {
+  const target = localStorage.getItem(`mind_${key}`)
+  if (!target) return null
+  return JSON.parse(target)
+}
+
 export default {
   get_time,
   get_url_end_node,
@@ -88,5 +107,9 @@ export default {
   calc_distance,
   calc_angle,
   generate_key,
-  generate_public_key
+  generate_public_key,
+  is_private_key,
+  is_public_key,
+  get_mind_by_public_key_local,
+  get_mind_by_private_key_local
 }

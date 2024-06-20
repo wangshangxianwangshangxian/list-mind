@@ -1,4 +1,3 @@
-import { keccak256 } from "js-sha3";
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
 import { DIRECTION, MODE } from "./constant";
@@ -8,7 +7,13 @@ const MindStore = defineStore('MindStore', {
     return {
       mind  : null,
       blocks: [],
-      mode: MODE.COMMON
+      mode: MODE.COMMON,
+      exam_info: {
+        timer     : null,
+        start_time: null,
+        end_time  : null,
+        message   : ''
+      }
     }
   },
 
@@ -62,10 +67,17 @@ const MindStore = defineStore('MindStore', {
     },
 
     request_mind(id) {
-      const key    = `mind_${id}`
-      const target = localStorage.getItem(key)
-      this.mind    = JSON.parse(target)
+      let target
+      if (utils.is_public_key(id)) {
+        target = utils.get_mind_by_public_key_local(id)
+      }
+      else if (utils.is_private_key(id)) {
+        target = utils.get_mind_by_private_key_local(id)
+      }
 
+      if (!target) return
+      
+      this.mind    = target
       const handler = (children = []) => {
         children.forEach(c => {
           this.blocks.push(c)
@@ -173,7 +185,7 @@ const MindStore = defineStore('MindStore', {
     save_mind() {
       const mind = this.mind
       mind.update_time = utils.get_time()
-      localStorage.setItem(`mind_${mind.id}`, JSON.stringify(mind))
+      localStorage.setItem(`mind_${mind.address}`, JSON.stringify(mind))
     },
 
     request_mind_list() {
@@ -232,28 +244,12 @@ const MindStore = defineStore('MindStore', {
       block.expand = value
     },
 
-    init_exam_mode() {
-      this.mode = MODE.EXAM
-      this.blocks.forEach(b => {
-        if (this.is_root(b.id))
-          return
-        b.editable = false
-        b.visible = false
-      })
-    },
-
-    exit_exam_mode() {
-      this.mode = MODE.COMMON
-      this.blocks.forEach(b => {
-        if (this.is_root(b.id))
-          return
-        b.editable = true
-        b.visible = true
-      })
-    },
-
     is_exam_mode() {
       return this.mode === MODE.EXAM
+    },
+
+    is_guest_mode() {
+      return this.mode === MODE.GUEST
     },
 
     is_common_mode() {
@@ -305,6 +301,47 @@ const MindStore = defineStore('MindStore', {
       handler(block.children)
 
       return arrs
+    },
+
+    switch_mode(mode) {
+      // 旧 mode，cleanup处理
+      if (this.mode === MODE.EXAM) {
+        clearInterval(this.exam_info.timer)
+      }
+
+      // 新mode，初始化处理
+      if (mode === MODE.GUEST) {
+        this.mode = MODE.GUEST
+        this.blocks.forEach(b => {
+          b.visible  = true
+          b.editable = false
+          b.expand   = true
+        })
+      }
+      else if (mode === MODE.COMMON) {
+        this.mode = MODE.COMMON
+        this.blocks.forEach(b => {
+          b.visible  = true
+          b.editable = true
+          b.expand   = true
+        })
+      }
+      else if (mode === MODE.EXAM) {
+        this.mode = MODE.EXAM
+        this.blocks.forEach(b => {
+          b.visible  = false
+          b.editable = false
+          b.expand   = true
+        })
+        this.exam_info.start_time = Date.now()
+        this.exam_info.end_time   = this.exam_info.start_time
+        const handler             = () => {
+          this.exam_info.end_time = Date.now()
+          this.exam_info.message = `考试中, 用时 ${utils.get_left_time(this.exam_info.start_time, this.exam_info.end_time)}`
+        }
+        handler()
+        this.exam_info.timer      = setInterval(handler, 100)
+      }
     }
   }
 })

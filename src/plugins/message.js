@@ -36,10 +36,8 @@ export default {
       box.style.animation = 'out_1 .3s'
       box.addEventListener('animationend', () => {
         completed_count++
-        console.log(completed_count)
         box.style.opacity = 0
         if (container.children.length === completed_count) {
-          console.log('remove')
           document.body.removeChild(container)
           container = null
           completed_count = 0

@@ -18,7 +18,15 @@ export const POSITION = {
 
 export const MODE = {
   COMMON: 'common',
-  EXAM  : 'exam'
+  EXAM  : 'exam',
+  GUEST : 'guest'
+}
+
+export const OPTIONS = {
+  HOME : 'home',
+  SAVE : 'save',
+  EXAM : 'exam_mode',
+  GUEST: 'guest_mode'
 }
 
 export const TIMESTAMP = {
