@@ -1,6 +1,6 @@
 import { COLOR, TIMESTAMP } from "@/stores/constant"
 
-const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss.ms') => {
+const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
   const d       = new Date(time_stamp)
   const year    = String(d.getFullYear())    .padStart(4, '0')
   const month   = String(d.getMonth() + 1)   .padStart(2, '0')
@@ -16,7 +16,6 @@ const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss.ms') =>
     .replace('hh', hours)
     .replace('mm', minutes)
     .replace('ss', seconds)
-    .replace('ms', millsec)
   return date_str
 }
 

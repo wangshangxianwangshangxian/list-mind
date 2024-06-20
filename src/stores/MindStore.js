@@ -19,6 +19,7 @@ const MindStore = defineStore('MindStore', {
         id         : keccak256(Date.now().toString()),
         title      : '请在这里输入标题',
         create_time: utils.get_time(),
+        update_time: utils.get_time(),
         expand     : true,
         editable   : true,
         visible    : true,
@@ -170,6 +171,7 @@ const MindStore = defineStore('MindStore', {
 
     save_mind() {
       const mind = this.mind
+      mind.update_time = utils.get_time()
       localStorage.setItem(`mind_${mind.id}`, JSON.stringify(mind))
     },
 

@@ -14,10 +14,11 @@
         <p class="flex-1 flex justify-center items-center m-2 overflow-y-scroll text-center">
           {{ is_add_carr(item.id) ? '+' : item.title  }}
         </p>
+        <div v-if="!is_add_carr(item.id)" class="text-right pr-2 pb-2 text-gray-400 text-xs">更新时间：{{ item.update_time }}</div>
         <div
           v-if="!is_add_carr(item.id)"
           id="box-option" 
-          class="bg-red-400 flex justify-end px-4 items-center text-xs h-0 opacity-0">
+          class="bg-red-400 flex justify-end px-4 items-center text-xs h-0 opacity-0 text-gray-800">
           <p class="hover:text-white" @click.stop="ondelete(item)">
             删除
           </p>
@@ -34,7 +35,7 @@ import { ref, watch } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
 const list = MindStore().request_mind_list()
-list.forEach(t => arrs.value.push(t))
+list.sort((a, b) => new Date(b.update_time) - new Date(a.update_time)).forEach(t => arrs.value.push(t))
 
 const is_add_carr = id => id === 'na'
 

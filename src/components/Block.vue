@@ -20,6 +20,7 @@
           @keydown             = "onkeydown"
           @click               = "onclick"
           @dblclick            = "ondbclick"
+          @paste.prevent       = "onpaste"
         ></div>
         <div class="flex">
           <a 
@@ -179,6 +180,14 @@ const onfocus = () => {
   emits('block-focus', props.block.id)
 }
 const onblockfocus = id => emits('block-focus', id)
+
+const onpaste = e => {
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain')
+  const selection = window.getSelection()
+  if (!selection.rangeCount) return
+  selection.deleteFromDocument()
+  selection.getRangeAt(0).insertNode(document.createTextNode(text))
+}
 </script>
 
 <style scoped>
