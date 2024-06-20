@@ -261,8 +261,10 @@ const addition_info = reactive({
   id  : null
 })
 const onblockdbclick = id => {
-  addition_info.id   = id
-  addition_info.show = true
+  if (MindStore().is_common_mode()) {
+    addition_info.id   = id
+    addition_info.show = true
+  }
 }
 const onadditionclose = () => {
   addition_info.show = false

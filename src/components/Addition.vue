@@ -6,10 +6,6 @@
           <h3>插入链接</h3>
           <input type="text" placeholder="enter your url" class="block w-full focus:outline-none mt-1" v-model="block.addition.link"/>
         </li>
-        <li class="border-b">
-          <h3>插入备注</h3>
-          <div type="text" class="block w-full focus:outline-none min-h-8" contenteditable v-html="block.addition.remark" @blur="onremarkblur"></div>
-        </li>
       </ul>
     </div>
   </BackgroundMask>
@@ -40,8 +36,4 @@ watch(
 )
 
 const emits = defineEmits(['c_close'])
-
-const onremarkblur = e => {
-  block.value.addition.remark = e.target.innerHTML
-}
 </script>

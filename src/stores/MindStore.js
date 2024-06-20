@@ -43,8 +43,7 @@ const MindStore = defineStore('MindStore', {
         content : '',
         children: [],
         addition: {
-          link  : '',
-          remark: ''
+          link  : ''
         },
         style: {
           backgroundColor: utils.get_color()
@@ -253,6 +252,10 @@ const MindStore = defineStore('MindStore', {
 
     is_exam_mode() {
       return this.mode === MODE.EXAM
+    },
+
+    is_common_mode() {
+      return this.mode === MODE.COMMON
     },
 
     toggle_in_exam(id) {

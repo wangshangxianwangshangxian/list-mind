@@ -30,7 +30,6 @@
             target="_blank" 
             :title="props.block.addition.link"
           >🔗</a>
-          <div v-if="props.block.addition.remark" class="hover:bg-black-30 px-1 rounded cursor-pointer">🖊️</div>
         </div>
       </div>
     </div>
