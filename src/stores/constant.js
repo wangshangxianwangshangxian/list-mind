@@ -55,3 +55,5 @@ export const COLOR = {
 
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
+export const PRIVATE_LEN       = 64
+export const PUBLIC_LEN        = 40

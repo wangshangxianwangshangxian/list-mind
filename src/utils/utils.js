@@ -1,4 +1,4 @@
-import { COLOR, TIMESTAMP } from "@/stores/constant"
+import { COLOR, PRIVATE_LEN, PUBLIC_LEN, TIMESTAMP } from "@/stores/constant"
 import { ec } from "elliptic"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
@@ -65,7 +65,7 @@ const calc_angle = (x1, y1, x2, y2) => {
   return angle
 }
 
-const generate_key = (len = 64) => {
+const generate_key = (len = PRIVATE_LEN) => {
   const array       = new Uint8Array(32)
   window.crypto.getRandomValues(array)
   const private_key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
@@ -76,7 +76,7 @@ const generate_key = (len = 64) => {
 const generate_public_key = private_key => {
   const curve = new ec('secp256k1')
   const pair  = curve.keyFromPrivate(private_key)
-  const key   = '0x' + pair.getPublic(true, 'hex').slice(-40)
+  const key   = '0x' + pair.getPublic(true, 'hex').slice(-PUBLIC_LEN)
   return key
 }
 
