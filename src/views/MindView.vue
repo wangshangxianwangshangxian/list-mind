@@ -158,7 +158,7 @@ const onoptionselect = item => {
       return
     }
     MindStore().init_exam_mode()
-    proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO)
+    proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO, { timeout: 5000 })
     show_option.value = false
     start_exam()
   }
@@ -269,9 +269,3 @@ const onadditionclose = () => {
 }
 
 </script>
-
-<style scoped>
-::-webkit-scrollbar {
-  display: none;
-}
-</style>
