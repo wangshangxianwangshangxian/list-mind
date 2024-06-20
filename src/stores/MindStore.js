@@ -16,7 +16,8 @@ const MindStore = defineStore('MindStore', {
     create_mind() {
       const data = {
         pid        : null,
-        id         : keccak256(Date.now().toString()),
+        id         : utils.generate_key(),
+        address    : '',
         title      : '请在这里输入标题',
         create_time: utils.get_time(),
         update_time: utils.get_time(),
@@ -25,6 +26,7 @@ const MindStore = defineStore('MindStore', {
         visible    : true,
         children   : []
       }
+      data.address = utils.generate_public_key(data.id)
       this.mind = data
       this.blocks.push(data)
       this.new_block(data.id)
@@ -36,7 +38,7 @@ const MindStore = defineStore('MindStore', {
     new_block(pid) {
       const data = {
         pid,
-        id      : keccak256(Date.now().toString()).slice(-10),
+        id      : utils.generate_key(10),
         expand  : true,
         visible : true,
         editable: true,
