@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
 import { DIRECTION, MODE } from "./constant";
+import { post } from "@/utils/network";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -26,6 +27,7 @@ const MindStore = defineStore('MindStore', {
         title      : '请在这里输入标题',
         create_time: utils.get_time(),
         update_time: utils.get_time(),
+        upload_time: null,
         expand     : true,
         editable   : true,
         visible    : true,
@@ -35,7 +37,7 @@ const MindStore = defineStore('MindStore', {
       this.mind = data
       this.blocks.push(data)
       this.new_block(data.id, { content: '章节' })
-      this.save_mind(data.id)
+      this.save(data.id)
       return data
     },
 
@@ -182,10 +184,21 @@ const MindStore = defineStore('MindStore', {
       }
     },
 
-    save_mind() {
+    save() {
       const mind = this.mind
       mind.update_time = utils.get_time()
       localStorage.setItem(`mind_${mind.address}`, JSON.stringify(mind))
+    },
+
+    async save_remote() {
+      const resp = await post('upload-mind', this.mind)
+      if (resp.code === 0) {
+        this.mind = resp.data
+        this.save()
+        return true
+      }
+      
+      return false
     },
 
     request_mind_list() {

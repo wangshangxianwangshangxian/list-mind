@@ -1,7 +1,7 @@
 <template>
   <div class="flex relative">
     <!-- left -->
-    <div class="flex rounded-lg justify-center items-center z-50">
+    <div class="flex rounded-lg justify-center items-center z-50 shrink-0">
       <div 
         :id        = "`block-l-${props.block.id}`" 
         :class     = "box_class"
@@ -39,7 +39,7 @@
       </div>
     </div>
     <!-- center -->
-    <div :id="`block-c-box-${props.block.id}`" class="w-8 z-20 flex justify-center items-center" @mouseenter="onpathenter" @mouseleave="onpathleave">
+    <div :id="`block-c-box-${props.block.id}`" class="w-8 z-20 flex justify-center items-center shrink-0" @mouseenter="onpathenter" @mouseleave="onpathleave">
       <svg v-if="show_children" width="100%" height="100%" class="absolute top-0 left-0">
         <path v-for="child in paths" :key="child.child_id" :d="child.path" fill="none" stroke="black" stroke-width="2"></path>
       </svg>

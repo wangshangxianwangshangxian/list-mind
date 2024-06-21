@@ -104,11 +104,10 @@ const onaddchapter = () => {
 
 const onsave = e => {
   const target = MainData().search_hot_key(e)
-  console.log(target)
   if (target?.key === HOT_OPTION.SAVE) {
     e.preventDefault()
     nextTick(() => {
-      MindStore().save_mind()
+      MindStore().save()
       proxy.$message('保存成功')
     })
   }
@@ -130,19 +129,21 @@ const onblockclick = id => {
 
 const options = computed(() => {
   const arrs = []
-  const a    = { key: OPTIONS.HOME,  label: '回到主页', tips: '' }
-  const b    = { key: OPTIONS.SAVE,  label: '保存',    tips: '' }
-  const c    = { key: OPTIONS.EXAM,  label: '考试模式', tips: '学生党利器'}
-  const d    = { key: OPTIONS.GUEST, label: '读者模式', tips: '别人看到的状态'}
+  const a    = { key: OPTIONS.HOME,        label: '回到主页',   tips: '' }
+  const b    = { key: OPTIONS.SAVE,        label: '保存',      tips: `本地保存 ${MainData().get_hot_info(HOT_OPTION.SAVE)?.keys.join(' + ') || ''}` }
+  const c    = { key: OPTIONS.SAVE_REMOTE, label: '保存到云端', tips: '可在不同设备查看' }
+  const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
+  const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
+  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '分享出去' }
   
   if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, c])
+    arrs.push(...[a, d])
   }
   else if (MindStore().is_exam_mode()) {
     arrs.push(...[a])
   }
   else {
-    arrs.push(...[a, b, c, d])
+    arrs.push(...[a, b, c, d, e, f])
   }
   return arrs
 })
@@ -150,13 +151,13 @@ const options = computed(() => {
 const show_option = ref(false)
 const onmenu = () => show_option.value = true
 const onoptioncancel = () => show_option.value = false
-const onoptionselect = item => {
+const onoptionselect = async item => {
   show_option.value = false
   if (item.key === OPTIONS.HOME) {
     router.push({ name: 'home' })
   }
   else if (item.key === OPTIONS.SAVE) {
-    MindStore().save_mind()
+    MindStore().save()
     proxy.$message('保存成功')
   }
   else if (item.key === OPTIONS.EXAM) {
@@ -171,6 +172,18 @@ const onoptionselect = item => {
       return
     }
     MindStore().switch_mode(MODE.GUEST)
+  }
+  else if (item.key === OPTIONS.SAVE_REMOTE) {
+    const flag = await MindStore().save_remote()
+    if (flag) {
+      proxy.$message('成功保存到云端', MESSAGE_TYPE.SUCCESS)
+      return
+    }
+
+    proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
+  }
+  else if (item.key === OPTIONS.SHARE) {
+    proxy.$message('分享出去吧', MESSAGE_TYPE.INFO)
   }
 }
 const onquizexam = () => {

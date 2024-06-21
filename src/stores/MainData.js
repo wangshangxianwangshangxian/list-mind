@@ -45,6 +45,10 @@ const MainData = defineStore('MainData', {
         })
       })
       return target
+    },
+
+    get_hot_info(key) {
+      return this.hots.find(a => a.key === key)
     }
   }
 })

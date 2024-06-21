@@ -23,10 +23,12 @@ export const MODE = {
 }
 
 export const OPTIONS = {
-  HOME : 'home',
-  SAVE : 'save',
-  EXAM : 'exam_mode',
-  GUEST: 'guest_mode'
+  HOME       : 'home',
+  SAVE       : 'save',
+  SAVE_REMOTE: 'save remote',
+  SHARE      : 'share',
+  EXAM       : 'exam_mode',
+  GUEST      : 'guest_mode'
 }
 
 export const TIMESTAMP = {
@@ -154,7 +156,20 @@ export const BOARD_KEY = {
   TAB      : 'Tab',
   BACKSPACE: 'Backspace'
 }
+
+export const ENV = {
+  PROD: 'env',
+  DEV : 'dev'
+}
+
+export const ENV_URL = {
+  PROD: 'https://env-00jxgx8y5hni.dev-hz.cloudbasefunction.cn/',
+  DEV : ''
+}
+
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
+export const ENVIRONMENT       = ENV.PROD
+export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.PROD
