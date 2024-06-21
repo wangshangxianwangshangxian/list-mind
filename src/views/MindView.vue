@@ -7,7 +7,7 @@
             <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
           </svg>
         </span>
-        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" disabled="!mind.editable"/> 
+        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
       </div>
       <div class="flex-1 text-right">
         <p v-if="MindStore().is_exam_mode()">
