@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { BOARD_KEY, HOT_OPTION } from "./constant";
 
 const MainData = defineStore('MainData', {
   state () {
@@ -15,11 +16,13 @@ const MainData = defineStore('MainData', {
       }
       else {
         this.hots = [
-          { key: 'save',  label: '保存',               keys: ['Ctrl', 's'] },
-          { key: 'left',    label: '光标向左移动一个块', keys: ['Ctrl', 'ArrowLeft'] },
-          { key: 'right', label: '向右一个块移动',       keys: ['Ctrl', 'ArrowRight'] },
-          { key: 'up',    label: '然后向上',            keys: ['Ctrl', 'ArrowUp'] },
-          { key: 'down',  label: '最后是向下',          keys: ['Ctrl', 'ArrowDown'] }
+          { key: HOT_OPTION.SAVE,   label: '保存',             keys: [BOARD_KEY.SHIFT, 's'] },
+          { key: HOT_OPTION.LEFT,   label: '光标向左移动一个块', keys: [BOARD_KEY.SHIFT, 'ArrowLeft'] },
+          { key: HOT_OPTION.RIGHT,  label: '向右一个块移动',     keys: [BOARD_KEY.SHIFT, 'ArrowRight'] },
+          { key: HOT_OPTION.UP,     label: '然后向上',          keys: [BOARD_KEY.SHIFT, 'ArrowUp'] },
+          { key: HOT_OPTION.DOWN,   label: '最后是向下',        keys: [BOARD_KEY.SHIFT, 'ArrowDown'] },
+          { key: HOT_OPTION.CREATE, label: '创建「子块」',      keys: [BOARD_KEY.TAB] },
+          { key: HOT_OPTION.DELETE, label: '删除「块」',        keys: [BOARD_KEY.SHIFT, BOARD_KEY.BACKSPACE] }
         ]
       }
     },
@@ -29,6 +32,19 @@ const MainData = defineStore('MainData', {
       console.log(target)
       target.keys = keys
       localStorage.setItem('hots', JSON.stringify(this.hots))
+    },
+
+    search_hot_key(e) {
+      const target = this.hots.find(a => {
+        return a.keys.every(key => {
+          if (key === BOARD_KEY.META)  return e.metaKey
+          if (key === BOARD_KEY.CTRL ) return e.ctrlKey
+          if (key === BOARD_KEY.ALT  ) return e.altKey
+          if (key === BOARD_KEY.SHIFT) return e.shiftKey
+          return key === e.key
+        })
+      })
+      return target
     }
   }
 })

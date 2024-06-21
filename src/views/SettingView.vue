@@ -46,6 +46,8 @@
         <p>简体中文</p>
         <p>英语</p>
         <p>粤语</p>
+        <p>脏脏话</p>
+        <p>难道真的可以做成用户可配置？</p>
       </div>
       <!-- 关于 -->
       <div v-if="active === 'about'"></div>
@@ -57,6 +59,7 @@
 <script setup>
 import router from '@/router';
 import MainData from '@/stores/MainData';
+import { BOARD_KEY } from '@/stores/constant';
 import utils from '@/utils/utils';
 import { reactive, ref } from 'vue';
 
@@ -91,10 +94,10 @@ const onhome = () => router.push('/')
 const link_tag = ' + '
 const onhotkeydown = (e, item) => {
   const temp_keys = []
-  e.metaKey  && temp_keys.push('Meta')
-  e.ctrlKey  && temp_keys.push('Ctrl')
-  e.shiftKey && temp_keys.push('Shift')
-  e.altKey   && temp_keys.push('Alt')
+  e.metaKey  && temp_keys.push(BOARD_KEY.META)
+  e.ctrlKey  && temp_keys.push(BOARD_KEY.CTRL)
+  e.shiftKey && temp_keys.push(BOARD_KEY.SHIFT)
+  e.altKey   && temp_keys.push(BOARD_KEY.ALT)
   !temp_keys.includes(e.key) && temp_keys.push(e.key)
   // console.log(temp_keys)
   const el     = document.getElementById(`hot-${item.key}`)

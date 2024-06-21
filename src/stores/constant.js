@@ -135,6 +135,25 @@ export const BORDER_COLOR = {
   PINK    : 'border-pink-400',
   ROSE    : 'border-rose-400'
 }
+
+export const HOT_OPTION = {
+  SAVE  : 'save',
+  LEFT  : 'left',
+  UP    : 'up',
+  RIGHT : 'right',
+  DOWN  : 'down',
+  CREATE: 'create',
+  DELETE: 'delete'
+}
+
+export const BOARD_KEY = {
+  META     : 'Meta',
+  CTRL     : 'Ctrl',
+  ALT      : 'Alt',
+  SHIFT    : 'Shift',
+  TAB      : 'Tab',
+  BACKSPACE: 'Backspace'
+}
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64

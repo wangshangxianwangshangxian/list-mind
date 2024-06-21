@@ -76,6 +76,7 @@
 
 <script setup>
 import MindStore from '@/stores/MindStore';
+import MainData from '@/stores/MainData';
 import utils from '@/utils/utils';
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
@@ -83,7 +84,7 @@ import Options from '@/components/Options.vue'
 import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
-import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS } from '@/stores/constant';
+import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/constant';
 
 const { proxy } = getCurrentInstance()
 const id        = utils.get_url_end_node()
@@ -102,7 +103,9 @@ const onaddchapter = () => {
 }
 
 const onsave = e => {
-  if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
+  const target = MainData().search_hot_key(e)
+  console.log(target)
+  if (target?.key === HOT_OPTION.SAVE) {
     e.preventDefault()
     nextTick(() => {
       MindStore().save_mind()
@@ -182,10 +185,12 @@ const onquizexam = () => {
 onUnmounted(() => MindStore().switch_mode(null))
 
 const onblockkeydown = (e, id) => {
-  if (e.metaKey && e.key.toLocaleLowerCase() === 'backspace') {
+  const target = MainData().search_hot_key(e)
+  if (target?.key === HOT_OPTION.DELETE) {
     MindStore().delete_block(id)
   }
-  else if (e.key.toLocaleLowerCase() === 'tab') {
+  
+  else if (target?.key === HOT_OPTION.CREATE) {
     e.preventDefault()
     const child = MindStore().new_block(id)
     child && nextTick(() => {
@@ -193,30 +198,33 @@ const onblockkeydown = (e, id) => {
       update_refresh()
     })
   }
-  else if (e.metaKey && e.key.toLocaleLowerCase() === 's') {
+
+  else if (target?.key === HOT_OPTION.SAVE) {
     e.preventDefault()
     const block = MindStore().get_block(id)
     const el    = document.getElementById(`block-content-${block.id}`)
     el.blur()
   }
-  else if(e.metaKey && e.shiftKey && e.key.toLocaleLowerCase() === 'arrowup') {
-  }
-  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowup') {
+  
+  else if(target?.key === HOT_OPTION.UP) {
     const target = MindStore().get_direction_block(id, DIRECTION.UP)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
-  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowdown') {
+
+  else if(target?.key === HOT_OPTION.DOWN) {
     const target = MindStore().get_direction_block(id, DIRECTION.DOWN)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
-  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowleft') {
+
+  else if(target?.key === HOT_OPTION.LEFT) {
     const target = MindStore().get_direction_block(id, DIRECTION.LEFT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
-  else if(e.metaKey && e.key.toLocaleLowerCase() === 'arrowright') {
+
+  else if(target?.key === HOT_OPTION.RIGHT) {
     const target = MindStore().get_direction_block(id, DIRECTION.RIGHT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)

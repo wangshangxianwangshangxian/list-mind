@@ -210,7 +210,7 @@ const MindStore = defineStore('MindStore', {
       const p_block = this.get_block(block.pid)
       if (!p_block) {
         const mind  = this.mind
-        const index = mind.children.findIndex(c => c.id === id)
+        let index = mind.children.findIndex(c => c.id === id)
         mind.children.splice(index, 1)
         index = this.blocks.indexOf(block)
         this.blocks.splice(index, 1)
