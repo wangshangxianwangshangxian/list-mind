@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MindView from '../views/MindView.vue'
+import SettingView from '@/views/SettingView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -17,8 +18,13 @@ const router = createRouter({
     },
     {
       path: '/setting',
+      name: 'setting default',
+      redirect: '/setting/base'
+    },
+    {
+      path: '/setting/:tab',
       name: 'setting',
-      component: MindView
+      component: SettingView
     }
   ]
 })

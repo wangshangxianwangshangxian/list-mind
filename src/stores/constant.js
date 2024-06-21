@@ -62,10 +62,10 @@ export const COLOR = {
 }
 
 export const BG_COLOR = {
-  SLATE   : 'bg-slate-200',
+  // SLATE   : 'bg-slate-200',
   GRAY    : 'bg-gray-200',
-  ZINC    : 'bg-zinc-200',
-  NEUTRAL : 'bg-neutral-200',
+  // ZINC    : 'bg-zinc-200',
+  // NEUTRAL : 'bg-neutral-200',
   STONE   : 'bg-stone-200',
   RED     : 'bg-red-200',
   ORANGE  : 'bg-orange-200',
@@ -87,10 +87,10 @@ export const BG_COLOR = {
 }
 
 export const TEXT_COLOR = {
-  SLATE   : 'text-slate-400',
+  // SLATE   : 'text-slate-400',
   GRAY    : 'text-gray-400',
-  ZINC    : 'text-zinc-400',
-  NEUTRAL : 'text-neutral-400',
+  // ZINC    : 'text-zinc-400',
+  // NEUTRAL : 'text-neutral-400',
   STONE   : 'text-stone-400',
   RED     : 'text-red-400',
   ORANGE  : 'text-orange-400',
@@ -109,6 +109,31 @@ export const TEXT_COLOR = {
   FUCHSIZ : 'text-fuchsia-400',
   PINK    : 'text-pink-400',
   ROSE    : 'text-rose-400'
+}
+
+export const BORDER_COLOR = {
+  // SLATE   : 'border-slate-400',
+  GRAY    : 'border-gray-400',
+  // ZINC    : 'border-zinc-400',
+  // NEUTRAL : 'border-neutral-400',
+  STONE   : 'border-stone-400',
+  RED     : 'border-red-400',
+  ORANGE  : 'border-orange-400',
+  AMBER   : 'border-amber-400',
+  YELLOW  : 'border-yellow-400',
+  LIME    : 'border-lime-400',
+  GREEN   : 'border-green-400',
+  EMERALD : 'border-emerald-400',
+  TEAL    : 'border-teal-400',
+  CYAN    : 'border-cyan-400',
+  SKY     : 'border-sky-400',
+  BLUE    : 'border-blue-400',
+  INDIGO  : 'border-indigo-400',
+  VIOLET  : 'border-violet-400',
+  PURPLE  : 'border-purple-400',
+  FUCHSIZ : 'border-fuchsia-400',
+  PINK    : 'border-pink-400',
+  ROSE    : 'border-rose-400'
 }
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100

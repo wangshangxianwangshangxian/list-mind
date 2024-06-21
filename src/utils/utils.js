@@ -1,4 +1,4 @@
-import { BG_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
+import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
 import { ec } from "elliptic"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
@@ -65,6 +65,13 @@ const get_text_color = () =>{
   return color
 }
 
+const get_border_color = () =>{
+  const keys  = Object.keys(BORDER_COLOR)
+  const r     = Math.floor(Math.random() * keys.length)
+  const color = BORDER_COLOR[keys[r]]
+  return color
+}
+
 const calc_distance = (x1, y1, x2, y2) => {
   const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
   return distance
@@ -127,5 +134,6 @@ export default {
   get_mind_by_public_key_local,
   get_mind_by_private_key_local,
   get_text_color,
-  get_bg_color
+  get_bg_color,
+  get_border_color
 }

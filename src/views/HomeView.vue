@@ -2,13 +2,12 @@
   <main class="px-8 pb-8">
     <header class="text-4xl py-8 flex gap-2 items-baseline justify-between">
       <div>
-        <a href="/">
+        <a href="/" :class="`border-b-2 ${utils.get_border_color()}`">
           <span :class="utils.get_text_color()">L</span>
           <span :class="utils.get_text_color()">i</span>
           <span :class="utils.get_text_color()">s</span>
           <span :class="utils.get_text_color()">t</span>
-          &nbsp;
-          <span :class="utils.get_text_color()">M</span>
+          <span :class="`${utils.get_text_color()} ml-2`">M</span>
           <span :class="utils.get_text_color()">i</span>
           <span :class="utils.get_text_color()">n</span>
           <span :class="utils.get_text_color()">d</span>
@@ -102,7 +101,7 @@ const set_box_class = item => {
 }
 
 const onsetting = () => {
-  router.push({ name: 'setting' })
+  router.push({ name: 'setting default' })
 }
 
 </script>
