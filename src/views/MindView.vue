@@ -137,7 +137,7 @@ const options = computed(() => {
   const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '分享出去' }
   
   if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, d])
+    arrs.push(...[a, b, d])
   }
   else if (MindStore().is_exam_mode()) {
     arrs.push(...[a])
