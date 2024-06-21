@@ -14,6 +14,11 @@ const router = createRouter({
       path: '/mind/:id',
       name: 'mind',
       component: MindView
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: MindView
     }
   ]
 })
