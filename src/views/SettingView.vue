@@ -100,6 +100,7 @@ const onhotkeydown = (e, item) => {
   // console.log(temp_keys)
   const el     = document.getElementById(`hot-${item.key}`)
   el.innerHTML = temp_keys.join(link_tag)
+  e.preventDefault()
 }
 
 const onhotkeyup = (item) => {
