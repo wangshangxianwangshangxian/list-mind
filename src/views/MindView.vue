@@ -2,7 +2,11 @@
   <main class="h-screen flex flex-col scrollbar-hide">
     <header class="h-11 px-8 flex items-center bg-white">
       <div class="h-full flex gap-1 flex-1 items-center">
-        <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">三</span>
+        <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+          </svg>
+        </span>
         <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" disabled="!mind.editable"/> 
       </div>
       <div class="flex-1 text-right">
@@ -25,9 +29,13 @@
           </div>
           <div
             v-if="MindStore().is_common_mode()"
-            class="p-2 min-h-10 rounded-lg cursor-pointer text-center hover:scale-105 text-lg bg-gray-100"
+            class="p-2 min-h-10 rounded-lg cursor-pointer hover:bg-gray-200 bg-gray-100 flex justify-center items-center"
             @click="onaddchapter"
-          >+</div>
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+            </svg>
+          </div>
         </div>
       </div>
       <!-- 中间容器 -->

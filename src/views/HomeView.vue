@@ -12,7 +12,10 @@
         @click="oncardclick(item)"
       >
         <p class="flex-1 flex justify-center items-center m-2 overflow-y-scroll text-center">
-          {{ is_add_carr(item.id) ? '+' : item.title  }}
+          <svg v-if="is_add_carr(item.id)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          <template v-else>{{ item.title }}</template>
         </p>
         <div v-if="!is_add_carr(item.id)" class="text-right pr-2 pb-2 text-gray-400 text-xs">更新时间：{{ item.update_time }}</div>
         <div
@@ -20,7 +23,10 @@
           id="box-option" 
           class="bg-red-400 flex justify-end px-4 items-center text-xs h-0 opacity-0 text-gray-800">
           <p class="hover:text-white" @click.stop="ondelete(item)">
-            删除
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
+              <path fill-rule="evenodd" d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5Zm5.22 1.72a.75.75 0 0 1 1.06 0L10 10.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L11.06 12l1.72 1.72a.75.75 0 1 1-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 0 1-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>
           </p>
         </div>
       </div>

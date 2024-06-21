@@ -34,14 +34,14 @@ const MindStore = defineStore('MindStore', {
       data.address = utils.generate_public_key(data.id)
       this.mind = data
       this.blocks.push(data)
-      this.new_block(data.id)
+      this.new_block(data.id, { content: '章节' })
       this.save_mind(data.id)
       return data
     },
 
     // 创建块，并添加到父节点上
-    new_block(pid) {
-      const data = {
+    new_block(pid, o = {}) {
+      const data = Object.assign({
         pid,
         id      : utils.generate_key(10),
         expand  : true,
@@ -55,7 +55,7 @@ const MindStore = defineStore('MindStore', {
         style: {
           backgroundColor: utils.get_color()
         }
-      }
+      }, o)
       const block = this.get_block(pid)
       block.children.push(data)
       this.blocks.push(data)
