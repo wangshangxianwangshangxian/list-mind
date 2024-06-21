@@ -58,11 +58,15 @@ const get_bg_color = () =>{
   return color
 }
 
-const get_text_color = () =>{
-  const keys  = Object.keys(TEXT_COLOR)
-  const r     = Math.floor(Math.random() * keys.length)
-  const color = TEXT_COLOR[keys[r]]
-  return color
+const get_text_color = (excludes = []) =>{
+  while (1) {
+    const keys  = Object.keys(TEXT_COLOR)
+    const r     = Math.floor(Math.random() * keys.length)
+    const color = TEXT_COLOR[keys[r]]
+    if (excludes.includes(color))
+      continue
+    return color
+  }
 }
 
 const get_border_color = () =>{
@@ -106,6 +110,8 @@ const is_public_key  = key => typeof key === 'string' && key.length === PUBLIC_L
 const get_mind_by_private_key_local = id => {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
+    if (!key.startsWith('mind_'))
+      continue
     const mind = JSON.parse(localStorage.getItem(key))
     if (mind && mind.id === id) {
       return mind

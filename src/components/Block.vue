@@ -196,7 +196,7 @@ const onpaste = e => {
 
 <style scoped>
 .active {
-  box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.2)
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2)
 }
 </style>
 
