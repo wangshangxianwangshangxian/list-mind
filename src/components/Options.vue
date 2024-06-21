@@ -1,25 +1,27 @@
 <template>
   <BackgroundMask @bgclick="oncancel">
-    <div class="inline-block bg-white border rounded-lg absolute top-0 left-0" :style="option_style">
-      <ul class="p-1">
-        <li 
-          v-for="(item, index) in props.options" 
-          :key="index"
-          class="hover:bg-gray-100 p-2 rounded cursor-pointer flex gap-10 items-center justify-between"
-          @click.stop="onclick(item)"
-        >
-          <p>{{ item.label }}</p>
-          <p class="text-gray-400 text-xs">{{ item.tips }}</p>
-        </li>
-      </ul>
-    </div>
+    <Transition name="ani" @after-leave="onafterleave">
+      <div class="inline-block bg-white border rounded-lg absolute top-0 left-0" :style="option_style" v-if="show">
+        <ul class="p-1">
+          <li 
+            v-for="(item, index) in props.options" 
+            :key="index"
+            class="hover:bg-gray-100 p-2 rounded cursor-pointer flex gap-10 items-center justify-between"
+            @click.stop="onclick(item)"
+          >
+            <p>{{ item.label }}</p>
+            <p class="text-gray-400 text-xs">{{ item.tips }}</p>
+          </li>
+        </ul>
+      </div>
+    </Transition>
   </BackgroundMask>
 </template>
 
 <script setup>
 import BackgroundMask from '@/components/BackgroundMask.vue'
 import { POSITION } from '@/stores/constant';
-import { reactive, watch } from 'vue';
+import { onBeforeUnmount, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
   options: {
@@ -72,5 +74,8 @@ watch(
   { immediate: true }
 )
 
-const oncancel = () => emits('cancel', null)
+const show = ref(false)
+onMounted(() => show.value = true)
+const oncancel      = () => show.value = false
+const onafterleave  = () => emits('cancel', null)
 </script>

@@ -1,23 +1,6 @@
 @import './tailwind.css';
+@import url(./animation.css);
 
 ::-webkit-scrollbar {
   display: none;
-}
-
-@keyframes in_1 {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes out_1 {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
 }

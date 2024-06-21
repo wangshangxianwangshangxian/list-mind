@@ -1,7 +1,7 @@
 <template>
   <main class="h-screen flex flex-col scrollbar-hide">
     <header class="h-11 px-8 flex items-center bg-white">
-      <div class="h-full flex gap-1 flex-1">
+      <div class="h-full flex gap-1 flex-1 items-center">
         <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">三</span>
         <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" disabled="!mind.editable"/> 
       </div>
