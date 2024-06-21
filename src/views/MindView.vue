@@ -88,7 +88,7 @@ import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/con
 
 const { proxy } = getCurrentInstance()
 const id        = utils.get_url_end_node()
-const info      = MindStore().request_mind(id)
+const info      = MindStore().load_mind(id)
 const mind      = reactive(info)
 const refresh   = ref(0)
 const update_refresh = () => refresh.value = Date.now()

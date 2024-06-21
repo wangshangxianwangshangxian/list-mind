@@ -65,7 +65,7 @@ import utils from '@/utils/utils';
 import { ref, watch } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
-const list = MindStore().request_mind_list()
+const list = MindStore().load_mind_list()
 list.sort((a, b) => new Date(b.update_time) - new Date(a.update_time)).forEach(t => arrs.value.push(t))
 
 const is_add_carr = id => id === 'na'
@@ -96,7 +96,7 @@ const ondelete = item => {
    return
   MindStore().delete_mind(item.address)
   arrs.value.length = 1
-  const list = MindStore().request_mind_list()
+  const list = MindStore().load_mind_list()
   list.forEach(t => arrs.value.push(t))
 }
 

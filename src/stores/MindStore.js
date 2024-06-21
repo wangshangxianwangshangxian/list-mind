@@ -68,7 +68,7 @@ const MindStore = defineStore('MindStore', {
       this.mind
     },
 
-    request_mind(id) {
+    load_mind(id) {
       let target
       if (utils.is_public_key(id)) {
         target = utils.get_mind_by_public_key_local(id)
@@ -201,7 +201,7 @@ const MindStore = defineStore('MindStore', {
       return false
     },
 
-    request_mind_list() {
+    load_mind_list() {
       const list = []
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
