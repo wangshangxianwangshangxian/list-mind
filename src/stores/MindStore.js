@@ -53,7 +53,7 @@ const MindStore = defineStore('MindStore', {
           link  : ''
         },
         style: {
-          backgroundColor: utils.get_color()
+          backgroundColor: utils.get_bg_color()
         }
       }, o)
       const block = this.get_block(pid)

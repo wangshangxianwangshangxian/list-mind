@@ -37,6 +37,31 @@ export const TIMESTAMP = {
 }
 
 export const COLOR = {
+  SLATE   : 'slate',
+  GRAY    : 'gray',
+  ZINC    : 'zinc',
+  NEUTRAL : 'neutral',
+  STONE   : 'stone',
+  RED     : 'red',
+  ORANGE  : 'orange',
+  AMBER   : 'amber',
+  YELLOW  : 'yellow',
+  LIME    : 'lime',
+  GREEN   : 'green',
+  EMERALD : 'emerald',
+  TEAL    : 'teal',
+  CYAN    : 'cyan',
+  SKY     : 'sky',
+  BLUE    : 'blue',
+  INDIGO  : 'indigo',
+  VIOLET  : 'violet',
+  PURPLE  : 'purple',
+  FUCHSIZ : 'fuchsia',
+  PINK    : 'pink',
+  ROSE    : 'rose'
+}
+
+export const BG_COLOR = {
   SLATE   : 'bg-slate-200',
   GRAY    : 'bg-gray-200',
   ZINC    : 'bg-zinc-200',
@@ -61,6 +86,30 @@ export const COLOR = {
   ROSE    : 'bg-rose-200'
 }
 
+export const TEXT_COLOR = {
+  SLATE   : 'text-slate-400',
+  GRAY    : 'text-gray-400',
+  ZINC    : 'text-zinc-400',
+  NEUTRAL : 'text-neutral-400',
+  STONE   : 'text-stone-400',
+  RED     : 'text-red-400',
+  ORANGE  : 'text-orange-400',
+  AMBER   : 'text-amber-400',
+  YELLOW  : 'text-yellow-400',
+  LIME    : 'text-lime-400',
+  GREEN   : 'text-green-400',
+  EMERALD : 'text-emerald-400',
+  TEAL    : 'text-teal-400',
+  CYAN    : 'text-cyan-400',
+  SKY     : 'text-sky-400',
+  BLUE    : 'text-blue-400',
+  INDIGO  : 'text-indigo-400',
+  VIOLET  : 'text-violet-400',
+  PURPLE  : 'text-purple-400',
+  FUCHSIZ : 'text-fuchsia-400',
+  PINK    : 'text-pink-400',
+  ROSE    : 'text-rose-400'
+}
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64

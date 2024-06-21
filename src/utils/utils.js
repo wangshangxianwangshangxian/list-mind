@@ -1,4 +1,4 @@
-import { COLOR, PRIVATE_LEN, PUBLIC_LEN, TIMESTAMP } from "@/stores/constant"
+import { BG_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
 import { ec } from "elliptic"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
@@ -44,11 +44,25 @@ const get_url_end_node = () => {
   return wenh
 }
 
-const get_color = () => {
-  const keys = Object.keys(COLOR)
-  const r = Math.floor(Math.random() * keys.length)
-  const target = keys[r]
-  return COLOR[target]
+const get_color = (type = 'bg', level = 200) => {
+  const keys  = Object.keys(COLOR)
+  const r     = Math.floor(Math.random() * keys.length)
+  const color = COLOR[keys[r]]
+  return `${type}-${color}-${level}`
+}
+
+const get_bg_color = () =>{
+  const keys  = Object.keys(BG_COLOR)
+  const r     = Math.floor(Math.random() * keys.length)
+  const color = BG_COLOR[keys[r]]
+  return color
+}
+
+const get_text_color = () =>{
+  const keys  = Object.keys(TEXT_COLOR)
+  const r     = Math.floor(Math.random() * keys.length)
+  const color = TEXT_COLOR[keys[r]]
+  return color
 }
 
 const calc_distance = (x1, y1, x2, y2) => {
@@ -111,5 +125,7 @@ export default {
   is_private_key,
   is_public_key,
   get_mind_by_public_key_local,
-  get_mind_by_private_key_local
+  get_mind_by_private_key_local,
+  get_text_color,
+  get_bg_color
 }

@@ -1,6 +1,25 @@
 <template>
   <main class="px-8 pb-8">
-    <header class="text-4xl py-8">List Mind</header>
+    <header class="text-4xl py-8 flex gap-2 items-baseline justify-between">
+      <div>
+        <a href="/">
+          <span :class="utils.get_text_color()">L</span>
+          <span :class="utils.get_text_color()">i</span>
+          <span :class="utils.get_text_color()">s</span>
+          <span :class="utils.get_text_color()">t</span>
+          &nbsp;
+          <span :class="utils.get_text_color()">M</span>
+          <span :class="utils.get_text_color()">i</span>
+          <span :class="utils.get_text_color()">n</span>
+          <span :class="utils.get_text_color()">d</span>
+        </a>
+      </div>
+      <div>
+        <svg @click="onsetting" class="size-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
+        </svg>
+      </div>
+    </header>
     <div class="flex flex-wrap gap-6">
       <div 
         id="box"
@@ -21,7 +40,7 @@
         <div
           v-if="!is_add_carr(item.id)"
           id="box-option" 
-          class="bg-red-400 flex justify-end px-4 items-center text-xs h-0 opacity-0 text-gray-800">
+          :class="set_box_class(item)">
           <p class="hover:text-white" @click.stop="ondelete(item)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
               <path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
@@ -37,6 +56,7 @@
 <script setup>
 import router from '@/router';
 import MindStore from '@/stores/MindStore';
+import utils from '@/utils/utils';
 import { ref, watch } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
@@ -73,6 +93,16 @@ const ondelete = item => {
   arrs.value.length = 1
   const list = MindStore().request_mind_list()
   list.forEach(t => arrs.value.push(t))
+}
+
+const set_box_class = item => {
+  const arrs = ['flex', 'justify-end', 'px-4', 'items-center', 'text-xs', 'h-0', 'opacity-0', 'text-gray-800']
+  arrs.push(item.children[0]?.style.backgroundColor || utils.get_color())
+  return arrs
+}
+
+const onsetting = () => {
+  router.push({ name: 'setting' })
 }
 
 </script>
