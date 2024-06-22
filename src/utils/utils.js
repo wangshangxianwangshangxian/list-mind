@@ -1,4 +1,5 @@
 import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
+import axios from "axios"
 import { ec } from "elliptic"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
@@ -126,6 +127,20 @@ const get_mind_by_public_key_local = key => {
   return JSON.parse(target)
 }
 
+const get_ip = () => {
+  return new Promise(resolve => {
+    const url = 'https://api.ipify.org?format=json'
+    axios
+      .get(url)
+      .then(resp => resp.json())
+      .then(resp => resolve(resp.ip))
+      .catch(error => {
+        console.error(error)
+        resolve('')
+      })
+  })
+}
+
 export default {
   get_time,
   get_url_end_node,
@@ -141,5 +156,6 @@ export default {
   get_mind_by_private_key_local,
   get_text_color,
   get_bg_color,
-  get_border_color
+  get_border_color,
+  get_ip
 }

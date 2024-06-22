@@ -7,7 +7,7 @@
             <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
           </svg>
         </span>
-        <input type="text" placeholder="enter your title" class="w-6/12 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
+        <input type="text" placeholder="enter your title" class="w-6/12 min-w-80 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
       </div>
       <div class="flex-1 text-right">
         <p v-if="MindStore().is_exam_mode()">
@@ -153,7 +153,7 @@ const options = computed(() => {
   const c    = { key: OPTIONS.SAVE_REMOTE, label: '保存到云端', tips: '可在不同设备查看' }
   const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
   const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
-  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '分享出去' }
+  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '输出观点 !' }
   
   if (MindStore().is_guest_mode()) {
     arrs.push(...[a, b, d])
@@ -202,7 +202,7 @@ const onoptionselect = async item => {
     proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
   }
   else if (item.key === OPTIONS.SHARE) {
-    proxy.$message('分享出去吧', MESSAGE_TYPE.INFO)
+    share()
   }
 }
 const onquizexam = () => {
@@ -322,5 +322,22 @@ const onquizguest = () => {
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
+}
+
+const share = async () => {
+  const flag = await MindStore().is_mind_in_remote()
+  if (flag) {
+    const address = MindStore().mind?.address || null
+    if (!address)
+      return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
+
+    router.push({
+      name: 'dashboard',
+      params: { address }
+    })
+  }
+  else {
+    proxy.$message('当前导图尚未保存到云端，请先执行「 保存到云端 」', MESSAGE_TYPE.WARN)
+  }
 }
 </script>

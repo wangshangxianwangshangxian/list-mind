@@ -5,6 +5,7 @@ import SettingView from '@/views/SettingView.vue'
 import CustomerView from '@/views/CustomerView.vue'
 import VersionView from '@/views/VersionView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/version',
       name: 'version',
       component: VersionView
+    },
+    {
+      path: '/dashboard/:address',
+      name: 'dashboard',
+      component: DashboardView
     },
     {
       path: '/404',

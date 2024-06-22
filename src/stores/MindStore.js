@@ -32,10 +32,11 @@ const MindStore = defineStore('MindStore', {
         expand     : true,
         editable   : true,
         visible    : true,
-        children   : []
+        children   : [],
+        ip         : ''
       }
       data.address = utils.generate_public_key(data.id)
-      this.mind = data
+      this.mind    = data
       this.blocks.push(data)
       this.new_block(data.id, { content: '章节' })
       this.save(data.id)
@@ -113,6 +114,23 @@ const MindStore = defineStore('MindStore', {
       }
 
       return null
+    },
+
+    async is_mind_in_remote() {
+      const data = {
+        id     : this.mind.id,
+        address: this.mind.address
+      }
+
+      if ('upload_time' in this.mind && this.mind.upload_time) {
+        return true
+      }
+      // const resp = await get('get-mind', data)
+      // if (resp.code === ERROR_CODE.SUCCESS) {
+      //   return true
+      // }
+
+      return false
     },
 
     get_block(id) {
@@ -214,7 +232,7 @@ const MindStore = defineStore('MindStore', {
     async save_remote() {
       const resp = await post('upload-mind', this.mind)
       if (resp.code === ERROR_CODE.SUCCESS) {
-        this.mind.update_time = resp.data.update_time
+        this.mind = resp.data
         this.save()
         return true
       }

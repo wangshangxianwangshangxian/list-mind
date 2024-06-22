@@ -912,6 +912,18 @@ video {
   min-width: 15rem;
 }
 
+.min-w-52 {
+  min-width: 13rem;
+}
+
+.min-w-96 {
+  min-width: 24rem;
+}
+
+.min-w-80 {
+  min-width: 20rem;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
