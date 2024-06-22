@@ -99,7 +99,17 @@ const MindStore = defineStore('MindStore', {
       const resp = await get('get-mind', { id, address })
       if (resp.code === ERROR_CODE.SUCCESS) {
         this.mind = resp.data
-        return resp.data
+        const handler = (children = []) => {
+          children.forEach(c => {
+            this.blocks.push(c)
+            this.blocks.push(...c.children)
+            c.children.forEach(tmp => handler(tmp.children))
+          })
+        }
+  
+        this.blocks.push(this.mind)
+        handler(this.mind.children)
+        return this.mind
       }
 
       return null
@@ -203,8 +213,8 @@ const MindStore = defineStore('MindStore', {
 
     async save_remote() {
       const resp = await post('upload-mind', this.mind)
-      if (resp.code === 0) {
-        this.mind = resp.data
+      if (resp.code === ERROR_CODE.SUCCESS) {
+        this.mind.update_time = resp.data.update_time
         this.save()
         return true
       }

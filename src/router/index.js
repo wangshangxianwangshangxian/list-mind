@@ -4,6 +4,7 @@ import MindView from '../views/MindView.vue'
 import SettingView from '@/views/SettingView.vue'
 import CustomerView from '@/views/CustomerView.vue'
 import VersionView from '@/views/VersionView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,16 @@ const router = createRouter({
       path: '/version',
       name: 'version',
       component: VersionView
+    },
+    {
+      path: '/404',
+      name: 'not found',
+      component: NotFoundView
+    },
+    {
+      path: '/:pathMatch(.*)',
+      name: 'any',
+      redirect: '/404'
     }
   ]
 })

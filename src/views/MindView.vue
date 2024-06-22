@@ -14,6 +14,9 @@
           <span class="cursor-pointer hover:text-red-600" @click="onquizexam">「 退出 」</span>
           |&nbsp;&nbsp;{{ MindStore().exam_info.message }}
         </p>
+        <p v-if="show_guest_exit">
+          <span class="cursor-pointer hover:text-red-600" @click="onquizguest">「 退出 」</span>
+        </p>
       </div>
     </header>
     <div class="flex flex-1 overflow-y-hidden">
@@ -102,13 +105,12 @@ onBeforeMount(async () => {
       }
     }
     else {
-      proxy.$message('访问地址不存在', MESSAGE_TYPE.ERROR)
+      router.push({ name: 'not found' })
     }
   }
-  if (utils.is_public_key(id)) {
-    MindStore().switch_mode(MODE.GUEST)
-  }
-  else MindStore().switch_mode(MODE.COMMON)
+  if (utils.is_private_key(id))
+    return MindStore().switch_mode(MODE.COMMON)
+  MindStore().switch_mode(MODE.GUEST)
 })
 
 const refresh   = ref(0)
@@ -301,4 +303,24 @@ const onadditionclose = () => {
   addition_info.show = false
 }
 
+const show_guest_exit = computed(() => {
+  if (!MindStore().is_guest_mode()) {
+    return false
+  }
+
+  if (utils.is_public_key(id))
+    return false
+
+  // 创作者通过私钥打开的导图，其读者模式肯定从读者入口来的，所以肯定显示
+  if (utils.is_private_key(id)) {
+    return true
+  }
+
+  return false
+})
+const onquizguest = () => {
+  if (utils.is_private_key(id))
+    return MindStore().switch_mode(MODE.COMMON)
+  MindStore().switch_mode(MODE.GUEST)
+}
 </script>
