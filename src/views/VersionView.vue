@@ -26,7 +26,7 @@
           </svg>
         </div>
         <div class="pt-10 flex-1 shrink-0">
-          <p>{{ item.date }}</p>  
+          <p v-html="item.title"></p>  
           <div class="mt-2 text-gray-700" v-html="item.desc"></div>
         </div>
       </li>

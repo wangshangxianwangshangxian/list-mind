@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
 import { DIRECTION, MODE } from "./constant";
-import { post } from "@/utils/network";
+import { get, post } from "@/utils/network";
+import { ERROR_CODE } from "./errorcode";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -77,7 +78,7 @@ const MindStore = defineStore('MindStore', {
         target = utils.get_mind_by_private_key_local(id)
       }
 
-      if (!target) return
+      if (!target) return null
       
       this.mind    = target
       const handler = (children = []) => {
@@ -92,6 +93,16 @@ const MindStore = defineStore('MindStore', {
       handler(this.mind.children)
 
       return this.mind
+    },
+
+    async request_mind(id, address) {
+      const resp = await get('get-mind', { id, address })
+      if (resp.code === ERROR_CODE.SUCCESS) {
+        this.mind = resp.data
+        return resp.data
+      }
+
+      return null
     },
 
     get_block(id) {

@@ -9,7 +9,7 @@ export default {
     app.config.globalProperties.$message = async function (message = '', type = 'success', options = { }) {
 
       const o = Object.assign({
-        timeout: 1500
+        timeout: 5000
       }, options)
 
       if (!container) {

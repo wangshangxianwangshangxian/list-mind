@@ -6,11 +6,11 @@ const VersionStore = defineStore('VersionStore', {
       version: '0.8.0',
       footsteps: [
         {
-          date: '2024.06',
+          title: '2024.06',
           desc: ''
         },
         {
-          date: '2024.05',
+          title: '2024.05&nbsp;&nbsp;&nbsp;&nbsp;梦开始的地方',
           desc: `一直想开发一款思维导图工具，因为我的想法很多时候都是树形的，甚至做草稿时，都会现在导图上开个「块」，然后思维就像树一样慢慢伸展开来所以思维导图就成了我最常用的工具，市面上的同类产品，xMind是最好用的，但是直到我付费之后才发现它竟然还不支持云同步。` +
                 `<br />` +
                 'MindMaster也强大，样式丰富，素材很多，但UI很糟糕，始终没有达到我想要的风格。' + 

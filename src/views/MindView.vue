@@ -78,7 +78,7 @@
 import MindStore from '@/stores/MindStore';
 import MainData from '@/stores/MainData';
 import utils from '@/utils/utils';
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
 import MoveOption from '@/components/MoveOption.vue'
@@ -88,14 +88,31 @@ import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/con
 
 const { proxy } = getCurrentInstance()
 const id        = utils.get_url_end_node()
-const info      = MindStore().load_mind(id)
+const info      = MindStore().load_mind(id) || { children: [] }
 const mind      = reactive(info)
+
+onBeforeMount(async () => {
+  if (!info.id && !info.address) {
+    const key       = utils.is_private_key(id) ? id : ''
+    const address   = utils.is_public_key(id) ? id : ''
+    const temp_mind = await MindStore().request_mind(key, address)
+    if (temp_mind) {
+      for (let key in temp_mind) {
+        mind[key] = temp_mind[key]
+      }
+    }
+    else {
+      proxy.$message('访问地址不存在', MESSAGE_TYPE.ERROR)
+    }
+  }
+  if (utils.is_public_key(id)) {
+    MindStore().switch_mode(MODE.GUEST)
+  }
+  else MindStore().switch_mode(MODE.COMMON)
+})
+
 const refresh   = ref(0)
 const update_refresh = () => refresh.value = Date.now()
-if (utils.is_public_key(id)) {
-  MindStore().switch_mode(MODE.GUEST)
-}
-else MindStore().switch_mode(MODE.COMMON)
 
 const onaddchapter = () => {
   const child = MindStore().new_block(id)
