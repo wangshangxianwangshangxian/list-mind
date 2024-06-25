@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 left-0 w-full h-11 flex items-center px-8">
+  <header class="sticky top-0 left-0 w-full h-11 flex items-center px-8 mb-4 bg-white" style="z-index: 999999999;">
     <div class="flex-1 shrink-0 flex gap-4">
       <div class="flex gap-4">
         <svg v-if="show_home" @click="onhome" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 cursor-pointer">
@@ -10,7 +10,9 @@
       <div class="font-bold text-xl">{{ title }}</div>
     </div>
     <div class="flex-1"></div>
-    <div class="flex-1 shrink-0"></div>
+    <div class="flex-1 shrink-0">
+      <slot name="right-box"></slot>
+    </div>
   </header>
 </template>
 

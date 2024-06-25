@@ -7,7 +7,7 @@
     </template>
   </Header>
   <div class="flex">
-    <div class="w-60 bg-white pt-4">
+    <div class="w-60 bg-white">
       <ul>
         <li 
           v-for="item in tabs" 

@@ -39,7 +39,7 @@
       </div>
     </div>
     <!-- center -->
-    <div :id="`block-c-box-${props.block.id}`" class="w-8 z-20 flex justify-center items-center shrink-0" @mouseenter="onpathenter" @mouseleave="onpathleave">
+    <div v-if="need_children" :id="`block-c-box-${props.block.id}`" class="w-8 z-20 flex justify-center items-center shrink-0" @mouseenter="onpathenter" @mouseleave="onpathleave">
       <svg v-if="show_children" width="100%" height="100%" class="absolute top-0 left-0">
         <path v-for="child in paths" :key="child.child_id" :d="child.path" fill="none" stroke="black" stroke-width="2"></path>
       </svg>
@@ -52,7 +52,7 @@
       </div>
     </div>
     <!-- right -->
-    <div v-if="show_children" class="flex flex-col gap-2 justify-center z-50 shrink-0">
+    <div v-if="need_children && show_children" class="flex flex-col gap-2 justify-center z-50 shrink-0">
       <Block
         v-for="child in props.block.children" 
         :key             = "child.id" 
@@ -90,6 +90,11 @@ const props = defineProps({
     type: Number,
     default: 0
   },
+
+  need_children: {
+    type: Boolean,
+    default: true
+  }
 })
 
 const show_children = computed(() => {

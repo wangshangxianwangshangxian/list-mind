@@ -163,7 +163,7 @@ export const ENV = {
 }
 
 export const ENV_URL = {
-  PROD: 'https://env-00jxgx8y5hni.dev-hz.cloudbasefunction.cn/',
+  PROD: 'http://localhost:',
   DEV : ''
 }
 

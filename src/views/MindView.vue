@@ -100,6 +100,7 @@ onBeforeMount(async () => {
     const address   = utils.is_public_key(id) ? id : ''
     const temp_mind = await MindStore().request_mind(key, address)
     if (temp_mind) {
+      MindStore().init_mind(temp_mind)
       for (let key in temp_mind) {
         mind[key] = temp_mind[key]
       }
@@ -107,6 +108,9 @@ onBeforeMount(async () => {
     else {
       router.push({ name: 'not found' })
     }
+  }
+  else {
+    MindStore().init_mind(info)
   }
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
