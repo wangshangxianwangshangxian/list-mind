@@ -1,6 +1,7 @@
 <template>
   <div :class="box_classes" style="z-index: 999999999999999999;">
-    {{ props.message }}
+    <p v-if="props.options.use_html" v-html="props.message"></p>
+    <p v-else>{{ props.message }}</p>
   </div>
 </template>
 
@@ -23,7 +24,7 @@ const props = defineProps({
     type: Object,
     default() {
       return {
-
+        use_html: false
       }
     }
   }

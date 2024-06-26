@@ -194,20 +194,11 @@ const onoptionselect = async item => {
     }
     MindStore().switch_mode(MODE.GUEST)
   }
-  else if (item.key === OPTIONS.SAVE_REMOTE) {
-    const flag = await MindStore().save_remote()
-    if (flag) {
-      proxy.$message('成功保存到云端', MESSAGE_TYPE.SUCCESS)
-      return
-    }
 
-    proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
-  }
-  else if (item.key === OPTIONS.SHARE) {
-    share()
-  }
-  else if (item.key === OPTIONS.ANALYZE) {
-    analyze()
+  switch (item.key) {
+    case OPTIONS.SAVE_REMOTE : save_remote(); break
+    case OPTIONS.SHARE       : share();       break
+    case OPTIONS.ANALYZE     : analyze();     break
   }
 }
 const onquizexam = () => {
@@ -337,11 +328,29 @@ const analyze = () => {
   const address = MindStore().mind?.address || null
     if (!address)
       return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
-
     router.push({
       name: 'dashboard',
-      params: { address }
+      params: { address: id }
     })
+}
+
+const save_remote = async () => {
+  const flag = MindStore().had_remoted()
+  if (!flag) {
+    MindStore().save()
+    router.push({
+      name: 'dashboard',
+      params: { address: id }
+    })
+  }
+  else {
+    const flag = await MindStore().save_remote()
+    if (flag) {
+      const message = `成功保存到云端，<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">点我查看商业数据</a>`
+      return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
+    }
+    proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
+  }
 }
 </script>
 
