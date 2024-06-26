@@ -163,13 +163,13 @@ export const ENV = {
 }
 
 export const ENV_URL = {
-  PROD: 'http://localhost:',
-  DEV : ''
+  PROD: 'http://www.list-mind.com:6634/',
+  DEV : 'http://localhost:6634/'
 }
 
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
-export const ENVIRONMENT       = ENV.PROD
-export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.PROD
+export const ENVIRONMENT       = ENV.DEV
+export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.DEV

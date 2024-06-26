@@ -12,7 +12,7 @@
         <li 
           v-for="item in tabs" 
           :key="item.key" 
-          :class="`h-10 flex items-center px-8 rounded-r-full ${active === item.key ? utils.get_bg_color() : 'hover:bg-gray-100'}`" 
+          :class="`cursor-pointer h-10 flex items-center px-8 rounded-r-full ${active === item.key ? utils.get_bg_color() : 'hover:bg-gray-100'}`" 
           @click="ontabclick(item)"
         >
           {{ item.value }}
@@ -48,7 +48,9 @@
         <p>难道真的可以做成用户可配置？</p>
       </div>
       <!-- 关于 -->
-      <div v-if="active === 'about'"></div>
+      <div v-if="active === 'about'">
+        <p>0.8.1</p>
+      </div>
     </div>
     <div class="w-60"></div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <main class="h-screen flex flex-col scrollbar-hide">
-    <header class="h-11 px-8 flex items-center bg-white">
+    <header class="h-11 px-8 flex items-center bg-white" style="z-index: 99999;">
       <div class="h-full flex gap-1 flex-1 items-center">
         <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -21,13 +21,13 @@
     </header>
     <div class="flex flex-1 overflow-y-hidden">
       <!-- 左侧容器 -->
-      <div class="w-40 flex justify-center items-center flex-col p-4">
-        <div class="flex flex-col gap-2 p-1 rounded-lg min-w-28">
-          <div v-if="mind.children.length" class="flex flex-col gap-2 overflow-y-auto rounded-lg" style="max-height: 60vh">
+      <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2" style="z-index: 9999;">
+        <div class="flex flex-col gap-2 p-1 rounded-lg bg-white max-w-40">
+          <div v-if="mind.children.length" class="overflow-y-auto rounded-lg" style="max-height: 60vh">
             <div
               v-for="(item, index) in mind.children" :key="index"
               v-html="item.content"
-              :class="['p-2', 'rounded-lg', 'bg-orange-50', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', item.style.backgroundColor]"
+              :class="['chapter', 'p-2', 'rounded-lg', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', 'mb-2', item.style.backgroundColor]"
             ></div>
           </div>
           <div
@@ -59,7 +59,7 @@
         </div>
       </div>
       <!-- 右侧容器 -->
-      <div class="w-40"></div>
+      <!-- <div class="w-40"></div> -->
     </div>
     <Options 
       v-if="show_option" 
@@ -158,6 +158,7 @@ const options = computed(() => {
   const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
   const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
   const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '输出观点 !' }
+  // const g    = { key: OPTIONS.SHARE,       label: '数据',      tips:  '导图相关数据' }
   
   if (MindStore().is_guest_mode()) {
     arrs.push(...[a, b, d])
@@ -345,3 +346,9 @@ const share = async () => {
   }
 }
 </script>
+
+<style scoped>
+.chapter:last-child {
+  margin-bottom: 0;
+}
+</style>

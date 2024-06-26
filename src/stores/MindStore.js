@@ -84,7 +84,7 @@ const MindStore = defineStore('MindStore', {
     },
 
     async request_mind(id, address) {
-      const resp = await get('3001/get-mind', { id, address })
+      const resp = await get('get-mind', { id, address })
       if (resp.code === ERROR_CODE.SUCCESS) {
         return resp.data
       }
@@ -220,7 +220,7 @@ const MindStore = defineStore('MindStore', {
     },
 
     async save_remote() {
-      const resp = await post('3000/upload-mind', this.mind)
+      const resp = await post('upload-mind', this.mind)
       if (resp.code === ERROR_CODE.SUCCESS) {
         this.mind = resp.data
         this.save()
