@@ -1,5 +1,5 @@
 <template>
-  <div :class="box_classes">
+  <div :class="box_classes" style="z-index: 999999999999999999;">
     {{ props.message }}
   </div>
 </template>

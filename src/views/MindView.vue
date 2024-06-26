@@ -20,28 +20,6 @@
       </div>
     </header>
     <div class="flex flex-1 overflow-y-hidden">
-      <!-- 左侧容器 -->
-      <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2" style="z-index: 9999;">
-        <div class="flex flex-col gap-2 p-1 rounded-lg bg-white max-w-40">
-          <div v-if="mind.children.length" class="overflow-y-auto rounded-lg" style="max-height: 60vh">
-            <div
-              v-for="(item, index) in mind.children" :key="index"
-              v-html="item.content"
-              :class="['chapter', 'p-2', 'rounded-lg', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', 'mb-2', item.style.backgroundColor]"
-            ></div>
-          </div>
-          <div
-            v-if="MindStore().is_common_mode()"
-            class="p-2 min-h-10 rounded-lg cursor-pointer hover:bg-gray-200 bg-gray-100 flex justify-center items-center"
-            @click="onaddchapter"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <!-- 中间容器 -->
       <div class="flex-1 overflow-x-auto overflow-y-auto p-8 shrink-0">
         <div class="flex flex-col gap-8 items-center justify-center min-h-full shrink-0">
           <Block
@@ -58,8 +36,27 @@
           ></Block>
         </div>
       </div>
-      <!-- 右侧容器 -->
-      <!-- <div class="w-40"></div> -->
+    </div>
+    <!-- 章节 -->
+    <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2" style="z-index: 9999;">
+      <div class="flex flex-col gap-2 p-1 rounded-lg bg-white max-w-40">
+        <div v-if="mind.children.length" class="overflow-y-auto rounded-lg" style="max-height: 60vh">
+          <div
+            v-for="(item, index) in mind.children" :key="index"
+            v-html="item.content"
+            :class="['chapter', 'p-2', 'rounded-lg', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', 'mb-2', item.style.backgroundColor]"
+          ></div>
+        </div>
+        <div
+          v-if="MindStore().is_common_mode()"
+          class="p-2 min-h-10 rounded-lg cursor-pointer hover:bg-gray-200 bg-gray-100 flex justify-center items-center"
+          @click="onaddchapter"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+            <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+          </svg>
+        </div>
+      </div>
     </div>
     <Options 
       v-if="show_option" 
@@ -158,16 +155,16 @@ const options = computed(() => {
   const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
   const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
   const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '输出观点 !' }
-  // const g    = { key: OPTIONS.SHARE,       label: '数据',      tips:  '导图相关数据' }
+  const g    = { key: OPTIONS.ANALYZE,     label: '数据',      tips:  '导图商业数据' }
   
   if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, b, d])
+    arrs.push(...[a, b, d, g])
   }
   else if (MindStore().is_exam_mode()) {
     arrs.push(...[a])
   }
   else {
-    arrs.push(...[a, b, c, d, e, f])
+    arrs.push(...[a, b, c, d, e, f, g])
   }
   return arrs
 })
@@ -208,6 +205,9 @@ const onoptionselect = async item => {
   }
   else if (item.key === OPTIONS.SHARE) {
     share()
+  }
+  else if (item.key === OPTIONS.ANALYZE) {
+    analyze()
   }
 }
 const onquizexam = () => {
@@ -330,9 +330,11 @@ const onquizguest = () => {
 }
 
 const share = async () => {
-  const flag = await MindStore().is_mind_in_remote()
-  if (flag) {
-    const address = MindStore().mind?.address || null
+  proxy.$message('开发中', MESSAGE_TYPE.INFO)
+}
+
+const analyze = () => {
+  const address = MindStore().mind?.address || null
     if (!address)
       return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
 
@@ -340,10 +342,6 @@ const share = async () => {
       name: 'dashboard',
       params: { address }
     })
-  }
-  else {
-    proxy.$message('当前导图尚未保存到云端，请先执行「 保存到云端 」', MESSAGE_TYPE.WARN)
-  }
 }
 </script>
 

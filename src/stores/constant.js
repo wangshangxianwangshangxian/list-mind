@@ -28,7 +28,8 @@ export const OPTIONS = {
   SAVE_REMOTE: 'save remote',
   SHARE      : 'share',
   EXAM       : 'exam_mode',
-  GUEST      : 'guest_mode'
+  GUEST      : 'guest_mode',
+  ANALYZE    : 'analyze'
 }
 
 export const TIMESTAMP = {
