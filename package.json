@@ -7,7 +7,6 @@
     "dev": "vite",
     "preview": "vite preview",
     "tailwind": "npx tailwindcss -i ./src/assets/base.css -o ./src/assets/tailwind.css --watch",
-
     "build": "vite build",
     "tar": "tar -czvf dist.tar.gz dist/",
     "xtar": "tar -xzvf dist.tar.gz",
@@ -20,6 +19,7 @@
     "echarts": "^5.5.0",
     "elliptic": "^6.5.5",
     "pinia": "^2.1.7",
+    "qrcode": "^1.5.3",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
