@@ -5,6 +5,9 @@ module.exports = {
     extend: {
       backgroundColor: {
         'black-30': 'rgba(0, 0, 0, 0.2)'
+      },
+      width: {
+        
       }
     },
   },

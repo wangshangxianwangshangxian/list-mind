@@ -71,6 +71,7 @@
       @c_mouseup ="onmouseup"
     ></MoveOption>
     <Addition v-if="addition_info.show" :id="addition_info.id" @c_close="onadditionclose"></Addition>
+    <ShareDialog v-if="show_share" @c_close="onshareclose" :address="mind.address"></ShareDialog>
   </main>
 </template>
 
@@ -81,6 +82,7 @@ import utils from '@/utils/utils';
 import { computed, getCurrentInstance, nextTick, onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
+import ShareDialog from '@/components/ShareDialog.vue'
 import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
@@ -320,8 +322,17 @@ const onquizguest = () => {
   MindStore().switch_mode(MODE.GUEST)
 }
 
+const show_share = ref(false)
 const share = async () => {
-  proxy.$message('开发中', MESSAGE_TYPE.INFO)
+  const flag = MindStore().had_remoted()
+  if (flag) {
+    show_share.value = true
+    return
+  }
+  proxy.$message('请先保存到云端', MESSAGE_TYPE.WARN)
+}
+const onshareclose = () => {
+  show_share.value = false
 }
 
 const analyze = () => {
@@ -336,7 +347,8 @@ const analyze = () => {
 
 const save_remote = async () => {
   const flag = MindStore().had_remoted()
-  if (!flag) {
+  if (0) {
+  // if (!flag) {
     MindStore().save()
     router.push({
       name: 'dashboard',
