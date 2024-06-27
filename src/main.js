@@ -12,10 +12,12 @@ app.use(createPinia())
 app.use(router)
 
 import message from '@/plugins/message'
+import share from '@/plugins/share'
 import MainData from './stores/MainData'
 import VersionStore from './stores/VersionStore'
 MainData().init_hots()
 VersionStore().check()
 app.use(message)
+app.use(share)
 
 app.mount('#app')

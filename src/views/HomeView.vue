@@ -47,6 +47,9 @@
           id="box-option" 
           :class="set_box_class(item)"
         >
+          <svg @click.stop="onshare(item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 hover:text-white">
+            <path fill-rule="evenodd" d="M15.75 4.5a3 3 0 1 1 .825 2.066l-8.421 4.679a3.002 3.002 0 0 1 0 1.51l8.421 4.679a3 3 0 1 1-.729 1.31l-8.421-4.678a3 3 0 1 1 0-4.132l8.421-4.679a3 3 0 0 1-.096-.755Z" clip-rule="evenodd" />
+          </svg>
           <svg @click.stop="ondashboard(item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 hover:text-white">
             <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 0 1 8.25-8.25.75.75 0 0 1 .75.75v6.75H18a.75.75 0 0 1 .75.75 8.25 8.25 0 0 1-16.5 0Z" clip-rule="evenodd" />
             <path fill-rule="evenodd" d="M12.75 3a.75.75 0 0 1 .75-.75 8.25 8.25 0 0 1 8.25 8.25.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V3Z" clip-rule="evenodd" />
@@ -65,7 +68,7 @@
 import router from '@/router';
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { ref } from 'vue';
+import { getCurrentInstance, ref } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
 const list = MindStore().load_mind_list()
@@ -121,6 +124,8 @@ const set_box_class = item => {
 const onsetting = () => {
   router.push({ name: 'setting default' })
 }
+const { proxy } = getCurrentInstance()
+const onshare = item => proxy.$share(item.address)
 
 </script>
 

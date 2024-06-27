@@ -42,7 +42,7 @@ const PASTE = {
 const props = defineProps({
   address: {
     type: String,
-    default: '0x12345678'
+    default: ''
   }
 })
 
@@ -65,4 +65,7 @@ const oncopy = type => {
   .then(() => proxy.$message('粘贴成功', MESSAGE_TYPE.SUCCESS))
   .catch(() => proxy.$message('粘贴失败', MESSAGE_TYPE.ERROR))
 }
+
+const emits = defineEmits(['c_close'])
+const onclose = () => emits('c_close')
 </script>
