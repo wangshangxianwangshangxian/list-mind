@@ -49,7 +49,7 @@
       </div>
       <!-- 关于 -->
       <div v-if="active === 'about'">
-        <p>0.8.1</p>
+        <p>0.8.2</p>
       </div>
     </div>
     <div class="w-60"></div>
