@@ -58,31 +58,25 @@
     </Card>
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
-        <p>今日点击量 / 总量：1937 / 4593</p>
-        <SwitchButton @c_swicth="onswitchviews"></SwitchButton>
+        <p class="flex gap-8 items-center">
+          <span>今日浏览量: {{ today_views }}</span>
+          <span>昨日: {{ lastday_views }}</span>
+          <span>总量: {{ total_views }}</span>
+        </p>
+        <SwitchButton :labels="analyze_data.tabs.map(item => item.label)" @c_swicth="index => onswitchviews('views', index)"></SwitchButton>
       </div>
       <div id="views" style="width: 100%; height: 200px;"></div>
     </Card>
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
-        <p>今日点赞 / 总量：1937 / 4593</p>
-        <div>周 ｜ 月 ｜ 年</div>
+        <p class="flex gap-8 items-center">
+          <span>今日新增用户: {{ today_users }}</span>
+          <span>昨日: {{ lastday_users }}</span>
+          <span>总量: {{ total_users }}</span>
+        </p>
+        <SwitchButton :labels="analyze_data.tabs.map(item => item.label)" @c_swicth="index => onswitchviews('users', index)"></SwitchButton>
       </div>
-      <div id="like" style="width: 100%; height: 200px;"></div>
-    </Card>
-    <Card :width="680">
-      <div class="flex justify-between text-sm text-gray-800 my-1">
-        <p>今日收藏量 / 总量：1937 / 4593</p>
-        <div>周 ｜ 月 ｜ 年</div>
-      </div>
-      <div id="collection" style="width: 100%; height: 200px;"></div>
-    </Card>
-    <Card :width="680">
-      <div class="flex justify-between text-sm text-gray-800 my-1">
-        <p>今日新用户 / 总量：1937 / 4593</p>
-        <div>周 ｜ 月 ｜ 年</div>
-      </div>
-      <div id="user" style="width: 100%; height: 200px;"></div>
+      <div id="users" style="width: 100%; height: 200px;"></div>
     </Card>
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
@@ -100,7 +94,7 @@
 <script setup>
 import Header from '@/components/Header.vue'
 import Card from '@/components/Card.vue'
-import { computed, getCurrentInstance, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, getCurrentInstance, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 import utils from '@/utils/utils';
 import MindStore from '@/stores/MindStore';
 import Block from '@/components/Block.vue'
@@ -109,8 +103,10 @@ import SwitchButton from '@/components/SwitchButton.vue'
 import Dialog from '@/components/Dialog.vue'
 import * as echarts from 'echarts'
 import router from '@/router'
-import { MESSAGE_TYPE } from '@/stores/constant';
+import { MESSAGE_TYPE, TIMESTAMP } from '@/stores/constant';
 import { toDataURL } from 'qrcode';
+import MainData from '@/stores/MainData';
+import { ERROR_CODE } from '@/stores/errorcode';
 
 const { proxy } = getCurrentInstance()
 const mind = ref({})
@@ -124,9 +120,14 @@ onBeforeMount(async () => {
     info = MindStore().load_mind(id)
     if (!info)
       return router.push({ name: 'not found' })
+    init_mind(info)
+    mind.value = info
   }
-  init_mind(info)
-  mind.value = info
+  else {
+    mind.value = info
+    init_mind(info)
+    get_analyze_data()
+  }
 })
 
 const init_mind = info => {
@@ -140,39 +141,16 @@ const init_mind = info => {
 const search_message = ref('')
 const show_clear_icon = computed(() => search_message.value.length > 0)
 
-let chart_views
 onMounted(() => {
-  chart_views = echarts.init(document.getElementById('views'))
-  const rows = ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  const data = [1,2,3,4,5,6,7]
-  const options = generate_chart_options(rows, data)
-  chart_views.setOption(options)
-
-  var myChart = echarts.init(document.getElementById('like'))
-  const rows2 = ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  const data2 = [1,2,3,4,5,6,7]
-  const options2 = generate_chart_options(rows2, data2)
-  myChart.setOption(options2)
-
-  var myChart = echarts.init(document.getElementById('collection'))
-  const rows3 = ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  const data3 = [1,2,3,4,5,6,7]
-  const options3 = generate_chart_options(rows3, data3)
-  myChart.setOption(options3)
-
-  var myChart = echarts.init(document.getElementById('user'))
-  const rows4 = ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  const data4 = [1,2,3,4,5,6,7]
-  const options4 = generate_chart_options(rows4, data4)
-  myChart.setOption(options4)
+  init_analyze_config()
 })
 
 const generate_chart_options = (rows, data) => {
   const options = {
     grid: {
-      left: '0%',
+      left: '3%',
       right: '4%',
-      bottom: '0%',
+      bottom: '3%',
       top: '10%',
       containLabel: true
     },
@@ -197,26 +175,111 @@ const generate_chart_options = (rows, data) => {
   return options
 }
 
-const config = [
-  {
-    label: '周',
-    rows : ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  },
-  {
-    label: '月',
-    rows : ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16', '06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
-  },
-  {
-    label: '年',
-    rows : ['06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16', '06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16', '06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16', '06.10', '06.11', '06.12', '06.13', '06.14', '06.15', '06.16']
+const generate_chart_options_params = field => {
+  const cols   = []
+  const data   = []
+  const active = analyze_data[field].active
+  if ([0, 1].includes(active)) {
+    const rows = analyze_data.tabs[active].rows
+    rows.forEach(date => {
+      const total = analyze_data[field].data[date] || 0
+      data.unshift(total)
+      cols.unshift(date.slice(5))
+    })
   }
-]
+  else if (active === 2) {
+    const rows = analyze_data.tabs[active].rows
+    rows.forEach(date => {
+      const a     = date.slice(0, 7)
+      let   total = 0
+      for (let key in analyze_data[field].data) {
+        if (!key.startsWith(a))
+          continue
+        total += analyze_data[field].data[key]
+      }
+      data.unshift(total)
+      cols.unshift(a)
+    })
+  }
+  return [cols, data]
+}
 
-const onswitchviews = index => {
-  const rows = config[index].rows
-  const data = new Array(rows.length).fill(0).map(a => Math.floor(Math.random() * 1000))
-  const options = generate_chart_options(rows, data)
-  chart_views.setOption(options)
+const analyze_data = reactive({
+  tabs: [
+    { label : '近1周',  rows : [] },
+    { label : '近1月',  rows : [] },
+    { label : '近1年',  rows  : []}    
+  ],
+  views: {
+    chart   : null,
+    active  : 0,
+    data    : {}
+  },
+  users: {
+    chart   : null,
+    active  : 0,
+    data    : {}
+  }
+})
+
+const init_analyze_config = () => {
+  for (let i = 0; i < 7; i++) {
+    const date = utils.get_time_offset(-i)
+    analyze_data.tabs[0].rows.push(date)
+  }
+
+  for (let i = 0; i < 30; i++) {
+    const date = utils.get_time_offset(-i)
+    analyze_data.tabs[1].rows.push(date)
+  }
+
+  for (let i = 0; i < 12; i++) {
+    let month = utils.get_time_offset(-30 * i, 'YYYY-MM')
+    analyze_data.tabs[2].rows.push(month)
+  }
+
+  analyze_data.views.chart = echarts.init(document.getElementById('views'))
+  analyze_data.users.chart = echarts.init(document.getElementById('users'))
+}
+
+const get_analyze_data = async () => {
+  const resp = await MainData().get_analyze(mind.value.address)
+  if (resp.code === ERROR_CODE.SUCCESS) {
+    analyze_data.views.data = resp.data.views
+    analyze_data.users.data = resp.data.users
+    return
+  }
+  proxy.$message('获取数据信息异常', MESSAGE_TYPE.ERROR)
+}
+
+const set_option = type => {
+  if (!analyze_data[type].chart) return
+    const [cols, data] = generate_chart_options_params(type)
+    const options      = generate_chart_options(cols, data)
+    analyze_data[type].chart.setOption(options)
+}
+
+const today_views   = computed(() => analyze_data.views.data[utils.get_time(Date.now(), 'YYYY-MM-DD')] || 0)
+const lastday_views = computed(() => analyze_data.views.data[utils.get_time_offset(-1,  'YYYY-MM-DD')] || 0)
+const total_views   = computed(() => Object.entries(analyze_data.views.data).reduce((total, [key, value]) => total + value, 0))
+const today_users   = computed(() => analyze_data.users.data[utils.get_time(Date.now(), 'YYYY-MM-DD')] || 0)
+const lastday_users = computed(() => analyze_data.users.data[utils.get_time_offset(-1,  'YYYY-MM-DD')] || 0)
+const total_users   = computed(() => Object.entries(analyze_data.users.data).reduce((total, [key, value]) => total + value, 0))
+
+watch(
+  () => [analyze_data.views.data, analyze_data.views.active, analyze_data.tabs],
+  () => set_option('views'),
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => [analyze_data.users.data, analyze_data.users.active, analyze_data.tabs],
+  () => set_option('users'),
+  { immediate: true, deep: true }
+)
+
+const onswitchviews = (type, index) => {
+  analyze_data[type].active = index
 }
 
 const show_save_btn = computed(() => {

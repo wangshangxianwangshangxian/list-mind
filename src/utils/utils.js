@@ -20,6 +20,12 @@ const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
   return date_str
 }
 
+const get_time_offset = (offset, format = 'YYYY-MM-DD') => {
+  const target   = Date.now() + TIMESTAMP.DAY * offset
+  const date_str = get_time(target, format)
+  return date_str
+}
+
 const get_left_time = (start_time = Date.now(), end_time = Date.now(), format = 'hh:mm:ss') => {
   let total = new Date(end_time).getTime() - new Date(start_time).getTime()
 
@@ -157,5 +163,6 @@ export default {
   get_text_color,
   get_bg_color,
   get_border_color,
-  get_ip
+  get_ip,
+  get_time_offset
 }

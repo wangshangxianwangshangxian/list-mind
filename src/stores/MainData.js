@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ANALYZE, BOARD_KEY, HOT_OPTION } from "./constant";
-import { post } from "@/utils/network";
+import { get, post } from "@/utils/network";
 
 const MainData = defineStore('MainData', {
   state () {
@@ -58,6 +58,11 @@ const MainData = defineStore('MainData', {
         address : address
       }
       post('set-analyze', data)
+    },
+
+    get_analyze(address) {
+      const data = { address }
+      return get('get-analyze', data)
     }
   }
 })

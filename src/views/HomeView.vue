@@ -45,13 +45,16 @@
         <div
           v-if="!is_add_carr(item.id)"
           id="box-option" 
-          :class="set_box_class(item)">
-          <p class="hover:text-white" @click.stop="ondelete(item)">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-              <path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
-              <path fill-rule="evenodd" d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5Zm5.22 1.72a.75.75 0 0 1 1.06 0L10 10.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L11.06 12l1.72 1.72a.75.75 0 1 1-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 0 1-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-            </svg>
-          </p>
+          :class="set_box_class(item)"
+        >
+          <svg @click.stop="ondashboard(item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 hover:text-white">
+            <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 0 1 8.25-8.25.75.75 0 0 1 .75.75v6.75H18a.75.75 0 0 1 .75.75 8.25 8.25 0 0 1-16.5 0Z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M12.75 3a.75.75 0 0 1 .75-.75 8.25 8.25 0 0 1 8.25 8.25.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V3Z" clip-rule="evenodd" />
+          </svg>
+          <svg @click.stop="ondelete(item)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 hover:text-white">
+            <path d="M2 3a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H2Z" />
+            <path fill-rule="evenodd" d="M2 7.5h16l-.811 7.71a2 2 0 0 1-1.99 1.79H4.802a2 2 0 0 1-1.99-1.79L2 7.5Zm5.22 1.72a.75.75 0 0 1 1.06 0L10 10.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L11.06 12l1.72 1.72a.75.75 0 1 1-1.06 1.06L10 13.06l-1.72 1.72a.75.75 0 0 1-1.06-1.06L8.94 12l-1.72-1.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+          </svg>
         </div>
       </div>
     </div>
@@ -62,7 +65,7 @@
 import router from '@/router';
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const arrs = ref([{ id: 'na' }])
 const list = MindStore().load_mind_list()
@@ -100,8 +103,17 @@ const ondelete = item => {
   list.forEach(t => arrs.value.push(t))
 }
 
+const ondashboard = item => {
+  router.push({
+    name: 'dashboard',
+    params: {
+      address: item.id || item.address
+    }
+  })
+}
+
 const set_box_class = item => {
-  const arrs = ['flex', 'justify-end', 'px-4', 'items-center', 'text-xs', 'h-0', 'opacity-0', 'text-gray-800']
+  const arrs = ['flex', 'justify-end', 'px-4', 'items-center', 'text-xs', 'h-0', 'opacity-0', 'text-gray-800', 'gap-2']
   arrs.push(item.children[0]?.style.backgroundColor || utils.get_color())
   return arrs
 }
