@@ -63,6 +63,14 @@ const MainData = defineStore('MainData', {
     get_analyze(address) {
       const data = { address }
       return get('get-analyze', data)
+    },
+
+    switch_language(type) {
+      localStorage.setItem('lang', type)
+    },
+
+    check_language() {
+      localStorage.getItem('lang')
     }
   }
 })

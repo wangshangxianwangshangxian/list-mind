@@ -34,6 +34,12 @@ export const OPTIONS = {
   HTML2IMAGE : 'html2image'
 }
 
+export const LANGUAGE = {
+  CHINESE  : 'chinese',
+  ENGLISH  : 'english',
+  CANTONSE : 'cantonese'
+}
+
 export const TIMESTAMP = {
   DAY   : 1000 * 60 * 60 * 24,
   HOUR  : 1000 * 60 * 60,
@@ -178,6 +184,10 @@ export const PAY_KEY = {
 export const ANALYZE = {
   INIT  : 'init',
   VIEWS : 'views'
+}
+
+export const LOCALSTORAGE = {
+  LANG: 'lang'
 }
 
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域

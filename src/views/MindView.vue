@@ -7,7 +7,7 @@
             <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
           </svg>
         </span>
-        <input type="text" placeholder="enter your title" class="w-6/12 min-w-80 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
+        <input type="text" :placeholder="proxy.$lang('请输入标题')" class="w-6/12 min-w-80 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
       </div>
       <div class="flex-1 text-right">
         <p v-if="MindStore().is_exam_mode()">
@@ -132,7 +132,7 @@ const onsave = e => {
     e.preventDefault()
     nextTick(() => {
       MindStore().save()
-      proxy.$message('保存成功')
+      proxy.$message(proxy.$lang("保存成功"))
     })
   }
 }
@@ -153,15 +153,15 @@ const onblockclick = id => {
 
 const options = computed(() => {
   const arrs = []
-  const a    = { key: OPTIONS.HOME,        label: '回到主页',   tips: '' }
-  const b    = { key: OPTIONS.SAVE,        label: '保存',      tips: `本地保存 ${MainData().get_hot_info(HOT_OPTION.SAVE)?.keys.join(' + ') || ''}` }
-  const c    = { key: OPTIONS.SAVE_REMOTE, label: '保存到云端', tips: '可在不同设备查看' }
-  const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
-  const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
-  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips: '输出观点 !' }
-  const g    = { key: OPTIONS.ANALYZE,     label: '数据',      tips: '导图商业数据' }
-  const h    = { key: OPTIONS.SPEECH,      label: '演讲模式',   tips: '开会大法宝' }
-  const i    = { key: OPTIONS.HTML2IMAGE,  label: '导出为图片', tips: '' }
+  const a    = { key: OPTIONS.HOME,        label: proxy.$lang('回到主页'),   tips: '' }
+  const b    = { key: OPTIONS.SAVE,        label: proxy.$lang('保存'),      tips: `${proxy.$lang('本地保存')} ${MainData().get_hot_info(HOT_OPTION.SAVE)?.keys.join(' + ') || ''}` }
+  const c    = { key: OPTIONS.SAVE_REMOTE, label: proxy.$lang('保存到云端'), tips: proxy.$lang('可在不同设备查看') }
+  const d    = { key: OPTIONS.EXAM,        label: proxy.$lang('考试模式'),   tips: proxy.$lang('学生党利器') }
+  const e    = { key: OPTIONS.GUEST,       label: proxy.$lang('读者模式'),   tips: proxy.$lang('别人看到的状态') }
+  const f    = { key: OPTIONS.SHARE,       label: proxy.$lang('分享'),      tips: proxy.$lang('输出观点 !') }
+  const g    = { key: OPTIONS.ANALYZE,     label: proxy.$lang('数据'),      tips: proxy.$lang('导图商业数据') }
+  const h    = { key: OPTIONS.SPEECH,      label: proxy.$lang('演讲模式'),   tips: proxy.$lang('开会大法宝') }
+  const i    = { key: OPTIONS.HTML2IMAGE,  label: proxy.$lang('导出为图片'), tips: '' }
   
   if (MindStore().is_guest_mode()) {
     arrs.push(...[a, b, d, g, h, i])
@@ -185,14 +185,14 @@ const onoptionselect = async item => {
   }
   else if (item.key === OPTIONS.SAVE) {
     MindStore().save()
-    proxy.$message('保存成功')
+    proxy.$message(proxy.$lang('保存成功'))
   }
   else if (item.key === OPTIONS.EXAM) {
     if (MindStore().is_exam_mode()) {
       return
     }
     MindStore().switch_mode(MODE.EXAM)
-    proxy.$message('「 考试模式 」，点击「 块 」显示答案', MESSAGE_TYPE.INFO, { timeout: 5000 })
+    proxy.$message(proxy.$lang('「 考试模式 」，点击「 块 」显示答案'), MESSAGE_TYPE.INFO, { timeout: 5000 })
   }
   else if (item.key === OPTIONS.GUEST) {
     if (MindStore().is_guest_mode()) {
@@ -335,7 +335,7 @@ const share = async () => {
     show_share.value = true
     return
   }
-  proxy.$message('请先保存到云端', MESSAGE_TYPE.WARN)
+  proxy.$message(proxy.$lang('请先保存到云端'), MESSAGE_TYPE.WARN)
 }
 const onshareclose = () => {
   show_share.value = false
@@ -344,7 +344,7 @@ const onshareclose = () => {
 const analyze = () => {
   const address = MindStore().mind?.address || null
   if (!address)
-    return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
+    return proxy.$message(proxy.$lang('找不到 address'), MESSAGE_TYPE.ERROR)
   router.push({
     name: 'dashboard',
     params: { address: id }
@@ -352,8 +352,8 @@ const analyze = () => {
 }
 
 const speech = () => {
-  proxy.$message('暂未开放，敬请期待，这个模式很棒，灵感来自「 xMind 」💗', MESSAGE_TYPE.INFO)
-  proxy.$message('它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！', MESSAGE_TYPE.INFO, { timeout: 10000 })
+  proxy.$message(proxy.$lang('暂未开放，敬请期待，这个模式很棒，灵感来自「 xMind 」💗'), MESSAGE_TYPE.INFO)
+  proxy.$message(proxy.$lang('它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！'), MESSAGE_TYPE.INFO, { timeout: 10000 })
 }
 
 const mind_content_box = ref(null)
@@ -361,8 +361,8 @@ const save_image = () => {
   html2image(mind_content_box.value, true, mind.title)
   .then(img_base64 => {
     if (!img_base64)
-      return proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
-      proxy.$message('保存成功，已下载到本地')
+      return proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
+      proxy.$message(proxy.$lang('保存成功，已下载到本地'))
   })
 }
 
@@ -379,10 +379,10 @@ const save_remote = async () => {
   else {
     const flag = await MindStore().save_remote()
     if (flag) {
-      const message = `成功保存到云端，<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">点我查看商业数据</a>`
+      const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
       return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
     }
-    proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
+    proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
   }
 }
 </script>

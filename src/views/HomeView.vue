@@ -70,6 +70,7 @@ import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
 import { getCurrentInstance, ref } from 'vue';
 
+const { proxy } = getCurrentInstance()
 const arrs = ref([{ id: 'na' }])
 const list = MindStore().load_mind_list()
 list.sort((a, b) => new Date(b.update_time) - new Date(a.update_time)).forEach(t => arrs.value.push(t))
@@ -97,7 +98,7 @@ const oncardclick = info => {
 }
 
 const ondelete = item => {
-  const flag = confirm(`确认删除?`)
+  const flag = confirm(proxy.$lang('确认删除?'))
   if (!flag)
    return
   MindStore().delete_mind(item.address)
@@ -124,7 +125,6 @@ const set_box_class = item => {
 const onsetting = () => {
   router.push({ name: 'setting default' })
 }
-const { proxy } = getCurrentInstance()
 const onshare = item => proxy.$share(item.address)
 
 </script>
