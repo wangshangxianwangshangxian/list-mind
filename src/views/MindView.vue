@@ -160,15 +160,16 @@ const options = computed(() => {
   const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
   const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '输出观点 !' }
   const g    = { key: OPTIONS.ANALYZE,     label: '数据',      tips:  '导图商业数据' }
+  const h    = { key: OPTIONS.SPEECH,      label: '演讲模式',   tips:  '开会大法宝' }
   
   if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, b, d, g])
+    arrs.push(...[a, b, d, g, h])
   }
   else if (MindStore().is_exam_mode()) {
     arrs.push(...[a])
   }
   else {
-    arrs.push(...[a, b, c, d, e, f, g])
+    arrs.push(...[a, b, c, d, e, f, g, h])
   }
   return arrs
 })
@@ -203,6 +204,7 @@ const onoptionselect = async item => {
     case OPTIONS.SAVE_REMOTE : save_remote(); break
     case OPTIONS.SHARE       : share();       break
     case OPTIONS.ANALYZE     : analyze();     break
+    case OPTIONS.SPEECH      : speech();      break
   }
 }
 const onquizexam = () => {
@@ -339,12 +341,17 @@ const onshareclose = () => {
 
 const analyze = () => {
   const address = MindStore().mind?.address || null
-    if (!address)
-      return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
-    router.push({
-      name: 'dashboard',
-      params: { address: id }
-    })
+  if (!address)
+    return proxy.$message('找不到 address', MESSAGE_TYPE.ERROR)
+  router.push({
+    name: 'dashboard',
+    params: { address: id }
+  })
+}
+
+const speech = () => {
+  proxy.$message('暂未开放，敬请期待，这个模式很棒，灵感来自「 xMind 」💗', MESSAGE_TYPE.INFO)
+  proxy.$message('它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！', MESSAGE_TYPE.INFO, { timeout: 10000 })
 }
 
 const save_remote = async () => {

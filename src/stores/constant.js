@@ -29,7 +29,8 @@ export const OPTIONS = {
   SHARE      : 'share',
   EXAM       : 'exam_mode',
   GUEST      : 'guest_mode',
-  ANALYZE    : 'analyze'
+  ANALYZE    : 'analyze',
+  SPEECH     : 'speech'
 }
 
 export const TIMESTAMP = {
@@ -182,5 +183,5 @@ export const ANALYZE = {
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
-export const ENVIRONMENT       = ENV.DEV
+export const ENVIRONMENT       = ENV.PROD
 export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.DEV
