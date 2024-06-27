@@ -29,7 +29,9 @@ export default {
       const component = createApp(Message, props, o)
       const box = document.createElement('div')
       component.mount(box)
-      box.style.animation = 'in_1 .2s'
+      box.style.animation      = 'in_1 .2s'
+      box.style.display        = 'flex'
+      box.style.justifyContent = 'center'
       container.appendChild(box)
       
       await new Promise(succ => setTimeout(succ, o.timeout - 500))
