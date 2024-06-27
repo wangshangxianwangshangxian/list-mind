@@ -1,6 +1,7 @@
 import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
 import axios from "axios"
 import { ec } from "elliptic"
+import html2canvas from 'html2canvas'
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
   const d       = new Date(time_stamp)
@@ -145,6 +146,24 @@ const get_ip = () => {
         resolve('')
       })
   })
+}
+
+export const html2image = async (el, download = false, file_name) => {
+  try {
+    const canvas = await html2canvas(el)
+    const image  = canvas.toDataURL('image/png')
+    if (download) {
+      const link = document.createElement('a')
+      link.href = image
+      link.download = file_name
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+    return image
+  } catch (error) {
+    return ''
+  }
 }
 
 export default {

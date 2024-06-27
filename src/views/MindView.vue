@@ -19,7 +19,7 @@
         </p>
       </div>
     </header>
-    <div class="flex flex-1 overflow-y-hidden">
+    <div class="flex flex-1 overflow-y-hidden" ref="mind_content_box">
       <div class="flex-1 overflow-x-auto overflow-y-auto p-8 shrink-0">
         <div class="flex flex-col gap-8 items-center justify-center min-h-full shrink-0">
           <Block
@@ -78,7 +78,7 @@
 <script setup>
 import MindStore from '@/stores/MindStore';
 import MainData from '@/stores/MainData';
-import utils from '@/utils/utils';
+import utils, { html2image } from '@/utils/utils';
 import { computed, getCurrentInstance, nextTick, onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
 import Block from '@/components/Block.vue'
 import Options from '@/components/Options.vue'
@@ -158,18 +158,19 @@ const options = computed(() => {
   const c    = { key: OPTIONS.SAVE_REMOTE, label: '保存到云端', tips: '可在不同设备查看' }
   const d    = { key: OPTIONS.EXAM,        label: '考试模式',   tips: '学生党利器'}
   const e    = { key: OPTIONS.GUEST,       label: '读者模式',   tips: '别人看到的状态'}
-  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips:  '输出观点 !' }
-  const g    = { key: OPTIONS.ANALYZE,     label: '数据',      tips:  '导图商业数据' }
-  const h    = { key: OPTIONS.SPEECH,      label: '演讲模式',   tips:  '开会大法宝' }
+  const f    = { key: OPTIONS.SHARE,       label: '分享',      tips: '输出观点 !' }
+  const g    = { key: OPTIONS.ANALYZE,     label: '数据',      tips: '导图商业数据' }
+  const h    = { key: OPTIONS.SPEECH,      label: '演讲模式',   tips: '开会大法宝' }
+  const i    = { key: OPTIONS.HTML2IMAGE,  label: '导出为图片', tips: '' }
   
   if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, b, d, g, h])
+    arrs.push(...[a, b, d, g, h, i])
   }
   else if (MindStore().is_exam_mode()) {
     arrs.push(...[a])
   }
   else {
-    arrs.push(...[a, b, c, d, e, f, g, h])
+    arrs.push(...[a, b, c, d, e, f, g, h, i])
   }
   return arrs
 })
@@ -205,6 +206,7 @@ const onoptionselect = async item => {
     case OPTIONS.SHARE       : share();       break
     case OPTIONS.ANALYZE     : analyze();     break
     case OPTIONS.SPEECH      : speech();      break
+    case OPTIONS.HTML2IMAGE  : save_image();  break
   }
 }
 const onquizexam = () => {
@@ -352,6 +354,16 @@ const analyze = () => {
 const speech = () => {
   proxy.$message('暂未开放，敬请期待，这个模式很棒，灵感来自「 xMind 」💗', MESSAGE_TYPE.INFO)
   proxy.$message('它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！', MESSAGE_TYPE.INFO, { timeout: 10000 })
+}
+
+const mind_content_box = ref(null)
+const save_image = () => {
+  html2image(mind_content_box.value, true, mind.title)
+  .then(img_base64 => {
+    if (!img_base64)
+      return proxy.$message('保存失败', MESSAGE_TYPE.ERROR)
+      proxy.$message('保存成功，已下载到本地')
+  })
 }
 
 const save_remote = async () => {

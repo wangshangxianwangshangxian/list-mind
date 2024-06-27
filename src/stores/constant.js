@@ -30,7 +30,8 @@ export const OPTIONS = {
   EXAM       : 'exam_mode',
   GUEST      : 'guest_mode',
   ANALYZE    : 'analyze',
-  SPEECH     : 'speech'
+  SPEECH     : 'speech',
+  HTML2IMAGE : 'html2image'
 }
 
 export const TIMESTAMP = {
