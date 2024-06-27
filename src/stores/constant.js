@@ -173,6 +173,11 @@ export const PAY_KEY = {
   ALIPAY : 'alipay'
 }
 
+export const ANALYZE = {
+  INIT  : 'init',
+  VIEWS : 'views'
+}
+
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64

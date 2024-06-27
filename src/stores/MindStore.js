@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { DIRECTION, MODE } from "./constant";
+import { ANALYZE, DIRECTION, MODE } from "./constant";
 import { get, post } from "@/utils/network";
 import { ERROR_CODE } from "./errorcode";
 
@@ -224,7 +224,14 @@ const MindStore = defineStore('MindStore', {
       if (resp.code === ERROR_CODE.SUCCESS) {
         this.mind = resp.data
         this.save()
-        return true
+        const data = {
+          type    : ANALYZE.INIT,
+          address : this.mind.address
+        }
+        const resp2 = await post('set-analyze', data)
+        if (resp2.code === ERROR_CODE.SUCCESS) {
+          return true
+        }
       }
       
       return false

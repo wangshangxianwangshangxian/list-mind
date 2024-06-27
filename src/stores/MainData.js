@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { BOARD_KEY, HOT_OPTION } from "./constant";
+import { ANALYZE, BOARD_KEY, HOT_OPTION } from "./constant";
+import { post } from "@/utils/network";
 
 const MainData = defineStore('MainData', {
   state () {
@@ -49,6 +50,14 @@ const MainData = defineStore('MainData', {
 
     get_hot_info(key) {
       return this.hots.find(a => a.key === key)
+    },
+
+    analyze(address) {
+      const data = {
+        type    : ANALYZE.VIEWS,
+        address : address
+      }
+      post('set-analyze', data)
     }
   }
 })

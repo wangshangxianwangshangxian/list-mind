@@ -111,6 +111,8 @@ onBeforeMount(async () => {
   else {
     MindStore().init_mind(info)
   }
+  if (MindStore().had_remoted())
+    MainData().analyze(mind.address)
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
