@@ -1,6 +1,6 @@
 <template>
   <main class="px-8 pb-8">
-    <header class="text-4xl py-8 flex gap-2 items-baseline justify-between">
+    <header class="text-4xl py-8 flex gap-2 items-baseline justify-between sticky top-0 left-0 bg-white">
       <div>
         <a href="/" :class="`border-b-2 ${utils.get_border_color()}`">
           <span :class="utils.get_text_color()">L</span>
@@ -41,7 +41,7 @@
           </svg>
           <template v-else>{{ item.title }}</template>
         </p>
-        <div v-if="!is_add_carr(item.id)" class="text-right pr-2 pb-2 text-gray-400 text-xs">更新时间：{{ item.update_time }}</div>
+        <div v-if="!is_add_carr(item.id)" class="text-right pr-2 pb-2 text-gray-400 text-xs">{{ item.update_time }}</div>
         <div
           v-if="!is_add_carr(item.id)"
           id="box-option" 
