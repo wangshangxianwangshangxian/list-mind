@@ -10,7 +10,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
-        <input type="text" class="focus:outline-none focus:bg-white w-full bg-transparent" placeholder="Search by Address" v-model="search_message" />
+        <input type="text" class="focus:outline-none focus:bg-white w-full bg-transparent" :placeholder="proxy.$lang('输入address进行搜索，如0x1234567890...')" v-model="search_message" />
         <svg v-show="show_clear_icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
@@ -59,9 +59,9 @@
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
         <p class="flex gap-8 items-center">
-          <span>今日浏览量: {{ today_views }}</span>
-          <span>昨日: {{ lastday_views }}</span>
-          <span>总量: {{ total_views }}</span>
+          <span>{{ proxy.$lang('今日浏览量') }}: {{ today_views }}</span>
+          <span>{{ proxy.$lang('昨日') }}: {{ lastday_views }}</span>
+          <span>{{ proxy.$lang('总量') }} : {{ total_views }}</span>
         </p>
         <SwitchButton :labels="analyze_data.tabs.map(item => item.label)" @c_swicth="index => onswitchviews('views', index)"></SwitchButton>
       </div>
@@ -70,9 +70,9 @@
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
         <p class="flex gap-8 items-center">
-          <span>今日新增用户: {{ today_users }}</span>
-          <span>昨日: {{ lastday_users }}</span>
-          <span>总量: {{ total_users }}</span>
+          <span>{{ proxy.$lang('今日新增用户') }}: {{ today_users }}</span>
+          <span>{{ proxy.$lang('昨日') }}: {{ lastday_users }}</span>
+          <span>{{ proxy.$lang('总量') }} : {{ total_users }}</span>
         </p>
         <SwitchButton :labels="analyze_data.tabs.map(item => item.label)" @c_swicth="index => onswitchviews('users', index)"></SwitchButton>
       </div>
@@ -80,14 +80,14 @@
     </Card>
     <Card :width="680">
       <div class="flex justify-between text-sm text-gray-800 my-1">
-        <p>创建时间<br />{{ mind.create_time }}</p>
-        <p>最后更新时间<br />{{ mind.update_time }}</p>
-        <p>上传时间<br />{{ mind.update_time }}</p>
+        <p>{{ proxy.$lang('创建时间') }}<br />{{ mind.create_time }}</p>
+        <p>{{ proxy.$lang('最后更新时间') }}<br />{{ mind.update_time }}</p>
+        <p>{{ proxy.$lang('上传时间') }}<br />{{ mind.update_time }}</p>
       </div>
     </Card>
   </div>
   <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" />
-  <Dialog v-if="show_qrcode" title="分享本页地址">
+  <Dialog v-if="show_qrcode" :title="proxy.$lang('分享本页地址')">
     <img :src="QRcode" width="200" height="200" />
   </Dialog>
 </template>
@@ -206,9 +206,9 @@ const generate_chart_options_params = field => {
 
 const analyze_data = reactive({
   tabs: [
-    { label : '近1周',  rows : [] },
-    { label : '近1月',  rows : [] },
-    { label : '近1年',  rows  : []}    
+    { label : proxy.$lang('近1周'),  rows : [] },
+    { label : proxy.$lang('近1月'),  rows : [] },
+    { label : proxy.$lang('近1年'),  rows  : []}    
   ],
   views: {
     chart   : null,
@@ -249,7 +249,7 @@ const get_analyze_data = async () => {
     analyze_data.users.data = resp.data.users
     return
   }
-  proxy.$message('获取数据信息异常', MESSAGE_TYPE.ERROR)
+  proxy.$message(proxy.$lang('获取数据信息异常'), MESSAGE_TYPE.ERROR)
 }
 
 const set_option = type => {
@@ -308,8 +308,8 @@ const onsaveremote = () => {
 
 const oncopy = () => {
   navigator.clipboard.writeText(mind.value.address)
-    .then(() => proxy.$message('已将地址复制到剪切板', MESSAGE_TYPE.SUCCESS))
-    .catch(() => proxy.$message('复制失败，请重试', MESSAGE_TYPE.ERROR))
+    .then(() => proxy.$message(proxy.$lang('已将地址复制到剪切板'), MESSAGE_TYPE.SUCCESS))
+    .catch(() => proxy.$message(proxy.$lang('复制失败，请重试'), MESSAGE_TYPE.ERROR))
 }
 
 const QRcode = ref('')

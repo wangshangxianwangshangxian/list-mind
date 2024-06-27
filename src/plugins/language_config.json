@@ -4,6 +4,11 @@
     "english": "Panel",
     "cantonese": "面板"
   },
+  "输入address进行搜索，如0x1234567890...": {
+    "chinese": "输入address进行搜索，如0x1234567890...",
+    "english": "Search by address, such as 0x1234567890...",
+    "cantonese": "输入address进行搜索，如0x1234567890..."
+  },
   "点我查看": {
     "chinese": "点我查看",
     "english": "Click to view",
@@ -18,6 +23,76 @@
     "chinese": "设置付费阅读",
     "english": "Set up paid reading",
     "cantonese": "設置付費閱讀"
+  },
+  "今日浏览量": {
+    "chinese": "今日浏览量",
+    "english": "Today's Views",
+    "cantonese": "今日瀏覽量"
+  },
+  "昨日": {
+    "chinese": "昨日",
+    "english": "Yesterday",
+    "cantonese": "昨日"
+  },
+  "总量": {
+    "chinese": "总量",
+    "english": "Total",
+    "cantonese": "總量"
+  },
+  "今日新增用户": {
+    "chinese": "今日新增用户",
+    "english": "New Users Today",
+    "cantonese": "今日新增用戶"
+  },
+  "创建时间": {
+    "chinese": "创建时间",
+    "english": "Creation Time",
+    "cantonese": "創建時間"
+  },
+  "最后更新时间": {
+    "chinese": "最后更新时间",
+    "english": "Last Update Time",
+    "cantonese": "最後更新時間"
+  },
+  "上传时间": {
+    "chinese": "上传时间",
+    "english": "Upload Time",
+    "cantonese": "上傳時間"
+  },
+  "分享本页地址": {
+    "chinese": "分享本页地址",
+    "english": "Share this Page's Address",
+    "cantonese": "分享本頁地址"
+  },
+  "近1周": {
+    "chinese": "近1周",
+    "english": "Last 1 Week",
+    "cantonese": "近1周"
+  },
+  "近1月": {
+    "chinese": "近1月",
+    "english": "Last 1 Month",
+    "cantonese": "近1月"
+  },
+  "近1年": {
+    "chinese": "近1年",
+    "english": "Last 1 Year",
+    "cantonese": "近1年"
+  },
+  "获取数据信息异常": {
+    "chinese": "获取数据信息异常",
+    "english": "Error Retrieving Data",
+    "cantonese": "獲取數據信息異常"
+  },
+  "已将地址复制到剪切板": {
+    "chinese": "已将地址复制到剪切板",
+    "english": "Address Copied to Clipboard",
+    "cantonese": "已將地址複製到剪貼板"
+  },
+  "复制失败，请重试": {
+    "chinese": "复制失败，请重试",
+    "english": "Copy Failed, Please Try Again",
+    "cantonese": "複製失敗，請重試"
   },
   "确认删除?": {
     "chinese": "确认删除",
