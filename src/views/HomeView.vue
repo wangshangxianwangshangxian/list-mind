@@ -12,6 +12,9 @@
           <span :class="utils.get_text_color()">n</span>
           <span :class="utils.get_text_color()">d</span>
         </a>
+        <span class="text-sm text-gray-500 ml-2">
+          思路有条理
+        </span>
       </div>
       <div class="flex gap-2">
         <svg @click="onsetting" class="size-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

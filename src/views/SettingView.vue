@@ -59,8 +59,9 @@
         </ul>
       </div>
       <!-- 关于 -->
-      <div v-if="active === 'about'">
-        <p>0.8.2</p>
+      <div v-if="active === 'about'" class="flex flex-col items-center justify-center text-gray-700 gap-4">
+        <img src="@/assets/favicon.png" class="max-w-52 max-h-52" />
+        <p>version {{ VersionStore().version }}</p>
       </div>
     </div>
     <div class="w-60"></div>
@@ -76,6 +77,7 @@ import { getCurrentInstance, ref, watch } from 'vue';
 import Header from '@/components/Header.vue'
 import Card from '@/components/Card.vue'
 import LANGUAGE_CONFIG from '@/plugins/language_config.json';
+import VersionStore from '@/stores/VersionStore';
 
 const { proxy } = getCurrentInstance()
 const tabs = ref([])
