@@ -21,7 +21,7 @@ export default {
         container.style.flexDirection   = 'column'
         container.style.gap             = '20px'
         container.style.transform       = 'translateX(-50%)'
-        container.style.zIndex          = 999999
+        container.style.zIndex          = 7777777
         document.body.appendChild(container)
       }
 
