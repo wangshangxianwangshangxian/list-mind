@@ -257,19 +257,19 @@ const MindStore = defineStore('MindStore', {
     delete_block(id) {
       const block = this.get_block(id)
       const p_block = this.get_block(block.pid)
+      this.collect_block_ids(id).forEach(a => {
+        const index = this.blocks.findIndex(s => s.id === a.id)
+        this.blocks.splice(index, 1)
+      })
       if (!p_block) {
         const mind  = this.mind
         let index = mind.children.findIndex(c => c.id === id)
         mind.children.splice(index, 1)
-        index = this.blocks.indexOf(block)
-        this.blocks.splice(index, 1)
         return block
       }
 
       let index = p_block.children.findIndex(c => c.id === id)
       p_block.children.splice(index, 1)
-      index = this.blocks.indexOf(block)
-      this.blocks.splice(index, 1)
       return block
     },
 
@@ -408,6 +408,19 @@ const MindStore = defineStore('MindStore', {
     set_image(id, base64) {
       const block          = this.get_block(id)
       block.addition.img64 = base64
+    },
+
+    collect_block_ids(id) {
+      const arrs = [id]
+      const handler = children => {
+        children.forEach(a => {
+          arrs.push(a.id)
+          handler(a.children)
+        })
+      }
+      const block = this.get_block(id)
+      handler(block.children)
+      return arrs
     }
   }
 })
