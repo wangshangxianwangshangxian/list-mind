@@ -64,7 +64,7 @@ const onmousemove = e => {
     const el       = document.getElementById(`block-l-${block.id}`)
     if (!el) continue
     const el_rect  = el.getBoundingClientRect()
-    const distance = utils.calc_distance(rect.x, rect.y, el_rect.x, el_rect.y)
+    const distance = utils.calc_distance(rect.x, rect.y, el_rect.x + el_rect.width / 2, el_rect.y + el_rect.height / 2)
     if (distance > MOVE_MAX_DSITANCE) continue
     
     if (!valid_block.target) {
@@ -82,7 +82,7 @@ const onmousemove = e => {
   }
 
   if (!valid_block.target) return
-  const angle = utils.calc_angle(valid_block.rect.x, valid_block.rect.y, rect.x, rect.y)
+  const angle = utils.calc_angle(valid_block.rect.x + valid_block.rect.width / 2, valid_block.rect.y + valid_block.rect.height / 2, rect.x, rect.y)
   const ranges = [
     [0   ,   45, DIRECTION.RIGHT],
     [45  ,  180, DIRECTION.DOWN ],
@@ -101,15 +101,15 @@ const show_path = (block, dir) => {
   const p_block    = MindStore().get_block(block.pid)
   
   const block_el   = document.getElementById(`block-l-${block.id}`)
-  const p_block_el = document.getElementById(`block-l-${p_block.id}`)
-
-  if (!block_el || !p_block_el) return
-
+  
+  if (!block_el) return
   const block_rect   = block_el.getBoundingClientRect()
-  const p_block_rect = p_block_el.getBoundingClientRect()
   const index = MindStore().get_block_index(block.id)
   
   if (dir === DIRECTION.DOWN) {
+    const p_block_el = document.getElementById(`block-l-${p_block.id}`)
+    if (!p_block_el) return
+    const p_block_rect = p_block_el.getBoundingClientRect()
     const next_block = p_block.children[index + 1]
     let offset_y = 0
     if (next_block) {
@@ -137,6 +137,8 @@ const show_path = (block, dir) => {
     return
   }
   if (dir === DIRECTION.UP) {
+    const p_block_el = document.getElementById(`block-l-${p_block.id}`)
+    if (!p_block_el) return
     const last_block = p_block.children[index -1]
     let offset_y = 0
     if (last_block) {
@@ -147,6 +149,7 @@ const show_path = (block, dir) => {
       offset_y = block_rect.height
     }
 
+    const p_block_rect = p_block_el.getBoundingClientRect()
     const start_x = p_block_rect.x + p_block_rect.width
     const start_y = p_block_rect.y + p_block_rect.height / 2
     const end_x   = block_rect.x
