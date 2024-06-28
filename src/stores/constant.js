@@ -194,5 +194,5 @@ export const LOCALSTORAGE = {
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
-export const ENVIRONMENT       = ENV.PROD
+export const ENVIRONMENT       = ENV.DEV
 export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.DEV

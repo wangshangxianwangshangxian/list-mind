@@ -22,4 +22,7 @@ app.use(message)
 app.use(share)
 app.use(language)
 
+import loading from './directives/loading'
+app.directive('loading', loading)
+
 app.mount('#app')
