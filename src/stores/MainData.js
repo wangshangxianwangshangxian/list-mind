@@ -10,21 +10,28 @@ const MainData = defineStore('MainData', {
   },
 
   actions: {
-    init_hots() {
+    init_hots(app) {
+      const $lang = app.config.globalProperties.$lang
+      const config = [
+        { key: HOT_OPTION.SAVE,   label: $lang('保存'),             keys: [BOARD_KEY.SHIFT, 's'] },
+        { key: HOT_OPTION.LEFT,   label: $lang('光标向左移动一个块'), keys: [BOARD_KEY.SHIFT, 'ArrowLeft'] },
+        { key: HOT_OPTION.RIGHT,  label: $lang('向右一个块移动'),     keys: [BOARD_KEY.SHIFT, 'ArrowRight'] },
+        { key: HOT_OPTION.UP,     label: $lang('然后向上'),          keys: [BOARD_KEY.SHIFT, 'ArrowUp'] },
+        { key: HOT_OPTION.DOWN,   label: $lang('最后是向下'),        keys: [BOARD_KEY.SHIFT, 'ArrowDown'] },
+        { key: HOT_OPTION.CREATE, label: $lang('创建「子块」'),      keys: [BOARD_KEY.TAB] },
+        { key: HOT_OPTION.DELETE, label: $lang('删除「块」'),        keys: [BOARD_KEY.SHIFT, BOARD_KEY.BACKSPACE] },
+        { key: HOT_OPTION.MENU,   label: $lang('打开操作菜单'),      keys: [BOARD_KEY.SLASH] }
+      ]
       const hots = localStorage.getItem('hots')
       if (hots) {
         this.hots = JSON.parse(hots)
+        this.hots.forEach(a => {
+          const target = config.find(b => a.key === b.key)
+          a.label = target.label
+        })
       }
       else {
-        this.hots = [
-          { key: HOT_OPTION.SAVE,   label: '保存',             keys: [BOARD_KEY.SHIFT, 's'] },
-          { key: HOT_OPTION.LEFT,   label: '光标向左移动一个块', keys: [BOARD_KEY.SHIFT, 'ArrowLeft'] },
-          { key: HOT_OPTION.RIGHT,  label: '向右一个块移动',     keys: [BOARD_KEY.SHIFT, 'ArrowRight'] },
-          { key: HOT_OPTION.UP,     label: '然后向上',          keys: [BOARD_KEY.SHIFT, 'ArrowUp'] },
-          { key: HOT_OPTION.DOWN,   label: '最后是向下',        keys: [BOARD_KEY.SHIFT, 'ArrowDown'] },
-          { key: HOT_OPTION.CREATE, label: '创建「子块」',      keys: [BOARD_KEY.TAB] },
-          { key: HOT_OPTION.DELETE, label: '删除「块」',        keys: [BOARD_KEY.SHIFT, BOARD_KEY.BACKSPACE] }
-        ]
+        this.hots = config
       }
     },
 

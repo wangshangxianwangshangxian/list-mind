@@ -1,9 +1,10 @@
 import { defineStore } from "pinia"
+import { BOARD_KEY, HOT_OPTION } from "./constant"
 
 const VersionStore = defineStore('VersionStore', {
   state () {
     return {
-      version: '0.8.0',
+      version: '0.8.1',
       footsteps: [
         {
           title: '2024.06',
@@ -34,6 +35,10 @@ const VersionStore = defineStore('VersionStore', {
 
     // 新版本调用方法
     async update() {
+      const data = JSON.parse(localStorage.getItem('hots'))
+      const info = { key: HOT_OPTION.MENU,   label: '打开操作菜单',      keys: [BOARD_KEY.SLASH] }
+      data.push(info)
+      localStorage.setItem('hots', JSON.stringify(data))
       // for (let i = 0; i < localStorage.length; i++) {
       //   const key = localStorage.key(i)
       //   if (!key.startsWith('mind_'))

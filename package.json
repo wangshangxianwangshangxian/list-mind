@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "tailwind": "npx tailwindcss -i ./src/assets/base.css -o ./src/assets/tailwind.css --watch",
     "build": "vite build",
+    "lang": "node ./scripts/language.js",
     "tar": "tar -czvf dist.tar.gz dist/",
     "xtar": "tar -xzvf dist.tar.gz",
     "upload": "scp dist.tar.gz root@47.238.130.238:/client",

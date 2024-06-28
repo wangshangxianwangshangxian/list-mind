@@ -1,4 +1,44 @@
 {
+  "保存": {
+    "chinese": "保存",
+    "english": "Save",
+    "cantonese": "保存"
+  },
+  "光标向左移动一个块": {
+    "chinese": "光标向左移动一个块",
+    "english": "Move the cursor one block to the left",
+    "cantonese": "光标向左移动一个块"
+  },
+  "向右一个块移动": {
+    "chinese": "向右一个块移动",
+    "english": "Move one block to the right",
+    "cantonese": "向右一个块移动"
+  },
+  "然后向上": {
+    "chinese": "然后向上",
+    "english": "Then move up",
+    "cantonese": "然后向上"
+  },
+  "最后是向下": {
+    "chinese": "最后是向下",
+    "english": "Finally, move down",
+    "cantonese": "最后是向下"
+  },
+  "创建「子块」": {
+    "chinese": "创建「子块」",
+    "english": "Create 'sub-block'",
+    "cantonese": "创建「子块」"
+  },
+  "删除「块」": {
+    "chinese": "删除「块」",
+    "english": "Delete 'block'",
+    "cantonese": "删除「块」"
+  },
+  "打开操作菜单": {
+    "chinese": "打开操作菜单",
+    "english": "Open the action menu",
+    "cantonese": "打开操作菜单"
+  },
   "面板": {
     "chinese": "面板",
     "english": "Panel",
@@ -113,11 +153,6 @@
     "chinese": "回到主页",
     "english": "Back to Home",
     "cantonese": "回到主頁"
-  },
-  "保存": {
-    "chinese": "保存",
-    "english": "Save",
-    "cantonese": "保存"
   },
   "本地保存": {
     "chinese": "本地保存",

@@ -148,22 +148,24 @@ export const BORDER_COLOR = {
 }
 
 export const HOT_OPTION = {
-  SAVE  : 'save',
-  LEFT  : 'left',
-  UP    : 'up',
-  RIGHT : 'right',
-  DOWN  : 'down',
-  CREATE: 'create',
-  DELETE: 'delete'
+  SAVE   : 'save',
+  LEFT   : 'left',
+  UP     : 'up',
+  RIGHT  : 'right',
+  DOWN   : 'down',
+  CREATE : 'create',
+  DELETE : 'delete',
+  MENU   : 'menu'
 }
 
 export const BOARD_KEY = {
-  META     : 'Meta',
-  CTRL     : 'Ctrl',
-  ALT      : 'Alt',
-  SHIFT    : 'Shift',
-  TAB      : 'Tab',
-  BACKSPACE: 'Backspace'
+  META      : 'Meta',
+  CTRL      : 'Ctrl',
+  ALT       : 'Alt',
+  SHIFT     : 'Shift',
+  TAB       : 'Tab',
+  BACKSPACE : 'Backspace',
+  SLASH     : 'Slash'
 }
 
 export const ENV = {
