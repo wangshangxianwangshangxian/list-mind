@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 left-0 w-full h-11 flex items-center px-8 mb-4 bg-white" style="z-index: 999999;">
+  <header class="sticky top-0 left-0 w-full h-11 flex items-center px-8 mb-4 bg-white" style="z-index: 55555;">
     <div class="flex-1 shrink-0 flex gap-4">
       <div class="flex gap-4">
         <svg v-if="show_back" @click="onback" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 cursor-pointer">

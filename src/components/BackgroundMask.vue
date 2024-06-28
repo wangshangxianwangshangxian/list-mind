@@ -1,5 +1,5 @@
 <template>
-  <div :class="box_class" style="z-index: 99999999;">
+  <div :class="box_class" style="z-index: 666666;">
     <div class="w-full h-full absolute z-0" @click="onbgclick"></div>
     <slot></slot>
   </div>

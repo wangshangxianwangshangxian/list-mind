@@ -1,6 +1,6 @@
 <template>
   <main class="h-screen flex flex-col scrollbar-hide">
-    <header class="h-11 px-8 flex items-center bg-white" style="z-index: 99999;">
+    <header class="h-11 px-8 flex items-center bg-white" style="z-index: 55555;">
       <div class="h-full flex gap-1 flex-1 items-center">
         <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -37,7 +37,7 @@
       </div>
     </div>
     <!-- 章节 -->
-    <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2" style="z-index: 9999;">
+    <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2" style="z-index: 4444;">
       <div class="flex flex-col gap-2 p-1 rounded-lg bg-white max-w-40">
         <div v-if="mind.children.length" class="overflow-y-auto rounded-lg" style="max-height: 60vh">
           <div

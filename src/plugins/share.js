@@ -8,7 +8,7 @@ export default {
       if (container)
         return
       container = document.createElement('div')
-      container.style.zIndex = 999999
+      container.style.zIndex = 666666
       document.body.appendChild(container)
 
       const props = { 
