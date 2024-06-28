@@ -21,6 +21,7 @@ export const post = (route, data) => {
       .then(resp => resolve(resp))
       .catch(err => {
         console.error('error', err)
+        resolve({})
       })
   })
 }

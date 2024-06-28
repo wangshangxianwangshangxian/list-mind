@@ -9,19 +9,24 @@
         @dragstart = "ondragstart"
       >
         <div></div>
-        <div
-          :id                  = "`block-content-${props.block.id}`"
-          :class               = "content_class"
-          v-html               = "props.block.content"
-          :contenteditable     = "props.block.editable"
-          @focus               = "onfocus"
-          @blur                = "onblur"
-          @input               = "oninput"
-          @keydown             = "onkeydown"
-          @click               = "onclick"
-          @dblclick            = "ondbclick"
-          @paste.prevent       = "onpaste"
-        ></div>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-center" v-if="props.block.addition.img64">
+            <img :src="props.block.addition.img64" class="border shadow-md max-w-40 max-h-40 rounded cursor-pointer" @click="onimgclick" />
+          </div>
+          <div
+            :id                  = "`block-content-${props.block.id}`"
+            :class               = "content_class"
+            v-html               = "props.block.content"
+            :contenteditable     = "props.block.editable"
+            @focus               = "onfocus"
+            @blur                = "onblur"
+            @input               = "oninput"
+            @keydown             = "onkeydown"
+            @click               = "onclick"
+            @dblclick            = "ondbclick"
+            @paste.prevent       = "onpaste"
+          ></div>
+        </div>
         <div class="flex">
           <a 
             v-if="props.block.addition.link" 
@@ -30,10 +35,10 @@
             target="_blank" 
             :title="props.block.addition.link"
           >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-            <path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" />
-            <path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" />
-          </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" />
+              <path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" />
+            </svg>
           </a>
         </div>
       </div>
@@ -196,6 +201,24 @@ const onpaste = e => {
   if (!selection.rangeCount) return
   selection.deleteFromDocument()
   selection.getRangeAt(0).insertNode(document.createTextNode(text))
+}
+
+const onimgclick = () => {
+  const newWindow = window.open()
+  const img       = `<img 
+                        src='${props.block.addition.img64}'
+                        style="
+                          max-width: 90%; 
+                          max-height: 90%; 
+                          position: absolute; 
+                          left: 50%; 
+                          top: 50%; 
+                          transform: translate(-50%, -50%);
+                          border-radius: 4px;
+                          box-shadow: 10px 14px 16px 0px gray
+                        "
+                    >`
+  newWindow.document.write(img)
 }
 </script>
 

@@ -1,10 +1,11 @@
 import { defineStore } from "pinia"
 import { BOARD_KEY, HOT_OPTION } from "./constant"
+import MindStore from "./MindStore"
 
 const VersionStore = defineStore('VersionStore', {
   state () {
     return {
-      version: '0.8.1',
+      version: '0.8.3',
       footsteps: [
         {
           title: '2024.06',
@@ -35,19 +36,24 @@ const VersionStore = defineStore('VersionStore', {
 
     // 新版本调用方法
     async update() {
+      // 新增操作菜单
       const data = JSON.parse(localStorage.getItem('hots'))
       const info = { key: HOT_OPTION.MENU,   label: '打开操作菜单',      keys: [BOARD_KEY.SLASH] }
       data.push(info)
       localStorage.setItem('hots', JSON.stringify(data))
-      // for (let i = 0; i < localStorage.length; i++) {
-      //   const key = localStorage.key(i)
-      //   if (!key.startsWith('mind_'))
-      //     continue
-      //   const mind = JSON.parse(localStorage.getItem(key))
-      //   localStorage.removeItem(key)
-      //   mind.title = Math.floor(Math.random() * 100)
-      //   localStorage.setItem(`mind_${mind.address}`, JSON.stringify(mind))
-      // }
+
+      // 新增img6字段
+      const handle = children => {
+        children.forEach(a => {
+          a.addition.img64 = ''
+          handle(a.children)
+        })
+      }
+      const list = MindStore().load_mind_list()
+      list.forEach(a => {
+        handle(a.children)
+        localStorage.setItem(`mind_${a.address}`, JSON.stringify(a))
+      })
     }
   }
 })

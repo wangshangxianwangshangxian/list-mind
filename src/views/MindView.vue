@@ -30,7 +30,6 @@
             @block-blur      = "onblockblur"
             @block-expand    = "onblockexpand"
             @block-click     = "onblockclick"
-            @block-dbclick   = "onblockdbclick"
             @block-keydown   = "onblockkeydown"
             @block-dragstart = "onblockdragstart"
           ></Block>
@@ -70,7 +69,7 @@
       :block     = "move_info.move_el" 
       @c_mouseup ="onmouseup"
     ></MoveOption>
-    <Addition v-if="addition_info.show" :id="addition_info.id" @c_close="onadditionclose"></Addition>
+    <Addition v-if="addition_info.show" :block="addition_info.block" @c_close="onadditionclose" @c_update="onadditionupdate"></Addition>
     <ShareDialog v-if="show_share" @c_close="onshareclose" :address="mind.address"></ShareDialog>
   </main>
 </template>
@@ -265,6 +264,15 @@ const onblockkeydown = (e, id) => {
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
+
+  else if (target?.key === HOT_OPTION.MENU) {
+    if (MindStore().is_common_mode()) {
+      e.preventDefault()
+      e.target.blur()
+      addition_info.block = MindStore().get_block(id)
+      addition_info.show  = true
+    }
+  }
 }
 
 const onblockblur = (id, content) => {
@@ -297,14 +305,21 @@ const addition_info = reactive({
   show: false,
   id  : null
 })
-const onblockdbclick = id => {
-  if (MindStore().is_common_mode()) {
-    addition_info.id   = id
-    addition_info.show = true
-  }
-}
+
 const onadditionclose = () => {
   addition_info.show = false
+}
+
+const onadditionupdate = additions => {
+  additions.forEach(a => {
+    if (a.key === 'link') {
+      MindStore().set_link(addition_info.block.id, a.value)
+    }
+    else if (a.key === 'image') {
+      MindStore().set_image(addition_info.block.id, a.base64)
+    }
+  })
+  update_refresh()
 }
 
 const show_guest_exit = computed(() => {

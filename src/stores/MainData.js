@@ -20,7 +20,7 @@ const MainData = defineStore('MainData', {
         { key: HOT_OPTION.DOWN,   label: $lang('最后是向下'),        keys: [BOARD_KEY.SHIFT, 'ArrowDown'] },
         { key: HOT_OPTION.CREATE, label: $lang('创建「子块」'),      keys: [BOARD_KEY.TAB] },
         { key: HOT_OPTION.DELETE, label: $lang('删除「块」'),        keys: [BOARD_KEY.SHIFT, BOARD_KEY.BACKSPACE] },
-        { key: HOT_OPTION.MENU,   label: $lang('打开操作菜单'),      keys: [BOARD_KEY.SLASH] }
+        { key: HOT_OPTION.MENU,   label: $lang('打开操作菜单'),      keys: [BOARD_KEY.SHIFT, BOARD_KEY.SLASH] }
       ]
       const hots = localStorage.getItem('hots')
       if (hots) {

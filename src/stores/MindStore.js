@@ -54,7 +54,8 @@ const MindStore = defineStore('MindStore', {
         content : '',
         children: [],
         addition: {
-          link  : ''
+          link  : '',
+          img64 : ''
         },
         style: {
           backgroundColor: utils.get_bg_color()
@@ -233,7 +234,6 @@ const MindStore = defineStore('MindStore', {
           return true
         }
       }
-      
       return false
     },
 
@@ -398,6 +398,16 @@ const MindStore = defineStore('MindStore', {
     // 求稳的话可以发请求给后端。
     had_remoted() {
       return this.mind.upload_time != null
+    },
+
+    set_link(id, link) {
+      const block         = this.get_block(id)
+      block.addition.link = link
+    },
+
+    set_image(id, base64) {
+      const block          = this.get_block(id)
+      block.addition.img64 = base64
     }
   }
 })
