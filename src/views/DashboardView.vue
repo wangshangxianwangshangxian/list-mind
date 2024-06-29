@@ -39,7 +39,7 @@
                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
               </svg>
               {{ proxy.$lang('保存到云端') }}</button>
-            <button v-if="show_sale_btn" class="hover:text-blue-400  flex gap-1">
+            <button v-if="show_sale_btn" class="hover:text-blue-400  flex gap-1" @click="onsale">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                 <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
@@ -86,7 +86,7 @@
       </div>
     </Card>
   </div>
-  <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" />
+  <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" @c_payed="onpayed" />
   <Dialog v-if="show_qrcode" :title="proxy.$lang('分享本页地址')">
     <img :src="QRcode" width="200" height="200" />
   </Dialog>
@@ -103,10 +103,11 @@ import SwitchButton from '@/components/SwitchButton.vue'
 import Dialog from '@/components/Dialog.vue'
 import * as echarts from 'echarts'
 import router from '@/router'
-import { MESSAGE_TYPE, TIMESTAMP } from '@/stores/constant';
+import { ANALYZE, MESSAGE_TYPE } from '@/stores/constant';
 import { toDataURL } from 'qrcode';
 import MainData from '@/stores/MainData';
 import { ERROR_CODE } from '@/stores/errorcode';
+import { post } from '@/utils/network';
 
 const { proxy } = getCurrentInstance()
 const mind = ref({})
@@ -285,7 +286,7 @@ const onswitchviews = (type, index) => {
 const show_save_btn = computed(() => {
   if (!utils.is_private_key(id))
     return false
-  if (mind.value.update_time != null)
+  if (mind.value.upload_time != null)
     return false
   return true
 })
@@ -293,7 +294,7 @@ const show_save_btn = computed(() => {
 const show_sale_btn = computed(() => {
   if (!utils.is_private_key(id))
     return false
-  if (mind.value.update_time == null)
+  if (mind.value.upload_time == null)
     return false
   return true
 })
@@ -304,6 +305,35 @@ const ondiaclose = () => {
 }
 const onsaveremote = () => {
   show_pay.value = true
+}
+const onpayed = async () => {
+  proxy.$message(proxy.$lang('支付成功'))
+  await new Promise(succ => setTimeout(succ, 1000))
+  proxy.$message(proxy.$lang('准备上传导图'))
+
+  const resp = await post('upload-mind', mind.value)
+  if (resp.code === ERROR_CODE.SUCCESS) {
+    mind.value = resp.data
+    mind.update_time = utils.get_time()
+    localStorage.setItem(`mind_${mind.value.address}`, JSON.stringify(mind.value))
+    const data = {
+      type    : ANALYZE.INIT,
+      address : mind.value.address
+    }
+    const resp2 = await post('set-analyze', data)
+    if (resp2.code === ERROR_CODE.SUCCESS) {
+
+      return proxy.$message(proxy.$lang('成功保存到云端'), MESSAGE_TYPE.SUCCESS)
+    }
+    else {
+      proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
+    }
+  }
+  proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
+}
+
+const onsale = () => {
+  proxy.$message(proxy.$lang('还在开发，应该是个能帮助创作者赚点小钱钱的功能🔧'))
 }
 
 const oncopy = () => {

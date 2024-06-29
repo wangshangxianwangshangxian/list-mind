@@ -2,6 +2,8 @@ import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIM
 import axios from "axios"
 import { ec } from "elliptic"
 import html2canvas from 'html2canvas'
+import { post } from "./network"
+import { ERROR_CODE } from "@/stores/errorcode"
 
 const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
   const d       = new Date(time_stamp)

@@ -383,8 +383,7 @@ const save_image = () => {
 
 const save_remote = async () => {
   const flag = MindStore().had_remoted()
-  if (0) {
-  // if (!flag) {
+  if (!flag) {
     MindStore().save()
     router.push({
       name: 'dashboard',

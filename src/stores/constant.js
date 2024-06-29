@@ -192,9 +192,19 @@ export const LOCALSTORAGE = {
   LANG: 'lang'
 }
 
+export const PAY = {
+  ETHER: 'ether'
+}
+
+export const NETWORK = {
+  SEPOLIA : '0xaa36a7',
+  ETHER   : '0x1'
+}
+
 // 拖动 block 时，在多少像素内进行判断是否可以移动到该区域
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
 export const ENVIRONMENT       = ENV.DEV
 export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.DEV
+export const RECIPIENT         = '0xFE5A9B6a64A915Eda55C6FfE36f9a7eB149bB744'
