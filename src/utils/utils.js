@@ -1,27 +1,7 @@
 import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
 import axios from "axios"
-import { ec } from "elliptic"
 import html2canvas from 'html2canvas'
-import { post } from "./network"
-import { ERROR_CODE } from "@/stores/errorcode"
-
-const get_time = (time_stamp = Date.now(), format = 'YYYY-MM-DD hh:mm:ss') => {
-  const d       = new Date(time_stamp)
-  const year    = String(d.getFullYear())    .padStart(4, '0')
-  const month   = String(d.getMonth() + 1)   .padStart(2, '0')
-  const date    = String(d.getDate())        .padStart(2, '0')
-  const hours   = String(d.getHours())       .padStart(2, '0')
-  const minutes = String(d.getMinutes())     .padStart(2, '0')
-  const seconds = String(d.getSeconds())     .padStart(2, '0')
-
-  const date_str = format.replace('YYYY', year)
-    .replace('MM', month)
-    .replace('DD', date)
-    .replace('hh', hours)
-    .replace('mm', minutes)
-    .replace('ss', seconds)
-  return date_str
-}
+import get_time from "./get_time"
 
 const get_time_offset = (offset, format = 'YYYY-MM-DD') => {
   const target   = Date.now() + TIMESTAMP.DAY * offset
@@ -44,14 +24,6 @@ const get_left_time = (start_time = Date.now(), end_time = Date.now(), format = 
     .replace('hh', hour.toString().padStart(2, '0'))
     .replace('mm', mins.toString().padStart(2, '0'))
     .replace('ss', secs.toString().padStart(2, '0'))
-}
-
-const get_url_end_node = () => {
-  const hash = location.hash
-  const arrs = hash.split('/')
-  const temp = arrs[arrs.length - 1]
-  const wenh = temp.split('?')[0]
-  return wenh
 }
 
 const get_color = (type = 'bg', level = 200) => {
@@ -104,13 +76,6 @@ const generate_key = (len = PRIVATE_LEN) => {
   window.crypto.getRandomValues(array)
   const private_key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
   const key         = private_key.slice(0, len)
-  return key
-}
-
-const generate_public_key = private_key => {
-  const curve = new ec('secp256k1')
-  const pair  = curve.keyFromPrivate(private_key)
-  const key   = '0x' + pair.getPublic(true, 'hex').slice(-PUBLIC_LEN)
   return key
 }
 
@@ -169,14 +134,11 @@ export const html2image = async (el, download = false, file_name) => {
 }
 
 export default {
-  get_time,
-  get_url_end_node,
   get_color,
   get_left_time,
   calc_distance,
   calc_angle,
   generate_key,
-  generate_public_key,
   is_private_key,
   is_public_key,
   get_mind_by_public_key_local,

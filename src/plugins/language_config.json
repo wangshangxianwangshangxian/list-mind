@@ -124,6 +124,26 @@
     "english": "Error Retrieving Data",
     "cantonese": "獲取數據信息異常"
   },
+  "支付成功，准备上传导图": {
+    "chinese": "",
+    "english": "",
+    "cantonese": ""
+  },
+  "保存成功， 2s后刷新页面": {
+    "chinese": "",
+    "english": "",
+    "cantonese": ""
+  },
+  "保存失败": {
+    "chinese": "保存失败",
+    "english": "Save Failed",
+    "cantonese": "保存失敗"
+  },
+  "还在开发，应该是个能帮助创作者赚点小钱钱的功能🔧": {
+    "chinese": "",
+    "english": "",
+    "cantonese": ""
+  },
   "已将地址复制到剪切板": {
     "chinese": "已将地址复制到剪切板",
     "english": "Address Copied to Clipboard",
@@ -243,11 +263,6 @@
     "chinese": "它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！",
     "english": "It can play your mind map like a PPT, no more worrying about cumbersome PPTs before meetings!",
     "cantonese": "它可以像 PPT 一樣播放你的導圖，開會前再也不擔心麻煩的 PPT 了！"
-  },
-  "保存失败": {
-    "chinese": "保存失败",
-    "english": "Save Failed",
-    "cantonese": "保存失敗"
   },
   "保存成功，已下载到本地": {
     "chinese": "保存成功，已下载到本地",

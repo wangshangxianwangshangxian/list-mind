@@ -65,12 +65,12 @@ const MainData = defineStore('MainData', {
         type    : ANALYZE.VIEWS,
         address : address
       }
-      post('set-analyze', data)
+      // post('set-analyze', data)
     },
 
     get_analyze(address) {
       const data = { address }
-      return get('get-analyze', data)
+      return get('get-analyze-data', data)
     },
 
     switch_language(type) {

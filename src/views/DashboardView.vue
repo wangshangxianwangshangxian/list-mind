@@ -105,28 +105,28 @@ import * as echarts from 'echarts'
 import router from '@/router'
 import { ANALYZE, MESSAGE_TYPE } from '@/stores/constant';
 import { toDataURL } from 'qrcode';
-import MainData from '@/stores/MainData';
 import { ERROR_CODE } from '@/stores/errorcode';
-import { post } from '@/utils/network';
+import { get, post } from '@/utils/network';
+import get_mind from '@/atom/get_mind';
+import get_local_mind from '@/atom/get_local_mind';
+import get_time from '@/utils/get_time';
+import get_url_end_node from '@/utils/get_url_end_node';
 
 const { proxy } = getCurrentInstance()
 const mind = ref({})
-const id   = utils.get_url_end_node()
-// 先获取云端的，毕竟云端才有所有面板数据，否则拿本地的。
+const id   = get_url_end_node()
+
 onBeforeMount(async () => {
-  const key      = utils.is_private_key(id) ? id : ''
-  const address  = utils.is_public_key(id) ? id : ''
-  let   info     = await MindStore().request_mind(key, address)
-  if (!info) {
-    info = MindStore().load_mind(id)
-    if (!info)
-      return router.push({ name: 'not found' })
+  let resp = await get_mind(id)
+  if (resp.code !== ERROR_CODE.SUCCESS) {
+    const info = get_local_mind(id)
+    if (!info) return router.push({ name: 'not found' })
     init_mind(info)
     mind.value = info
   }
   else {
-    mind.value = info
-    init_mind(info)
+    mind.value = resp.data
+    init_mind(mind.value)
     get_analyze_data()
   }
 })
@@ -244,7 +244,7 @@ const init_analyze_config = () => {
 }
 
 const get_analyze_data = async () => {
-  const resp = await MainData().get_analyze(mind.value.address)
+  const resp = await get('get-analyze-data', { address : mind.value.address })
   if (resp.code === ERROR_CODE.SUCCESS) {
     analyze_data.views.data = resp.data.views
     analyze_data.users.data = resp.data.users
@@ -260,10 +260,10 @@ const set_option = type => {
     analyze_data[type].chart.setOption(options)
 }
 
-const today_views   = computed(() => analyze_data.views.data[utils.get_time(Date.now(), 'YYYY-MM-DD')] || 0)
+const today_views   = computed(() => analyze_data.views.data[get_time(Date.now(), 'YYYY-MM-DD')] || 0)
 const lastday_views = computed(() => analyze_data.views.data[utils.get_time_offset(-1,  'YYYY-MM-DD')] || 0)
 const total_views   = computed(() => Object.entries(analyze_data.views.data).reduce((total, [key, value]) => total + value, 0))
-const today_users   = computed(() => analyze_data.users.data[utils.get_time(Date.now(), 'YYYY-MM-DD')] || 0)
+const today_users   = computed(() => analyze_data.users.data[get_time(Date.now(), 'YYYY-MM-DD')] || 0)
 const lastday_users = computed(() => analyze_data.users.data[utils.get_time_offset(-1,  'YYYY-MM-DD')] || 0)
 const total_users   = computed(() => Object.entries(analyze_data.users.data).reduce((total, [key, value]) => total + value, 0))
 
@@ -306,28 +306,16 @@ const ondiaclose = () => {
 const onsaveremote = () => {
   show_pay.value = true
 }
-const onpayed = async () => {
-  proxy.$message(proxy.$lang('支付成功'))
-  await new Promise(succ => setTimeout(succ, 1000))
-  proxy.$message(proxy.$lang('准备上传导图'))
-
-  const resp = await post('upload-mind', mind.value)
+const onpayed = async ({ from, tx_hash }) => {
+  proxy.$message(proxy.$lang('支付成功，准备上传导图'))
+  const data       = { from, tx_hash, mind: mind.value }
+  const resp       = await post('save-remote-first', data)
   if (resp.code === ERROR_CODE.SUCCESS) {
-    mind.value = resp.data
-    mind.update_time = utils.get_time()
-    localStorage.setItem(`mind_${mind.value.address}`, JSON.stringify(mind.value))
-    const data = {
-      type    : ANALYZE.INIT,
-      address : mind.value.address
-    }
-    const resp2 = await post('set-analyze', data)
-    if (resp2.code === ERROR_CODE.SUCCESS) {
-
-      return proxy.$message(proxy.$lang('成功保存到云端'), MESSAGE_TYPE.SUCCESS)
-    }
-    else {
-      proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
-    }
+    proxy.$message(proxy.$lang('保存成功， 2s后刷新页面'))
+    show_pay.value = false
+    await new Promise(succ => setTimeout(succ, 2000))
+    location.reload()
+    return 
   }
   proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
 }

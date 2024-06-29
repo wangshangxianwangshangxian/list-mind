@@ -78,10 +78,11 @@ import Header from '@/components/Header.vue'
 import Card from '@/components/Card.vue'
 import LANGUAGE_CONFIG from '@/plugins/language_config.json';
 import VersionStore from '@/stores/VersionStore';
+import get_url_end_node from '@/utils/get_url_end_node';
 
 const { proxy } = getCurrentInstance()
 const tabs = ref([])
-const key = utils.get_url_end_node()
+const key = get_url_end_node()
 const active = ref(key || tabs.value[0].key)
 
 const ontabclick = item => {

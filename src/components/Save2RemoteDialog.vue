@@ -41,7 +41,7 @@ const props = defineProps({
 const onpay = async () => {
   const resp = await pay(PAY.ETHER, 0.000001)
   if (resp.code === ERROR_CODE.SUCCESS) {
-    emits('c_payed')
+    emits('c_payed', resp.data)
     return
   }
   else {

@@ -86,9 +86,15 @@ import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
 import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/constant';
+import { ERROR_CODE } from '@/stores/errorcode';
+import { post } from '@/utils/network';
+import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
+import get_mind from '@/atom/get_mind';
+import save_remote from '@/atom/save_remote';
+import get_url_end_node from '@/utils/get_url_end_node';
 
 const { proxy } = getCurrentInstance()
-const id        = utils.get_url_end_node()
+const id        = get_url_end_node()
 const info      = MindStore().load_mind(id) || { children: [] }
 const mind      = reactive(info)
 
@@ -110,8 +116,9 @@ onBeforeMount(async () => {
   else {
     MindStore().init_mind(info)
   }
-  if (MindStore().had_remoted())
-    MainData().analyze(mind.address)
+
+  add_analyze_mind_view(mind.address)
+
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
@@ -201,7 +208,7 @@ const onoptionselect = async item => {
   }
 
   switch (item.key) {
-    case OPTIONS.SAVE_REMOTE : save_remote(); break
+    case OPTIONS.SAVE_REMOTE : save_cloud();  break
     case OPTIONS.SHARE       : share();       break
     case OPTIONS.ANALYZE     : analyze();     break
     case OPTIONS.SPEECH      : speech();      break
@@ -381,9 +388,9 @@ const save_image = () => {
   })
 }
 
-const save_remote = async () => {
-  const flag = MindStore().had_remoted()
-  if (!flag) {
+const save_cloud = async () => {
+  const resp = await get_mind(mind.address)
+  if (resp.code !== ERROR_CODE.SUCCESS) {
     MindStore().save()
     router.push({
       name: 'dashboard',
@@ -391,8 +398,8 @@ const save_remote = async () => {
     })
   }
   else {
-    const flag = await MindStore().save_remote()
-    if (flag) {
+    const resp = await save_remote(mind)
+    if (resp.code === ERROR_CODE.SUCCESS) {
       const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
       return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
     }

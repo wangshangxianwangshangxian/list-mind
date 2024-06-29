@@ -3,6 +3,8 @@ import utils from '@/utils/utils'
 import { ANALYZE, DIRECTION, MODE } from "./constant";
 import { get, post } from "@/utils/network";
 import { ERROR_CODE } from "./errorcode";
+import get_time from "@/utils/get_time";
+import generate_public_key from "@/utils/generate_public_key";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -26,8 +28,8 @@ const MindStore = defineStore('MindStore', {
         id         : utils.generate_key(),
         address    : '',
         title      : '请在这里输入标题',
-        create_time: utils.get_time(),
-        update_time: utils.get_time(),
+        create_time: get_time(),
+        update_time: get_time(),
         upload_time: null,
         expand     : true,
         editable   : true,
@@ -35,7 +37,7 @@ const MindStore = defineStore('MindStore', {
         children   : [],
         ip         : ''
       }
-      data.address = utils.generate_public_key(data.id)
+      data.address = generate_public_key(data.id)
       this.mind    = data
       this.blocks.push(data)
       this.new_block(data.id, { content: '章节' })
@@ -216,24 +218,24 @@ const MindStore = defineStore('MindStore', {
 
     save() {
       const mind = this.mind
-      mind.update_time = utils.get_time()
+      mind.update_time = get_time()
       localStorage.setItem(`mind_${mind.address}`, JSON.stringify(mind))
     },
 
     async save_remote() {
-      const resp = await post('upload-mind', this.mind)
-      if (resp.code === ERROR_CODE.SUCCESS) {
-        this.mind = resp.data
-        this.save()
-        const data = {
-          type    : ANALYZE.INIT,
-          address : this.mind.address
-        }
-        const resp2 = await post('set-analyze', data)
-        if (resp2.code === ERROR_CODE.SUCCESS) {
-          return true
-        }
-      }
+      // const resp = await post('upload-mind', this.mind)
+      // if (resp.code === ERROR_CODE.SUCCESS) {
+      //   this.mind = resp.data
+      //   this.save()
+      //   const data = {
+      //     type    : ANALYZE.INIT,
+      //     address : this.mind.address
+      //   }
+      //   const resp2 = await post('set-analyze', data)
+      //   if (resp2.code === ERROR_CODE.SUCCESS) {
+      //     return true
+      //   }
+      // }
       return false
     },
 

@@ -59,12 +59,12 @@ const pay_eth = async (resp, amount) => {
     }
   }
 
-  // 校验交易有效性
-  const info = {
-    type   : PAY.ETHER,
-    params : { from, tx_hash }
-  }
-  resp = await post('pay', info)
+  resp.data = { from, tx_hash }
+  // const info = {
+  //   type   : PAY.ETHER,
+  //   params : { from, tx_hash }
+  // }
+  // resp = await post('pay', info)
   return resp
 }
 
