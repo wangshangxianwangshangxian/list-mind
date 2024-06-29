@@ -158,7 +158,6 @@ onBeforeMount(async () => {
     analyze_data.users.data = resp.data.users
     return
   }
-  proxy.$message(proxy.$lang('获取数据信息异常'), MESSAGE_TYPE.ERROR)
 })
 
 // 初始化分析表格UI

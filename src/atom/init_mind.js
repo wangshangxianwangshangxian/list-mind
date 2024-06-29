@@ -11,5 +11,6 @@ const handler = children => {
 export default mind => {
   MindStore().mind          = mind
   MindStore().blocks.length = 0
+  MindStore().blocks.push(mind)
   handler(mind.children)
 }

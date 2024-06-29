@@ -205,6 +205,6 @@ export const NETWORK = {
 export const MOVE_MAX_DSITANCE = 100
 export const PRIVATE_LEN       = 64
 export const PUBLIC_LEN        = 40
-export const ENVIRONMENT       = ENV.DEV
+export const ENVIRONMENT       = ENV.PROD
 export const BASE_URL          = ENVIRONMENT === ENV.PROD ? ENV_URL.PROD : ENV_URL.DEV
 export const RECIPIENT         = '0xFE5A9B6a64A915Eda55C6FfE36f9a7eB149bB744'

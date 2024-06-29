@@ -1,5 +1,6 @@
 import { DIRECTION } from "@/stores/constant"
 import get_block from "./get_block"
+import MindStore from "@/stores/MindStore"
 
 export default (id, direction) => {
   if (direction === DIRECTION.LEFT) {
@@ -23,7 +24,7 @@ export default (id, direction) => {
     while(1) {
       p_block = get_block(block.pid)
       index   = p_block.children.indexOf(block)
-      if (this.is_root(p_block.id) && index === 0) {
+      if (MindStore().is_root(p_block.id) && index === 0) {
         return block
       }
 
@@ -42,7 +43,7 @@ export default (id, direction) => {
     while(1) {
       p_block = get_block(block.pid)
       index   = p_block.children.indexOf(block)
-      if (this.is_root(p_block.id) && index === p_block.children.length - 1) {
+      if (MindStore().is_root(p_block.id) && index === p_block.children.length - 1) {
         return block
       }
 
