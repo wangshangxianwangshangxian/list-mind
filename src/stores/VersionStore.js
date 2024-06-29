@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { BOARD_KEY, HOT_OPTION } from "./constant"
 import MindStore from "./MindStore"
+import load_local_minds from "@/atom/load_local_minds"
 
 const VersionStore = defineStore('VersionStore', {
   state () {
@@ -49,7 +50,8 @@ const VersionStore = defineStore('VersionStore', {
           handle(a.children)
         })
       }
-      const list = MindStore().load_mind_list()
+
+      const list = load_local_minds()
       list.forEach(a => {
         handle(a.children)
         localStorage.setItem(`mind_${a.address}`, JSON.stringify(a))

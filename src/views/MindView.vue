@@ -94,6 +94,9 @@ import ERRORCODE from '@/utils/ERRORCODE'
 import init_mind from '@/atom/init_mind';
 import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
 import get_block from '@/atom/get_block';
+import set_block_content from '@/atom/set_block_content';
+import get_direction_block from '@/atom/get_direction_block';
+import save_local from '@/atom/save_local';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
@@ -132,7 +135,7 @@ const onsave = e => {
   if (target?.key === HOT_OPTION.SAVE) {
     e.preventDefault()
     nextTick(() => {
-      MindStore().save()
+      save_local()
       proxy.$message(proxy.$lang("保存成功"))
     })
   }
@@ -185,7 +188,7 @@ const onoptionselect = async item => {
     router.push({ name: 'home' })
   }
   else if (item.key === OPTIONS.SAVE) {
-    MindStore().save()
+    save_local()
     proxy.$message(proxy.$lang('保存成功'))
   }
   else if (item.key === OPTIONS.EXAM) {
@@ -244,25 +247,25 @@ const onblockkeydown = (e, id) => {
   }
   
   else if(target?.key === HOT_OPTION.UP) {
-    const target = MindStore().get_direction_block(id, DIRECTION.UP)
+    const target = get_direction_block(id, DIRECTION.UP)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
 
   else if(target?.key === HOT_OPTION.DOWN) {
-    const target = MindStore().get_direction_block(id, DIRECTION.DOWN)
+    const target = get_direction_block(id, DIRECTION.DOWN)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
 
   else if(target?.key === HOT_OPTION.LEFT) {
-    const target = MindStore().get_direction_block(id, DIRECTION.LEFT)
+    const target = get_direction_block(id, DIRECTION.LEFT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
 
   else if(target?.key === HOT_OPTION.RIGHT) {
-    const target = MindStore().get_direction_block(id, DIRECTION.RIGHT)
+    const target = get_direction_block(id, DIRECTION.RIGHT)
     target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
     nextTick(update_refresh)
   }
@@ -279,7 +282,7 @@ const onblockkeydown = (e, id) => {
 
 const onblockblur = (id, content) => {
   update_refresh()
-  MindStore().set_block_content(id, content)
+  set_block_content(id, content)
 }
 
 const move_info = reactive({
@@ -386,7 +389,7 @@ const save_image = () => {
 const save_cloud = async () => {
   const resp = await get_mind(mind.address)
   if (resp.code !== ERRORCODE.SUCCESS) {
-    MindStore().save()
+    save_local()
     router.push({
       name: 'dashboard',
       params: { address: id }

@@ -68,6 +68,7 @@
 </template>
 
 <script setup>
+import delete_mind from '@/atom/delete_mind';
 import router from '@/router';
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
@@ -75,7 +76,7 @@ import { getCurrentInstance, ref } from 'vue';
 
 const { proxy } = getCurrentInstance()
 const arrs = ref([{ id: 'na' }])
-const list = MindStore().load_mind_list()
+const list = load_local_minds()
 list.sort((a, b) => new Date(b.update_time) - new Date(a.update_time)).forEach(t => arrs.value.push(t))
 
 const is_add_carr = id => id === 'na'
@@ -104,9 +105,9 @@ const ondelete = item => {
   const flag = confirm(proxy.$lang('确认删除?'))
   if (!flag)
    return
-  MindStore().delete_mind(item.address)
+  delete_mind(item.address)
   arrs.value.length = 1
-  const list = MindStore().load_mind_list()
+  const list = load_local_minds()
   list.forEach(t => arrs.value.push(t))
 }
 
