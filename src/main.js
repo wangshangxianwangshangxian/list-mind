@@ -15,11 +15,11 @@ import share from '@/plugins/share'
 import MainData from './stores/MainData'
 import VersionStore from './stores/VersionStore'
 import language from './plugins/language'
-VersionStore().check()
 app.use(message)
 app.use(share)
 app.use(language)
 MainData().init_hots(app)
+VersionStore().check()
 
 import loading from './directives/loading'
 app.directive('loading', loading)
