@@ -11,7 +11,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
         <input type="text" class="focus:outline-none focus:bg-white w-full bg-transparent text-sm" :placeholder="proxy.$lang('输入address进行搜索，如0x1234567890...')" v-model="search_message" />
-        <svg v-show="show_clear_icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <svg v-show="show_clear_icon" @click="search_message = ''" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
       </div>
@@ -27,10 +27,6 @@
             <svg @click="oncopy" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 cursor-pointer">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" />
             </svg>
-            <!-- <svg @click="onqrcode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 cursor-pointer">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
-            </svg> -->
           </div>
           <div>
             <button v-if="show_save_btn" class="hover:text-blue-400 flex gap-1" @click="onsaveremote">
@@ -87,9 +83,6 @@
     </Card>
   </div>
   <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" @c_payed="onpayed" />
-  <Dialog v-if="show_qrcode" :title="proxy.$lang('分享本页地址')">
-    <img :src="QRcode" width="200" height="200" />
-  </Dialog>
 </template>
 <script setup>
 import Header from '@/components/Header.vue'
@@ -111,70 +104,83 @@ import get_mind from '@/atom/get_mind';
 import get_local_mind from '@/atom/get_local_mind';
 import get_time from '@/utils/get_time';
 import get_url_end_node from '@/utils/get_url_end_node';
+import remain_root_only from '@/atom/remain_root_only';
+import generate_chart_options from '@/utils/generate_chart_options';
+import get_address from '@/utils/get_address';
 
 const { proxy } = getCurrentInstance()
-const mind = ref({})
-const id   = get_url_end_node()
 
+// 先加载本地导图，如果没有再加载云端
+const id        = get_url_end_node()
+const mind      = ref(get_local_mind(id) || { children : [] })
 onBeforeMount(async () => {
-  let resp = await get_mind(id)
-  if (resp.code !== ERRORCODE.SUCCESS) {
-    const info = get_local_mind(id)
-    if (!info) return router.push({ name: 'not found' })
-    init_mind(info)
-    mind.value = info
+  if (!mind.value.address) {
+    const resp = await get_mind(id)
+    if (resp.code === ERRORCODE.SUCCESS) {
+      mind.value = resp.data
+      remain_root_only(mind.value)
+    }
+    else {
+      router.push({ name: 'not found' })
+    }
   }
   else {
-    mind.value = resp.data
-    init_mind(mind.value)
-    get_analyze_data()
+    remain_root_only(mind.value)
   }
 })
 
-const init_mind = info => {
-  info.children.forEach(b => {
-    b.visible  = true
-    b.editable = false
-    b.expand   = false
-  })
-}
-
+// 搜索
 const search_message = ref('')
 const show_clear_icon = computed(() => search_message.value.length > 0)
 
-onMounted(() => {
-  init_analyze_config()
+// 初始化分析数据
+const analyze_data = reactive({
+  tabs: [
+    { label : proxy.$lang('近1周'),  rows : [] },
+    { label : proxy.$lang('近1月'),  rows : [] },
+    { label : proxy.$lang('近1年'),  rows  : []}    
+  ],
+  views: {
+    chart   : null,
+    active  : 0,
+    data    : {}
+  },
+  users: {
+    chart   : null,
+    active  : 0,
+    data    : {}
+  }
+})
+onBeforeMount(async () => {
+  const resp = await get('get-analyze-data', { address : get_address(id) })
+  if (resp.code === ERRORCODE.SUCCESS) {
+    analyze_data.views.data = resp.data.views
+    analyze_data.users.data = resp.data.users
+    return
+  }
+  proxy.$message(proxy.$lang('获取数据信息异常'), MESSAGE_TYPE.ERROR)
 })
 
-const generate_chart_options = (rows, data) => {
-  const options = {
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      top: '10%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: rows
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        type: 'line',
-        data: data,
-        itemStyle: {
-          color: 'green'
-        }
-      }
-    ]
+// 初始化分析表格UI
+onMounted(() => {
+  for (let i = 0; i < 7; i++) {
+    const date = utils.get_time_offset(-i)
+    analyze_data.tabs[0].rows.push(date)
   }
-  return options
-}
+
+  for (let i = 0; i < 30; i++) {
+    const date = utils.get_time_offset(-i)
+    analyze_data.tabs[1].rows.push(date)
+  }
+
+  for (let i = 0; i < 12; i++) {
+    let month = utils.get_time_offset(-30 * i, 'YYYY-MM')
+    analyze_data.tabs[2].rows.push(month)
+  }
+
+  analyze_data.views.chart = echarts.init(document.getElementById('views'))
+  analyze_data.users.chart = echarts.init(document.getElementById('users'))
+})
 
 const generate_chart_options_params = field => {
   const cols   = []
@@ -203,54 +209,6 @@ const generate_chart_options_params = field => {
     })
   }
   return [cols, data]
-}
-
-const analyze_data = reactive({
-  tabs: [
-    { label : proxy.$lang('近1周'),  rows : [] },
-    { label : proxy.$lang('近1月'),  rows : [] },
-    { label : proxy.$lang('近1年'),  rows  : []}    
-  ],
-  views: {
-    chart   : null,
-    active  : 0,
-    data    : {}
-  },
-  users: {
-    chart   : null,
-    active  : 0,
-    data    : {}
-  }
-})
-
-const init_analyze_config = () => {
-  for (let i = 0; i < 7; i++) {
-    const date = utils.get_time_offset(-i)
-    analyze_data.tabs[0].rows.push(date)
-  }
-
-  for (let i = 0; i < 30; i++) {
-    const date = utils.get_time_offset(-i)
-    analyze_data.tabs[1].rows.push(date)
-  }
-
-  for (let i = 0; i < 12; i++) {
-    let month = utils.get_time_offset(-30 * i, 'YYYY-MM')
-    analyze_data.tabs[2].rows.push(month)
-  }
-
-  analyze_data.views.chart = echarts.init(document.getElementById('views'))
-  analyze_data.users.chart = echarts.init(document.getElementById('users'))
-}
-
-const get_analyze_data = async () => {
-  const resp = await get('get-analyze-data', { address : mind.value.address })
-  if (resp.code === ERRORCODE.SUCCESS) {
-    analyze_data.views.data = resp.data.views
-    analyze_data.users.data = resp.data.users
-    return
-  }
-  proxy.$message(proxy.$lang('获取数据信息异常'), MESSAGE_TYPE.ERROR)
 }
 
 const set_option = type => {
@@ -283,6 +241,15 @@ const onswitchviews = (type, index) => {
   analyze_data[type].active = index
 }
 
+const show_pay = ref(false)
+const ondiaclose = () => {
+  show_pay.value = false
+}
+const onsaveremote = () => {
+  show_pay.value = true
+}
+
+// 保存到云端 & 付费阅读 按钮
 const show_save_btn = computed(() => {
   if (!utils.is_private_key(id))
     return false
@@ -299,13 +266,6 @@ const show_sale_btn = computed(() => {
   return true
 })
 
-const show_pay = ref(false)
-const ondiaclose = () => {
-  show_pay.value = false
-}
-const onsaveremote = () => {
-  show_pay.value = true
-}
 const onpayed = async ({ from, tx_hash }) => {
   proxy.$message(proxy.$lang('支付成功，准备上传导图'))
   const data       = { from, tx_hash, mind: mind.value }
@@ -324,17 +284,10 @@ const onsale = () => {
   proxy.$message(proxy.$lang('还在开发，应该是个能帮助创作者赚点小钱钱的功能🔧'))
 }
 
+// 复制 address
 const oncopy = () => {
   navigator.clipboard.writeText(mind.value.address)
-    .then(() => proxy.$message(proxy.$lang('已将地址复制到剪切板'), MESSAGE_TYPE.SUCCESS))
-    .catch(() => proxy.$message(proxy.$lang('复制失败，请重试'), MESSAGE_TYPE.ERROR))
-}
-
-const QRcode = ref('')
-const show_qrcode = ref(false)
-const onqrcode = async () => {
-  const message = `${location.origin}/#/dashboard/${mind.value.address}`
-  QRcode.value = await toDataURL(message)
-  show_qrcode.value = true
+    .then(() =>  proxy.$message(proxy.$lang('已将地址复制到剪切板'), MESSAGE_TYPE.SUCCESS))
+    .catch(() => proxy.$message(proxy.$lang('复制失败，请重试'),    MESSAGE_TYPE.ERROR))
 }
 </script>
