@@ -1,10 +1,9 @@
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { ANALYZE, DIRECTION, MODE } from "./constant";
-import { get, post } from "@/utils/network";
-import ERRORCODE from "./ERRORCODE";
+import { DIRECTION, MODE } from "./constant";
 import get_time from "@/utils/get_time";
 import generate_public_key from "@/utils/generate_public_key";
+import get_block from "@/atom/get_block";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -63,7 +62,7 @@ const MindStore = defineStore('MindStore', {
           backgroundColor: utils.get_bg_color()
         }
       }, o)
-      const block = this.get_block(pid)
+      const block = get_block(pid)
       block.children.push(data)
       this.blocks.push(data)
       return data
@@ -86,68 +85,8 @@ const MindStore = defineStore('MindStore', {
       return target
     },
 
-    init_mind(target) {
-      this.mind = target
-      const handler = (children = []) => {
-        children.forEach(c => {
-          this.blocks.push(c)
-          this.blocks.push(...c.children)
-          c.children.forEach(tmp => handler(tmp.children))
-        })
-      }
-
-      this.blocks.push(this.mind)
-      handler(this.mind.children)
-    },
-
-    async is_mind_in_remote() {
-      const data = {
-        id     : this.mind.id,
-        address: this.mind.address
-      }
-
-      if ('upload_time' in this.mind && this.mind.upload_time) {
-        return true
-      }
-      // const resp = await get('get-mind', data)
-      // if (resp.code === ERRORCODE.SUCCESS) {
-      //   return true
-      // }
-
-      return false
-    },
-
-    get_block(id) {
-      // if (this.mind.id === id) {
-      //   return this.mind
-      // }
-      // const block = this.blocks.find(t => t.id === id)
-      // return block
-
-      if (this.mind.id === id) {
-        return this.mind
-      }
-
-      let block
-      function search(children = []) {
-        children.some(c => {
-          if (c.id === id) {
-            block = c
-            return true
-          }
-          if (c.children?.length) {
-            search(c.children)
-            return false
-          }
-          return false
-        })
-      }
-      search(this.mind.children)
-      return block
-    },
-
     set_block_content(id, content) {
-      const block = this.get_block(id)
+      const block = get_block(id)
       if (!block)
         return
       block.content = content
@@ -155,13 +94,13 @@ const MindStore = defineStore('MindStore', {
 
     get_direction_block(id, direction) {
       if (direction === DIRECTION.LEFT) {
-        const block = this.get_block(id)
-        const p_block = this.get_block(block.pid)
+        const block = get_block(id)
+        const p_block = get_block(block.pid)
         return p_block ? p_block : block
       }
       
       if (direction === DIRECTION.RIGHT) {
-        const block = this.get_block(id)
+        const block = get_block(id)
         if (!block?.children?.length)
           return null
         const index = Math.floor(block.children.length / 2)
@@ -169,11 +108,11 @@ const MindStore = defineStore('MindStore', {
       }
 
       if (direction === DIRECTION.UP) {
-        let block   = this.get_block(id)
+        let block   = get_block(id)
         let p_block, index
 
         while(1) {
-          p_block = this.get_block(block.pid)
+          p_block = get_block(block.pid)
           index   = p_block.children.indexOf(block)
           if (this.is_root(p_block.id) && index === 0) {
             return block
@@ -188,11 +127,11 @@ const MindStore = defineStore('MindStore', {
       }
 
       if (direction === DIRECTION.DOWN) {
-        let block   = this.get_block(id)
+        let block   = get_block(id)
         let p_block, index
 
         while(1) {
-          p_block = this.get_block(block.pid)
+          p_block = get_block(block.pid)
           index   = p_block.children.indexOf(block)
           if (this.is_root(p_block.id) && index === p_block.children.length - 1) {
             return block
@@ -248,8 +187,8 @@ const MindStore = defineStore('MindStore', {
     },
 
     delete_block(id) {
-      const block = this.get_block(id)
-      const p_block = this.get_block(block.pid)
+      const block = get_block(id)
+      const p_block = get_block(block.pid)
       this.collect_block_ids(id).forEach(a => {
         const index = this.blocks.findIndex(s => s.id === a.id)
         this.blocks.splice(index, 1)
@@ -277,12 +216,12 @@ const MindStore = defineStore('MindStore', {
     },
 
     toggle_expand(id) {
-      const block = this.get_block(id)
+      const block = get_block(id)
       block.expand = !block.expand
     },
 
     set_expand(id, value) {
-      const block = this.get_block(id)
+      const block = get_block(id)
       block.expand = value
     },
 
@@ -299,30 +238,30 @@ const MindStore = defineStore('MindStore', {
     },
 
     toggle_in_exam(id) {
-      const block = this.get_block(id)
+      const block = get_block(id)
       block.visible = !block.visible
     },
 
     get_block_index(id) {
-      const block   = this.get_block(id)
-      const p_block = this.get_block(block.pid)
+      const block   = get_block(id)
+      const p_block = get_block(block.pid)
       return p_block.children.indexOf(block)
     },
 
     is_last_block(id) {
-      const block   = this.get_block(id)
-      const p_block = this.get_block(block.pid)
+      const block   = get_block(id)
+      const p_block = get_block(block.pid)
       const index   = p_block.children.indexOf(block)
       return index === p_block.children.length - 1
     },
 
     move(id, new_pid, new_index) {
-      const block   = this.get_block(id)
-      const p_block = this.get_block(block.pid)
+      const block   = get_block(id)
+      const p_block = get_block(block.pid)
       const index   = this.get_block_index(id)
       p_block.children.splice(index, 1)
       
-      const n_p_block = this.get_block(new_pid)
+      const n_p_block = get_block(new_pid)
       block.pid      = new_pid
       if (p_block === n_p_block && index < new_index) {
         new_index--
@@ -331,7 +270,7 @@ const MindStore = defineStore('MindStore', {
     },
 
     get_children_ids(id, deep = false) {
-      const block = this.get_block(id)
+      const block = get_block(id)
       const arrs  = block.children.map(c => c.id)
 
       function handler(children) {
@@ -394,12 +333,12 @@ const MindStore = defineStore('MindStore', {
     },
 
     set_link(id, link) {
-      const block         = this.get_block(id)
+      const block         = get_block(id)
       block.addition.link = link
     },
 
     set_image(id, base64) {
-      const block          = this.get_block(id)
+      const block          = get_block(id)
       block.addition.img64 = base64
     },
 
@@ -411,7 +350,7 @@ const MindStore = defineStore('MindStore', {
           handler(a.children)
         })
       }
-      const block = this.get_block(id)
+      const block = get_block(id)
       handler(block.children)
       return arrs
     }

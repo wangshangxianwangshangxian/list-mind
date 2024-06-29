@@ -105,7 +105,7 @@ import * as echarts from 'echarts'
 import router from '@/router'
 import { ANALYZE, MESSAGE_TYPE } from '@/stores/constant';
 import { toDataURL } from 'qrcode';
-import ERRORCODE from '@/stores/ERRORCODE';
+import ERRORCODE from '@/utils/ERRORCODE';
 import { get, post } from '@/utils/network';
 import get_mind from '@/atom/get_mind';
 import get_local_mind from '@/atom/get_local_mind';

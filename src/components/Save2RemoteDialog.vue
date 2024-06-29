@@ -26,7 +26,7 @@
 import Dialog from '@/components/Dialog.vue'
 import MindStore from '@/stores/MindStore';
 import { MESSAGE_TYPE, PAY } from '@/stores/constant';
-import ERRORCODE from '@/stores/ERRORCODE';
+import ERRORCODE from '@/utils/ERRORCODE';
 import pay from '@/utils/pay';
 import { getCurrentInstance, ref } from 'vue';
 

@@ -86,12 +86,14 @@ import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
 import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/constant';
-import ERRORCODE from '@/stores/ERRORCODE';
-import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
 import get_mind from '@/atom/get_mind';
 import save_remote from '@/atom/save_remote';
 import get_url_end_node from '@/utils/get_url_end_node';
 import get_local_mind from '@/atom/get_local_mind';
+import ERRORCODE from '@/utils/ERRORCODE'
+import init_mind from '@/atom/init_mind';
+import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
+import get_block from '@/atom/get_block';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
@@ -100,30 +102,18 @@ const info      = get_local_mind(id) || { children: [] }
 const mind      = reactive(info)
 
 onBeforeMount(async () => {
-  if (!info.id && !info.address) {
-    const resp = await get_mind(id)
-    if (resp.code === ERRORCODE.SUCCESS) {
-
-    }
-    else {
-      router.push({ name: 'not found' })
-    }
-    // if (temp_mind) {
-    //   MindStore().init_mind(temp_mind)
-    //   for (let key in temp_mind) {
-    //     mind[key] = temp_mind[key]
-    //   }
-    // }
-    // else {
-    //   router.push({ name: 'not found' })
-    // }
+  if (mind.address) {
+    init_mind(mind)
   }
+  // 如果本地没有，那就请求远程
   else {
-    MindStore().init_mind(info)
+    const resp = await get_mind(id)
+    if (resp.code !== ERRORCODE.SUCCESS)
+      return router.push({ name: 'not found' })
+    init_mind(resp.data)
+    Object.assign(mind, resp.data)
   }
-
   add_analyze_mind_view(mind.address)
-
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
@@ -248,7 +238,7 @@ const onblockkeydown = (e, id) => {
 
   else if (target?.key === HOT_OPTION.SAVE) {
     e.preventDefault()
-    const block = MindStore().get_block(id)
+    const block = get_block(id)
     const el    = document.getElementById(`block-content-${block.id}`)
     el.blur()
   }
@@ -281,7 +271,7 @@ const onblockkeydown = (e, id) => {
     if (MindStore().is_common_mode()) {
       e.preventDefault()
       e.target.blur()
-      addition_info.block = MindStore().get_block(id)
+      addition_info.block = get_block(id)
       addition_info.show  = true
     }
   }

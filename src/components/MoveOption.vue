@@ -13,7 +13,7 @@ import BackgroundMask from './BackgroundMask.vue'
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
 import { DIRECTION, MOVE_MAX_DSITANCE } from '@/stores/constant';
-
+import get_block from '@/atom/get_block';
 
 const props = defineProps({
   block: {
@@ -98,8 +98,7 @@ const path           = ref('')
 const move_parent_id = ref()
 const move_index     = ref(0)
 const show_path = (block, dir) => {
-  const p_block    = MindStore().get_block(block.pid)
-  
+  const p_block    = get_block(block.pid)
   const block_el   = document.getElementById(`block-l-${block.id}`)
   
   if (!block_el) return

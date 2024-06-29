@@ -1,7 +1,6 @@
 import { ENV, ENVIRONMENT, NETWORK, PAY, RECIPIENT } from "@/stores/constant"
-import ERRORCODE from "@/stores/ERRORCODE"
+import ERRORCODE from "@/utils/ERRORCODE"
 import Web3 from "web3"
-import { post } from "./network"
 
 
       
