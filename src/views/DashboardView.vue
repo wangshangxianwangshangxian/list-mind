@@ -10,7 +10,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
-        <input type="text" class="focus:outline-none focus:bg-white w-full bg-transparent" :placeholder="proxy.$lang('输入address进行搜索，如0x1234567890...')" v-model="search_message" />
+        <input type="text" class="focus:outline-none focus:bg-white w-full bg-transparent text-sm" :placeholder="proxy.$lang('输入address进行搜索，如0x1234567890...')" v-model="search_message" />
         <svg v-show="show_clear_icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>

@@ -4,6 +4,7 @@ import { DIRECTION, MODE } from "./constant";
 import get_time from "@/utils/get_time";
 import generate_public_key from "@/utils/generate_public_key";
 import get_block from "@/atom/get_block";
+import save_local from "@/atom/save_local";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -40,7 +41,7 @@ const MindStore = defineStore('MindStore', {
       this.mind    = data
       this.blocks.push(data)
       this.new_block(data.id, { content: '章节' })
-      this.save(data.id)
+      save_local(this.mind)
       return data
     },
 
