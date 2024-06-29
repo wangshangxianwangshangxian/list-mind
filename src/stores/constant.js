@@ -174,8 +174,8 @@ export const ENV = {
 }
 
 export const ENV_URL = {
-  PROD: 'http://www.list-mind.com:6634/',
-  DEV : 'http://localhost:6634/'
+  PROD: 'https://www.list-mind.com:6634/',
+  DEV : 'http://localhost:6633/'
 }
 
 export const PAY_KEY = {
