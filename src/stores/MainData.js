@@ -33,6 +33,7 @@ const MainData = defineStore('MainData', {
       else {
         this.hots = config
       }
+      localStorage.setItem('hots', JSON.stringify(this.hots))
     },
 
     set_hot_key(key, keys) {
