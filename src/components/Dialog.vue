@@ -56,10 +56,6 @@ const box_style = computed(() => {
   }
   return style
 })
-
-const onclose = () => {
-  
-}
 </script>
 
 <style scoped>

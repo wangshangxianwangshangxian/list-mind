@@ -12,4 +12,5 @@ export default () => {
       continue
     }
   }
+  return list
 }

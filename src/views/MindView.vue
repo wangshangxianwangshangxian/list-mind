@@ -104,11 +104,11 @@ const id        = get_url_end_node()
 const info      = get_local_mind(id) || { children: [] }
 const mind      = reactive(info)
 
+// 先加载本地导图，如果没有再加载云端
 onBeforeMount(async () => {
   if (mind.address) {
     init_mind(mind)
   }
-  // 如果本地没有，那就请求远程
   else {
     const resp = await get_mind(id)
     if (resp.code !== ERRORCODE.SUCCESS)

@@ -69,6 +69,7 @@
 
 <script setup>
 import delete_mind from '@/atom/delete_mind';
+import load_local_minds from '@/atom/load_local_minds';
 import router from '@/router';
 import MindStore from '@/stores/MindStore';
 import utils from '@/utils/utils';
