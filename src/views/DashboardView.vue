@@ -105,7 +105,7 @@ import * as echarts from 'echarts'
 import router from '@/router'
 import { ANALYZE, MESSAGE_TYPE } from '@/stores/constant';
 import { toDataURL } from 'qrcode';
-import { ERROR_CODE } from '@/stores/errorcode';
+import ERRORCODE from '@/stores/ERRORCODE';
 import { get, post } from '@/utils/network';
 import get_mind from '@/atom/get_mind';
 import get_local_mind from '@/atom/get_local_mind';
@@ -118,7 +118,7 @@ const id   = get_url_end_node()
 
 onBeforeMount(async () => {
   let resp = await get_mind(id)
-  if (resp.code !== ERROR_CODE.SUCCESS) {
+  if (resp.code !== ERRORCODE.SUCCESS) {
     const info = get_local_mind(id)
     if (!info) return router.push({ name: 'not found' })
     init_mind(info)
@@ -245,7 +245,7 @@ const init_analyze_config = () => {
 
 const get_analyze_data = async () => {
   const resp = await get('get-analyze-data', { address : mind.value.address })
-  if (resp.code === ERROR_CODE.SUCCESS) {
+  if (resp.code === ERRORCODE.SUCCESS) {
     analyze_data.views.data = resp.data.views
     analyze_data.users.data = resp.data.users
     return
@@ -310,7 +310,7 @@ const onpayed = async ({ from, tx_hash }) => {
   proxy.$message(proxy.$lang('支付成功，准备上传导图'))
   const data       = { from, tx_hash, mind: mind.value }
   const resp       = await post('save-remote-first', data)
-  if (resp.code === ERROR_CODE.SUCCESS) {
+  if (resp.code === ERRORCODE.SUCCESS) {
     proxy.$message(proxy.$lang('保存成功， 2s后刷新页面'))
     show_pay.value = false
     await new Promise(succ => setTimeout(succ, 2000))

@@ -86,32 +86,37 @@ import MoveOption from '@/components/MoveOption.vue'
 import Addition from '@/components/Addition.vue'
 import router from '@/router';
 import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/constant';
-import { ERROR_CODE } from '@/stores/errorcode';
-import { post } from '@/utils/network';
+import ERRORCODE from '@/stores/ERRORCODE';
 import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
 import get_mind from '@/atom/get_mind';
 import save_remote from '@/atom/save_remote';
 import get_url_end_node from '@/utils/get_url_end_node';
+import get_local_mind from '@/atom/get_local_mind';
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
 const id        = get_url_end_node()
-const info      = MindStore().load_mind(id) || { children: [] }
+const info      = get_local_mind(id) || { children: [] }
 const mind      = reactive(info)
 
 onBeforeMount(async () => {
   if (!info.id && !info.address) {
-    const key       = utils.is_private_key(id) ? id : ''
-    const address   = utils.is_public_key(id) ? id : ''
-    const temp_mind = await MindStore().request_mind(key, address)
-    if (temp_mind) {
-      MindStore().init_mind(temp_mind)
-      for (let key in temp_mind) {
-        mind[key] = temp_mind[key]
-      }
+    const resp = await get_mind(id)
+    if (resp.code === ERRORCODE.SUCCESS) {
+
     }
     else {
       router.push({ name: 'not found' })
     }
+    // if (temp_mind) {
+    //   MindStore().init_mind(temp_mind)
+    //   for (let key in temp_mind) {
+    //     mind[key] = temp_mind[key]
+    //   }
+    // }
+    // else {
+    //   router.push({ name: 'not found' })
+    // }
   }
   else {
     MindStore().init_mind(info)
@@ -390,7 +395,7 @@ const save_image = () => {
 
 const save_cloud = async () => {
   const resp = await get_mind(mind.address)
-  if (resp.code !== ERROR_CODE.SUCCESS) {
+  if (resp.code !== ERRORCODE.SUCCESS) {
     MindStore().save()
     router.push({
       name: 'dashboard',
@@ -399,7 +404,7 @@ const save_cloud = async () => {
   }
   else {
     const resp = await save_remote(mind)
-    if (resp.code === ERROR_CODE.SUCCESS) {
+    if (resp.code === ERRORCODE.SUCCESS) {
       const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
       return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
     }

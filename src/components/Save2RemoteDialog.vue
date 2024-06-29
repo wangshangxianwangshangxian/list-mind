@@ -26,7 +26,7 @@
 import Dialog from '@/components/Dialog.vue'
 import MindStore from '@/stores/MindStore';
 import { MESSAGE_TYPE, PAY } from '@/stores/constant';
-import { ERROR_CODE } from '@/stores/errorcode';
+import ERRORCODE from '@/stores/ERRORCODE';
 import pay from '@/utils/pay';
 import { getCurrentInstance, ref } from 'vue';
 
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const onpay = async () => {
   const resp = await pay(PAY.ETHER, 0.000001)
-  if (resp.code === ERROR_CODE.SUCCESS) {
+  if (resp.code === ERRORCODE.SUCCESS) {
     emits('c_payed', resp.data)
     return
   }

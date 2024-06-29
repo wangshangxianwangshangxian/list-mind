@@ -1,11 +1,11 @@
 import { ENV, ENVIRONMENT, NETWORK, PAY, RECIPIENT } from "@/stores/constant"
-import { ERROR_CODE } from "@/stores/errorcode"
+import ERRORCODE from "@/stores/ERRORCODE"
 import Web3 from "web3"
 import { post } from "./network"
 
 
       
-//   if (resp.code === ERROR_CODE.SUCCESS) {
+//   if (resp.code === ERRORCODE.SUCCESS) {
 //     const data = {
 //       type   : 'ether',
 //       action : 'save remote',
@@ -25,7 +25,7 @@ import { post } from "./network"
 
 const pay_eth = async (resp, amount) => {
   if (!window.ethereum) {
-    resp.code    = ERROR_CODE.PAY_ERROR
+    resp.code    = ERRORCODE.PAY_ERROR
     resp.message = '未安装MetaMask'
     return resp
   }
@@ -71,7 +71,7 @@ const pay_eth = async (resp, amount) => {
 const pay = (type, amount) => {
   return new Promise(async resolve => {
     let resp = {
-      code    : ERROR_CODE.SUCCESS,
+      code    : ERRORCODE.SUCCESS,
       message : null,
       data    : null
     }
@@ -83,22 +83,22 @@ const pay = (type, amount) => {
       catch (e) {
         resp.data    = e.stack
         if (e.code === 4001) {
-          resp.code    = ERROR_CODE.PAY_ERROR
+          resp.code    = ERRORCODE.PAY_ERROR
           resp.message = '切换网络 / 登录钱包异常'
         }
         else if (e.code === -32000) {
-          resp.code    = ERROR_CODE.PAY_ERROR
+          resp.code    = ERRORCODE.PAY_ERROR
           resp.message = '输入异常'
         }
         else {
           debugger
-          resp.code    = ERROR_CODE.CODE_ERROR
+          resp.code    = ERRORCODE.CODE_ERROR
           resp.message = '代码异常'
         }
       }
     }
     else {
-      resp.code    = ERROR_CODE.NOT_FOUND
+      resp.code    = ERRORCODE.NOT_FOUND
       resp.message = '找不到支付方式'
     }
 

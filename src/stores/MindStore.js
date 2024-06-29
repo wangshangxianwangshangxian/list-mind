@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import utils from '@/utils/utils'
 import { ANALYZE, DIRECTION, MODE } from "./constant";
 import { get, post } from "@/utils/network";
-import { ERROR_CODE } from "./errorcode";
+import ERRORCODE from "./ERRORCODE";
 import get_time from "@/utils/get_time";
 import generate_public_key from "@/utils/generate_public_key";
 
@@ -86,15 +86,6 @@ const MindStore = defineStore('MindStore', {
       return target
     },
 
-    async request_mind(id, address) {
-      const resp = await get('get-mind', { id, address })
-      if (resp.code === ERROR_CODE.SUCCESS) {
-        return resp.data
-      }
-
-      return null
-    },
-
     init_mind(target) {
       this.mind = target
       const handler = (children = []) => {
@@ -119,7 +110,7 @@ const MindStore = defineStore('MindStore', {
         return true
       }
       // const resp = await get('get-mind', data)
-      // if (resp.code === ERROR_CODE.SUCCESS) {
+      // if (resp.code === ERRORCODE.SUCCESS) {
       //   return true
       // }
 
@@ -224,7 +215,7 @@ const MindStore = defineStore('MindStore', {
 
     async save_remote() {
       // const resp = await post('upload-mind', this.mind)
-      // if (resp.code === ERROR_CODE.SUCCESS) {
+      // if (resp.code === ERRORCODE.SUCCESS) {
       //   this.mind = resp.data
       //   this.save()
       //   const data = {
@@ -232,7 +223,7 @@ const MindStore = defineStore('MindStore', {
       //     address : this.mind.address
       //   }
       //   const resp2 = await post('set-analyze', data)
-      //   if (resp2.code === ERROR_CODE.SUCCESS) {
+      //   if (resp2.code === ERRORCODE.SUCCESS) {
       //     return true
       //   }
       // }

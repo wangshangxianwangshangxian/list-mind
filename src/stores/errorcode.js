@@ -1,4 +1,4 @@
-export const ERROR_CODE = {
+export default {
   SUCCESS     : 'SUCCESS',
 	INCONSISTENT: 'INCONSISTENT',
 	PARAM_ERROR : 'PARAM ERROR',
