@@ -2,7 +2,7 @@ import Loading from '@/components/Loading.vue'
 import { createApp } from 'vue'
 
 const loading = (el, { value }) => {
-  if (value) {
+  if (value || value == undefined) {
     const amount       = Math.min(Math.max(Math.floor(el.clientWidth / 30), 0), 7)
     const props        = { amount }
     const box          = document.createElement('div')

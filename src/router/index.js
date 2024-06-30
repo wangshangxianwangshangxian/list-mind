@@ -6,6 +6,8 @@ import CustomerView from '@/views/CustomerView.vue'
 import VersionView from '@/views/VersionView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import MobileView from '@/views/MobileView.vue'
+import is_pc from '@/utils/is_pc'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -54,8 +56,20 @@ const router = createRouter({
       path: '/:pathMatch(.*)',
       name: 'any',
       redirect: '/404'
+    },
+    {
+      path      : '/sorry',
+      name      : 'sorry',
+      component : MobileView
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (!is_pc() && to.name !== 'sorry') {
+    return router.push({ name: 'sorry' })
+  }
+  next()
 })
 
 export default router
