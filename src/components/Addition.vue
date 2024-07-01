@@ -12,7 +12,12 @@
         </div>
       </div>
       <div>
-        <input v-show="active_item.type === 'input'" type="text" class="w-full h-10 focus:outline-none" :placeholder="active_item.placeholder" v-model="active_item.value" />
+        <div v-show="active_item.type === 'input'" class="flex justify-between items-center">
+          <input type="text" class="w-full h-10 focus:outline-none" :placeholder="active_item.placeholder" v-model="active_item.value" />
+          <svg v-show="active_item.value.length" @click="active_item.value=''" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </div>
         <div v-show="active_item.type === 'image'" class="flex flex-col gap-4">
           <div class="flex justify-between items-center h-10">
             <p>{{ active_item.value }}</p>
@@ -35,7 +40,9 @@
 
 <script setup>
 import BackgroundMask from '@/components/BackgroundMask.vue'
-import { computed, reactive, ref, watch } from 'vue';
+import { BOARD_KEY } from '@/stores/constant';
+import use_event from '@/use/use_event';
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
   block: {
@@ -112,4 +119,29 @@ const onuploaddelete = () => {
   active_item.value.value  = ''
   active_item.value.base64 = ''
 }
+
+const onkeydown = e => {
+  if (e.code === BOARD_KEY.ESC) {
+    emits('c_close')
+  }
+  else if (e.code === BOARD_KEY.RIGHT) {
+    let   index       = additions.findIndex(a => a.key === active.value)
+    index             = Math.min(index + 1, additions.length - 1)
+    active_item.value = additions[index]
+    active.value      = active_item.value.key
+  }
+  else if (e.code === BOARD_KEY.LEFT) {
+    let   index       = additions.findIndex(a => a.key === active.value)
+    index             = Math.max(index - 1, 0)
+    active_item.value = additions[index]
+    active.value      = active_item.value.key
+  }
+  else if (e.code === BOARD_KEY.DONW) {
+
+  }
+  else if (e.code === BOARD_KEY.UP) {
+    
+  }
+}
+use_event(window, 'keydown', onkeydown)
 </script>

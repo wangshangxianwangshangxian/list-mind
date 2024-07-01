@@ -20,7 +20,6 @@ app.use(share)
 app.use(language)
 MainData().init_hots(app)
 VersionStore().check()
-
 import loading from './directives/loading'
 app.directive('loading', loading)
 

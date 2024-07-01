@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/stores/constant"
 import axios from "axios"
 
-export const get = (route, data) => {
+export const get = (route, data = {}) => {
   return new Promise(async resolve => {
     const url = BASE_URL + route + '?' + Object.entries(data).map(arrs => arrs.join('=')).join('&')
     axios.get(url, data)

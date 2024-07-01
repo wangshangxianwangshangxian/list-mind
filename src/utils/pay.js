@@ -1,28 +1,8 @@
-import { ENV, ENVIRONMENT, NETWORK, PAY, RECIPIENT } from "@/stores/constant"
+import { ENV, ENVIRONMENT, NETWORK, PAY } from "@/stores/constant"
 import ERRORCODE from "@/utils/ERRORCODE"
 import Web3 from "web3"
 
-
-      
-//   if (resp.code === ERRORCODE.SUCCESS) {
-//     const data = {
-//       type   : 'ether',
-//       action : 'save remote',
-//       params : {
-//         from   : resp.data.from,
-//         txhash : resp.data.txhash
-//       }
-//     }
-//     const result = await post('pay', data)
-//     resolve(result)
-//   }
-//   else {
-//     console.error(resp.message)
-//     resolve(resp)
-//   }
-// }
-
-const pay_eth = async (resp, amount) => {
+const pay_eth = async (resp, to, amount, data) => {
   if (!window.ethereum) {
     resp.code    = ERRORCODE.PAY_ERROR
     resp.message = '未安装MetaMask'
@@ -37,11 +17,12 @@ const pay_eth = async (resp, amount) => {
   
   const web3         = new Web3(window.ethereum)
   const [ from ]     = await web3.eth.getAccounts()
-  const estimate_gas = await web3.eth.estimateGas({ from, to: RECIPIENT })
+  const estimate_gas = 51000n
   const tx           = {
     from,
-    to    : RECIPIENT,
+    to,
     value : web3.utils.toWei(amount, 'ether'),
+    data,
     gas   : web3.utils.toHex(estimate_gas)
   }
   const tx_hash = await ethereum.request({ method: 'eth_sendTransaction', params: [tx], })
@@ -58,16 +39,11 @@ const pay_eth = async (resp, amount) => {
     }
   }
 
-  resp.data = { from, tx_hash }
-  // const info = {
-  //   type   : PAY.ETHER,
-  //   params : { from, tx_hash }
-  // }
-  // resp = await post('pay', info)
+  resp.data = { tx_hash }
   return resp
 }
 
-const pay = (type, amount) => {
+const pay = (type, to, amount, data) => {
   return new Promise(async resolve => {
     let resp = {
       code    : ERRORCODE.SUCCESS,
@@ -77,22 +53,22 @@ const pay = (type, amount) => {
 
     if (type === PAY.ETHER) {
       try {
-        resp = await pay_eth(resp, amount)
+        resp = await pay_eth(resp, to, amount, data)
       }
       catch (e) {
         resp.data    = e.stack
         if (e.code === 4001) {
           resp.code    = ERRORCODE.PAY_ERROR
-          resp.message = '切换网络 / 登录钱包异常'
+          resp.message = '支付异常'
         }
         else if (e.code === -32000) {
           resp.code    = ERRORCODE.PAY_ERROR
           resp.message = '输入异常'
         }
         else {
-          debugger
           resp.code    = ERRORCODE.CODE_ERROR
           resp.message = '代码异常'
+          resp.data    = e
         }
       }
     }

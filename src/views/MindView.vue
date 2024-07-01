@@ -92,11 +92,12 @@ import get_url_end_node from '@/utils/get_url_end_node';
 import get_local_mind from '@/atom/get_local_mind';
 import ERRORCODE from '@/utils/ERRORCODE'
 import init_mind from '@/atom/init_mind';
-import add_analyze_mind_view from '@/atom/add_analyze_mind_view';
 import get_block from '@/atom/get_block';
 import set_block_content from '@/atom/set_block_content';
 import get_direction_block from '@/atom/get_direction_block';
 import save_local from '@/atom/save_local';
+import { get } from '@/utils/network';
+import get_address from '@/utils/get_address';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
@@ -110,13 +111,20 @@ onBeforeMount(async () => {
     init_mind(mind)
   }
   else {
-    const resp = await get_mind(id)
-    if (resp.code !== ERRORCODE.SUCCESS)
+    const address = get_address(id)
+    const resp    = await get('get-mindview-data', { address })
+    if (resp.code === ERRORCODE.NO_PERMISSION) {
+      proxy.$message(proxy.$lang('该导图需要付费才能阅读'))
+      await new Promise(succ => setTimeout(succ, 1000))
+      router.push({ name : 'dashboard', params: { address } })
+      return
+    }
+    else if (resp.code === ERRORCODE.NOT_FOUND)
       return router.push({ name: 'not found' })
-    init_mind(resp.data)
-    Object.assign(mind, resp.data)
+    
+    init_mind(resp.data.mind)
+    Object.assign(mind, resp.data.mind)
   }
-  add_analyze_mind_view(mind.address)
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
@@ -133,6 +141,7 @@ const onaddchapter = () => {
 const onsave = e => {
   const target = MainData().search_hot_key(e)
   if (target?.key === HOT_OPTION.SAVE) {
+    const sel = window.getSelection()
     e.preventDefault()
     nextTick(() => {
       save_local()
@@ -307,12 +316,15 @@ const onmouseup = (move_parent_id, move_index) => {
 }
 
 const addition_info = reactive({
-  show: false,
-  id  : null
+  show  : false,
+  block : null
 })
 
 const onadditionclose = () => {
   addition_info.show = false
+  const el = document.getElementById(`block-content-${addition_info.block.id}`)
+  el.focus()
+  addition_info.block = null
 }
 
 const onadditionupdate = additions => {

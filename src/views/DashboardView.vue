@@ -34,13 +34,22 @@
                 <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
               </svg>
-              {{ proxy.$lang('保存到云端') }}</button>
+              {{ proxy.$lang('保存到云端') }}
+            </button>
             <button v-if="show_sale_btn" class="hover:text-blue-400  flex gap-1" @click="onsale">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                 <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
                 <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
               </svg>
-              {{ proxy.$lang('设置付费阅读') }}
+              <span v-if="domain.value">{{ domain.value }} ETH</span>
+              <span v-else>{{ proxy.$lang('设置付费阅读') }}</span>
+            </button>
+            <button v-if="show_buy_btn" class="hover:text-blue-400 flex gap-1" @click="show_buy = true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
+                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
+              </svg>
+              {{ proxy.$lang('付费阅读') }}
             </button>
           </div>
         </div>
@@ -82,51 +91,66 @@
       </div>
     </Card>
   </div>
-  <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" @c_payed="onpayed" />
+  <Save2RemoteDialog v-if="show_pay" @c_close="ondiaclose" @c_payed="onpayed" :address="mind.address" />
+  <SaleDialog v-if="show_sale" @c_close="show_sale = false" :address="mind.address" :amount="domain.value" :recipit="domain.recipit" @c_pay="onsalepay" />
+  <BuyDialog v-if="show_buy" :amount="domain.value" :address="mind.address" @c_close="show_buy = false" />
 </template>
 <script setup>
 import Header from '@/components/Header.vue'
 import Card from '@/components/Card.vue'
 import { computed, getCurrentInstance, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 import utils from '@/utils/utils';
-import MindStore from '@/stores/MindStore';
 import Block from '@/components/Block.vue'
 import Save2RemoteDialog from '@/components/Save2RemoteDialog.vue'
+import SaleDialog from '@/components/SaleDialog.vue'
+import BuyDialog from '@/components/BuyDialog.vue'
 import SwitchButton from '@/components/SwitchButton.vue'
-import Dialog from '@/components/Dialog.vue'
 import * as echarts from 'echarts'
 import router from '@/router'
-import { ANALYZE, MESSAGE_TYPE } from '@/stores/constant';
-import { toDataURL } from 'qrcode';
+import { MESSAGE_TYPE } from '@/stores/constant';
 import ERRORCODE from '@/utils/ERRORCODE';
 import { get, post } from '@/utils/network';
-import get_mind from '@/atom/get_mind';
 import get_local_mind from '@/atom/get_local_mind';
 import get_time from '@/utils/get_time';
 import get_url_end_node from '@/utils/get_url_end_node';
 import remain_root_only from '@/atom/remain_root_only';
 import generate_chart_options from '@/utils/generate_chart_options';
 import get_address from '@/utils/get_address';
+import save_local from '@/atom/save_local';
 
-const { proxy } = getCurrentInstance()
+const { proxy }   = getCurrentInstance()
+const id          = get_url_end_node()
+const mind        = ref({ children : [] })
+const remoted     = ref(false)
+const domain      = reactive({ value: null, recipit: null, buyed: true })
 
-// 先加载本地导图，如果没有再加载云端
-const id        = get_url_end_node()
-const mind      = ref(get_local_mind(id) || { children : [] })
+// 先加载云端，如果没有再加载本地
 onBeforeMount(async () => {
-  if (!mind.value.address) {
-    const resp = await get_mind(id)
-    if (resp.code === ERRORCODE.SUCCESS) {
-      mind.value = resp.data
-      remain_root_only(mind.value)
-    }
-    else {
-      router.push({ name: 'not found' })
-    }
-  }
-  else {
+  const param     = { address: get_address(id) }
+  const resp      = await get('get-dashboard-data', param)
+  if (resp.code === ERRORCODE.SUCCESS) {
+    remoted.value = true
+    mind.value    = resp.data.mind
     remain_root_only(mind.value)
+    if (resp.data.analyze) {
+      analyze_data.views.data = resp.data.analyze.views
+      analyze_data.users.data = resp.data.analyze.users
+    }
+    if (resp.data.domain) {
+      domain.value   = resp.data.domain.value
+      domain.recipit = resp.data.domain.recipit
+      domain.buyed   = resp.data.domain.buyed
+    }
+    return
   }
+
+  const info = get_local_mind(id)
+  if (info) {
+    mind.value = info
+    remain_root_only(mind.value)
+    return
+  }
+  router.push({ name: 'not found' })
 })
 
 // 搜索
@@ -149,14 +173,6 @@ const analyze_data = reactive({
     chart   : null,
     active  : 0,
     data    : {}
-  }
-})
-onBeforeMount(async () => {
-  const resp = await get('get-analyze-data', { address : get_address(id) })
-  if (resp.code === ERRORCODE.SUCCESS) {
-    analyze_data.views.data = resp.data.views
-    analyze_data.users.data = resp.data.users
-    return
   }
 })
 
@@ -248,28 +264,19 @@ const onsaveremote = () => {
   show_pay.value = true
 }
 
-// 保存到云端 & 付费阅读 按钮
+// 保存到云端按钮
 const show_save_btn = computed(() => {
   if (!utils.is_private_key(id))
     return false
-  if (mind.value.upload_time != null)
-    return false
-  return true
+  return !remoted.value
 })
 
-const show_sale_btn = computed(() => {
-  if (!utils.is_private_key(id))
-    return false
-  if (mind.value.upload_time == null)
-    return false
-  return true
-})
-
-const onpayed = async ({ from, tx_hash }) => {
+const onpayed = async ({ tx_hash }) => {
   proxy.$message(proxy.$lang('支付成功，准备上传导图'))
-  const data       = { from, tx_hash, mind: mind.value }
+  const data       = { tx_hash, mind: mind.value }
   const resp       = await post('save-remote-first', data)
   if (resp.code === ERRORCODE.SUCCESS) {
+    save_local(resp.data)
     proxy.$message(proxy.$lang('保存成功， 2s后刷新页面'))
     show_pay.value = false
     await new Promise(succ => setTimeout(succ, 2000))
@@ -279,14 +286,37 @@ const onpayed = async ({ from, tx_hash }) => {
   proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
 }
 
-const onsale = () => {
-  proxy.$message(proxy.$lang('还在开发，应该是个能帮助创作者赚点小钱钱的功能🔧'))
-}
-
 // 复制 address
 const oncopy = () => {
   navigator.clipboard.writeText(mind.value.address)
     .then(() =>  proxy.$message(proxy.$lang('已将地址复制到剪切板'), MESSAGE_TYPE.SUCCESS))
     .catch(() => proxy.$message(proxy.$lang('复制失败，请重试'),    MESSAGE_TYPE.ERROR))
 }
+
+// 付费阅读
+const show_sale     = ref(false)
+const show_sale_btn = computed(() => {
+  if (!utils.is_private_key(id))
+    return false
+  return remoted.value
+})
+const onsale      = () => {
+  show_sale.value = true
+}
+const onsalepay   = async () => {
+  show_sale.value = false
+  proxy.$message(proxy.$lang('设置成功!'))
+  await new Promise(succ => setTimeout(succ, 1000))
+  location.reload()
+}
+
+// 购买阅读
+const show_buy  = ref(false)
+const show_buy_btn = computed(() => {
+  if (!utils.is_public_key(id))
+    return false
+  if (domain.buyed)
+    return false
+  return true
+})
 </script>

@@ -16,7 +16,7 @@ export default {
 
       try {
         const value = config[key][curr_lang]
-        return value
+        return value || key
       } 
       catch (e) {
         return key
