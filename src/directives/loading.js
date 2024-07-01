@@ -5,23 +5,34 @@ const loading = (el, { value }) => {
   if (value || value == undefined) {
     const amount       = Math.min(Math.max(Math.floor(el.clientWidth / 30), 0), 7)
     const props        = { amount }
+
+    const zhanwei      = document.createElement('div')
+    zhanwei.style.position = 'relative'
+    zhanwei.style.width = '0'
+    zhanwei.style.height = '0'
+
+    el.appendChild(zhanwei)
+    const rect         = el.getBoundingClientRect()
+    const zhanwei_rect = zhanwei.getBoundingClientRect()
+
     const box          = document.createElement('div')
     box.style.position = 'absolute'
-    box.style.left     = '0px'
-    box.style.top      = '0px'
-    box.style.width    = '100%'
-    box.style.height   = '100%'
+    box.style.width    = `${rect.width}px`
+    box.style.height   = `${rect.height}px`
+    box.style.left     = `-${zhanwei_rect.left - rect.left}px`
+    box.style.top      = `-${zhanwei_rect.top + rect.top}px`
     const component    = createApp(Loading, props)
-    el.__data          = { position: el.style.position, box, component }
-    el.style.position  = el.style.position || 'relative'
+    el.__data          = { box, component }
     component.mount(box)
-    el.appendChild(box)
+    zhanwei.appendChild(box)
   }
   else {
-    const { position, box, component } = el.__data
-    el.style.position  = position
+    if (!('__data' in el))
+      return
+    const { box, component } = el.__data
     component.unmount()
     el.removeChild(box)
+    delete el.__data
   }
 }
 

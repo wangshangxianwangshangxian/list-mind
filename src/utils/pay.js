@@ -17,15 +17,15 @@ const pay_eth = async (resp, to, amount, data) => {
   
   const web3         = new Web3(window.ethereum)
   const [ from ]     = await web3.eth.getAccounts()
-  const estimate_gas = 51000n
+  const estimate_gas = (await web3.eth.estimateGas({ from, to }))
   const tx           = {
     from,
     to,
-    value : web3.utils.toWei(amount, 'ether'),
+    value: web3.utils.toWei(amount, 'ether'),
     data,
-    gas   : web3.utils.toHex(estimate_gas)
+    gas  : estimate_gas
   }
-  const tx_hash = await ethereum.request({ method: 'eth_sendTransaction', params: [tx], })
+  const tx_hash = await ethereum.request({ method: 'eth_sendTransaction', params: [tx] })
 
   // 查询交易是否上链
   while (1) {
@@ -75,6 +75,8 @@ const pay = (type, to, amount, data) => {
     else {
       resp.code    = ERRORCODE.NOT_FOUND
       resp.message = '找不到支付方式'
+      resp.data    = e
+      debugger
     }
 
     resolve(resp)

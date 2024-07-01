@@ -1,5 +1,5 @@
 <template>
-  <div class="loading flex gap-1 w-full h-full items-center justify-center bg-white" style="z-index: 7777777;">
+  <div class="loading flex gap-1 w-full h-full items-center justify-center bg-white" style="z-index: 7777777;" @click.stop.capture.prevent>
     <div v-for="(c, index) in color" :key="index" :class="`w-2 h-2 rounded-full ${c}`"></div>
   </div>
 </template>
