@@ -206,13 +206,6 @@ const MindStore = defineStore('MindStore', {
       }
     },
 
-    // 是否保存到过远端
-    // 只有保存过的数据，upload_time 这个字段才会在服务端初始化
-    // 求稳的话可以发请求给后端。
-    had_remoted() {
-      return this.mind.upload_time != null
-    },
-
     set_link(id, link) {
       const block         = get_block(id)
       block.addition.link = link

@@ -368,8 +368,8 @@ const onquizguest = () => {
 
 const show_share = ref(false)
 const share = async () => {
-  const flag = MindStore().had_remoted()
-  if (flag) {
+  const resp = await get_mind(mind.address)
+  if (resp.code === ERRORCODE.SUCCESS) {
     show_share.value = true
     return
   }
