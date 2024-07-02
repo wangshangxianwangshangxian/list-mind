@@ -6,7 +6,7 @@ import load_local_minds from "@/atom/load_local_minds"
 const VersionStore = defineStore('VersionStore', {
   state () {
     return {
-      version: '0.8.3',
+      version: '0.8.7',
       footsteps: [
         {
           title: '2024.06',
@@ -37,23 +37,13 @@ const VersionStore = defineStore('VersionStore', {
 
     // 新版本调用方法
     async update() {
-      // 新增操作菜单
-      const data = JSON.parse(localStorage.getItem('hots'))
-      const info = { key: HOT_OPTION.MENU,   label: '打开操作菜单',      keys: [BOARD_KEY.SLASH] }
-      data.push(info)
-      localStorage.setItem('hots', JSON.stringify(data))
+      this.v0_8_7()
+    },
 
-      // 新增img6字段
-      const handle = children => {
-        children.forEach(a => {
-          a.addition.img64 = ''
-          handle(a.children)
-        })
-      }
-
+    async v0_8_7() {
       const list = load_local_minds()
       list.forEach(a => {
-        handle(a.children)
+        a.nonce = 1
         localStorage.setItem(`mind_${a.address}`, JSON.stringify(a))
       })
     }

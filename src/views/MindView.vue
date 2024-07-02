@@ -102,29 +102,36 @@ import get_address from '@/utils/get_address';
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
 const id        = get_url_end_node()
-const info      = get_local_mind(id) || { children: [] }
-const mind      = reactive(info)
+const mind      = reactive({ children: [] })
 
 // 先加载本地导图，如果没有再加载云端
 onBeforeMount(async () => {
-  if (mind.address) {
-    init_mind(mind)
+  const address        = get_address(id)
+  const local_info     = get_local_mind(address)
+  const { code, data } = await get('get-mindview-data', { address })
+  
+  if (code === ERRORCODE.NO_PERMISSION) {
+    proxy.$message(proxy.$lang('该导图需要付费才能阅读'))
+    await new Promise(succ => setTimeout(succ, 1000))
+    router.push({ name : 'dashboard', params: { address } })
+    return
   }
-  else {
-    const address = get_address(id)
-    const resp    = await get('get-mindview-data', { address })
-    if (resp.code === ERRORCODE.NO_PERMISSION) {
-      proxy.$message(proxy.$lang('该导图需要付费才能阅读'))
-      await new Promise(succ => setTimeout(succ, 1000))
-      router.push({ name : 'dashboard', params: { address } })
-      return
-    }
-    else if (resp.code === ERRORCODE.NOT_FOUND)
-      return router.push({ name: 'not found' })
-    
-    init_mind(resp.data.mind)
-    Object.assign(mind, resp.data.mind)
+
+  if (!local_info && data.mind) {
+    Object.assign(mind, data.mind)
   }
+  else if (local_info && !data.mind) {
+    Object.assign(mind, local_info)
+  }
+  else if (local_info && data.mind) {
+    const info = data.mind.nonce > local_info.nonce ? data.mind : local_info
+    Object.assign(mind, info)
+  }
+  else if (!local_info && !data.mind) {
+    return router.push({ name: 'not found' })
+  }
+  
+  init_mind(mind)
   if (utils.is_private_key(id))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
