@@ -115,19 +115,18 @@ import get_time from '@/utils/get_time';
 import get_url_end_node from '@/utils/get_url_end_node';
 import remain_root_only from '@/atom/remain_root_only';
 import generate_chart_options from '@/utils/generate_chart_options';
-import get_address from '@/utils/get_address';
 import save_local from '@/atom/save_local';
+import key_get from '@/atom/key_get';
 
 const { proxy }   = getCurrentInstance()
-const id          = get_url_end_node()
+const address     = get_url_end_node()
 const mind        = ref({ children : [] })
 const remoted     = ref(false)
 const domain      = reactive({ value: null, recipit: null, buyed: true })
 
 // 先加载云端，如果没有再加载本地
 onBeforeMount(async () => {
-  const param     = { address: get_address(id) }
-  const resp      = await get('get-dashboard-data', param)
+  const resp      = await get('get-dashboard-data', { address })
   if (resp.code === ERRORCODE.SUCCESS) {
     remoted.value = true
     mind.value    = resp.data.mind
@@ -144,7 +143,7 @@ onBeforeMount(async () => {
     return
   }
 
-  const info = get_local_mind(id)
+  const info = get_local_mind(address)
   if (info) {
     mind.value = info
     remain_root_only(mind.value)
@@ -266,7 +265,7 @@ const onsaveremote = () => {
 
 // 保存到云端按钮
 const show_save_btn = computed(() => {
-  if (!utils.is_private_key(id))
+  if (!key_get(address))
     return false
   return !remoted.value
 })
@@ -296,7 +295,7 @@ const oncopy = () => {
 // 付费阅读
 const show_sale     = ref(false)
 const show_sale_btn = computed(() => {
-  if (!utils.is_private_key(id))
+  if (!key_get(address))
     return false
   return remoted.value
 })
@@ -313,7 +312,7 @@ const onsalepay   = async () => {
 // 购买阅读
 const show_buy  = ref(false)
 const show_buy_btn = computed(() => {
-  if (!utils.is_public_key(id))
+  if (key_get(address))
     return false
   if (domain.buyed)
     return false

@@ -1,9 +1,9 @@
 import MindStore from "@/stores/MindStore"
-import get_address from "@/utils/get_address"
+import delete_key from "./delete_key"
 
-export default key => {
-  key = get_address(key)
+export default address => {
   MindStore().mind = null
   MindStore().blocks.length = 0
-  localStorage.removeItem(`mind_${key}`)
+  delete_key(address)
+  localStorage.removeItem(`mind_${address}`)
 }

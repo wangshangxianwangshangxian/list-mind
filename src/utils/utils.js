@@ -1,4 +1,4 @@
-import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, PUBLIC_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
+import { BG_COLOR, BORDER_COLOR, COLOR, PRIVATE_LEN, TEXT_COLOR, TIMESTAMP } from "@/stores/constant"
 import axios from "axios"
 import html2canvas from 'html2canvas'
 import get_time from "./get_time"
@@ -71,36 +71,6 @@ const calc_angle = (x1, y1, x2, y2) => {
   return angle
 }
 
-const generate_key = (len = PRIVATE_LEN) => {
-  const array       = new Uint8Array(32)
-  window.crypto.getRandomValues(array)
-  const private_key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
-  const key         = private_key.slice(0, len)
-  return key
-}
-
-const is_private_key = key => typeof key === 'string' && key.length === PRIVATE_LEN
-const is_public_key  = key => typeof key === 'string' && key.length === PUBLIC_LEN + 1 + key.startsWith('0x')
-
-const get_mind_by_private_key_local = id => {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (!key.startsWith('mind_'))
-      continue
-    const mind = JSON.parse(localStorage.getItem(key))
-    if (mind && mind.id === id) {
-      return mind
-    }
-  }
-  return null
-}
-
-const get_mind_by_public_key_local = key => {
-  const target = localStorage.getItem(`mind_${key}`)
-  if (!target) return null
-  return JSON.parse(target)
-}
-
 const get_ip = () => {
   return new Promise(resolve => {
     const url = 'https://api.ipify.org?format=json'
@@ -138,11 +108,6 @@ export default {
   get_left_time,
   calc_distance,
   calc_angle,
-  generate_key,
-  is_private_key,
-  is_public_key,
-  get_mind_by_public_key_local,
-  get_mind_by_private_key_local,
   get_text_color,
   get_bg_color,
   get_border_color,

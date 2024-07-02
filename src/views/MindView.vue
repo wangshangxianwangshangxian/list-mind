@@ -97,16 +97,15 @@ import set_block_content from '@/atom/set_block_content';
 import get_direction_block from '@/atom/get_direction_block';
 import save_local from '@/atom/save_local';
 import { get } from '@/utils/network';
-import get_address from '@/utils/get_address';
+import key_get from '@/atom/key_get';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
-const id        = get_url_end_node()
+const address   = get_url_end_node()
 const mind      = reactive({ children: [] })
 
 // 先加载本地导图，如果没有再加载云端
 onBeforeMount(async () => {
-  const address        = get_address(id)
   const local_info     = get_local_mind(address)
   const { code, data } = await get('get-mindview-data', { address })
   
@@ -132,7 +131,7 @@ onBeforeMount(async () => {
   }
   
   init_mind(mind)
-  if (utils.is_private_key(id))
+  if (key_get(address))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
 })
@@ -141,7 +140,7 @@ const refresh   = ref(0)
 const update_refresh = () => refresh.value = Date.now()
 
 const onaddchapter = () => {
-  const child = MindStore().new_block(id)
+  const child = MindStore().new_block(mind.id)
   child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
 }
 
@@ -230,7 +229,7 @@ const onoptionselect = async item => {
   }
 }
 const onquizexam = () => {
-  if (utils.is_public_key(id)) {
+  if (!key_get(address)) {
     MindStore().switch_mode(MODE.GUEST)
   }
   else {
@@ -351,18 +350,18 @@ const show_guest_exit = computed(() => {
     return false
   }
 
-  if (utils.is_public_key(id))
+  if (!key_get(address))
     return false
 
   // 创作者通过私钥打开的导图，其读者模式肯定从读者入口来的，所以肯定显示
-  if (utils.is_private_key(id)) {
+  if (key_get(address)) {
     return true
   }
 
   return false
 })
 const onquizguest = () => {
-  if (utils.is_private_key(id))
+  if (key_get(address))
     return MindStore().switch_mode(MODE.COMMON)
   MindStore().switch_mode(MODE.GUEST)
 }
@@ -386,7 +385,7 @@ const analyze = () => {
     return proxy.$message(proxy.$lang('找不到 address'), MESSAGE_TYPE.ERROR)
   router.push({
     name: 'dashboard',
-    params: { address: id }
+    params: { address }
   })
 }
 
@@ -411,13 +410,13 @@ const save_cloud = async () => {
     save_local()
     router.push({
       name: 'dashboard',
-      params: { address: id }
+      params: { address }
     })
   }
   else {
     const resp = await save_remote(mind)
     if (resp.code === ERRORCODE.SUCCESS) {
-      const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${id}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
+      const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${address}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
       return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
     }
     proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)

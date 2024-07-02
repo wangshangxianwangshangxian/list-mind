@@ -1,12 +1,11 @@
 import { defineStore } from "pinia"
-import { BOARD_KEY, HOT_OPTION } from "./constant"
-import MindStore from "./MindStore"
 import load_local_minds from "@/atom/load_local_minds"
+import key_set from "@/atom/key_set"
 
 const VersionStore = defineStore('VersionStore', {
   state () {
     return {
-      version: '0.8.7',
+      version: '0.8.8',
       footsteps: [
         {
           title: '2024.06',
@@ -37,7 +36,14 @@ const VersionStore = defineStore('VersionStore', {
 
     // 新版本调用方法
     async update() {
-      this.v0_8_7()
+      this.v0_8_8()
+    },
+
+    async v0_8_8() {
+      const list = load_local_minds()
+      list.forEach(a => {
+        key_set(a.id)
+      })
     },
 
     async v0_8_7() {

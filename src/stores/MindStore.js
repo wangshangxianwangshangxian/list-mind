@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import utils from '@/utils/utils'
-import { DIRECTION, MODE } from "./constant";
+import { MODE } from "./constant";
 import get_time from "@/utils/get_time";
-import generate_public_key from "@/utils/generate_public_key";
+import generate_address from "@/utils/generate_address";
 import get_block from "@/atom/get_block";
 import save_local from "@/atom/save_local";
+import key_set from "@/atom/key_set";
+import generate_key from "@/utils/generate_key";
 
 const MindStore = defineStore('MindStore', {
   state () {
@@ -25,7 +27,7 @@ const MindStore = defineStore('MindStore', {
     create_mind() {
       const data = {
         pid        : null,
-        id         : utils.generate_key(),
+        id         : generate_key(10),
         address    : '',
         title      : '请在这里输入标题',
         create_time: get_time(),
@@ -37,11 +39,13 @@ const MindStore = defineStore('MindStore', {
         children   : [],
         ip         : ''
       }
-      data.address = generate_public_key(data.id)
+      const key    = generate_key()
+      data.address = generate_address(key)
       this.mind    = data
       this.blocks.push(data)
       this.new_block(data.id, { content: '章节' })
       save_local(this.mind)
+      key_set(key)
       return data
     },
 

@@ -1,10 +1,11 @@
 import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
+
+import init_key_storage from './atom/init_key'
+init_key_storage()
 
 const app = createApp(App)
 app.use(createPinia())
@@ -22,5 +23,4 @@ MainData().init_hots(app)
 VersionStore().check()
 import loading from './directives/loading'
 app.directive('loading', loading)
-
 app.mount('#app')

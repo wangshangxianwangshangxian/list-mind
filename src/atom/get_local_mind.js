@@ -1,9 +1,6 @@
-import get_address from "@/utils/get_address"
-
-export default (key) => {
-  key = get_address(key)
+export default address => {
   try {
-    const tmp = localStorage.getItem(`mind_${key}`)
+    const tmp = localStorage.getItem(`mind_${address}`)
     return JSON.parse(tmp)
   }
   catch (e) {

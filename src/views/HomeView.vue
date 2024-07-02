@@ -88,7 +88,7 @@ const oncardclick = info => {
     router.push({
       name: 'mind',
       params: {
-        id: data.id
+        address: data.address
       }
     })
     return
@@ -97,7 +97,7 @@ const oncardclick = info => {
   router.push({
     name: 'mind',
     params: {
-      id: info.id || info.address
+      address: info.address
     }
   })
 }

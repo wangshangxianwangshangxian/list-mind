@@ -18,7 +18,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/mind/:id',
+      path: '/mind/:address',
       name: 'mind',
       component: MindView
     },
