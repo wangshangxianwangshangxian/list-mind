@@ -53,7 +53,7 @@ const MindStore = defineStore('MindStore', {
     new_block(pid, o = {}) {
       const data = Object.assign({
         pid,
-        id      : utils.generate_key(10),
+        id      : generate_key(10),
         expand  : true,
         visible : true,
         editable: true,
