@@ -1,89 +1,77 @@
 <template>
-  <BackgroundMask @bgclick="emits('c_close')">
-    <div class="bg-white w-1/2 absolute top-16 shadow left-1/2 border rounded py-2 px-4" style="transform: translateX(-50%); min-width: 600px;">
-      <div class="h-10 flex gap-2 items-center overflow-x-auto">
-        <div 
-          v-for="item in additions" 
-          :key="item.key" 
-          :class="`shrink-0 cursor-pointer hover:text-blue-500 ${active === item.key ? 'text-blue-500' : ''}`"
-          @click="onclick(item)"
-        >
-          {{ item.label }}
+  <Card v-if="props.visible" class="fixed top-10 left-1/2 p-2 w-96 bg-white" style="transform: translateX(-50%); z-index: 666666;">
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between items-center">
+        <div class="flex gap-2 overflow-x-auto">
+          <Button v-for="item in list" :type="`${ active === item.key ? 'success' : 'simple'}`" class="shrink-0" @click="active = item.key">
+            {{ item.label }}
+          </Button>
         </div>
+        <!-- <Button :icon="ICON.HOME"></Button> -->
       </div>
-      <div>
-        <div v-show="active_item.type === 'input'" class="flex justify-between items-center">
-          <input type="text" class="w-full h-10 focus:outline-none" :placeholder="active_item.placeholder" v-model="active_item.value" />
-          <svg v-show="active_item.value.length" @click="active_item.value=''" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-        </div>
-        <div v-show="active_item.type === 'image'" class="flex flex-col gap-4">
-          <div class="flex justify-between items-center h-10">
-            <p>{{ active_item.value }}</p>
-            <div class="flex gap-2 items-center">
-              <input type="file" class="hidden" ref="upload_btn" accept="image/*" @change="onuploadchange"/>
-              <svg v-show="active_item.value" @click="onuploaddelete" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 cursor-pointer">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-              <button class="p-1 hover:text-blue-500" @click="onupload">上传图片</button>
-            </div>
+      <div class="">
+        <Input v-if="active === ADDITION.LINK" placeholder="请输入链接" v-model="link" />
+        <!-- 图片 -->
+        <div v-if="active === ADDITION.IMAGE" class="flex flex-col gap-2">
+          <div class="flex gap-2 items-center justify-between">
+            <Button class="shrink-0" @click="onupload">上传图片</Button>
+            <p class="flex-1" style="word-break: break-all; word-wrap: break-word;">{{ image_file }}</p>
+            <input type="file" class="hidden" ref="upload_btn" accept="image/*" @change="onuploadchange"/>
+            <Button v-show="image_file" :icon="ICON.CLOSE" @click="ondeleteimage" />
           </div>
-          <div v-if="active_item.base64" class="flex justify-center">
-            <img :src="active_item.base64" class="border shadow-md max-w-80 max-h-80 rounded" />
+          <div class="flex justify-center">
+            <img :src="image_base64" class="bg-red-50 border shadow-md max-w-80 max-h-80 min-w-40 min-h-40 rounded" />
           </div>
         </div>
       </div>
     </div>
-  </BackgroundMask>
+  </Card>
 </template>
 
 <script setup>
-import BackgroundMask from '@/components/BackgroundMask.vue'
-import { BOARD_KEY } from '@/stores/constant';
-import use_event from '@/use/use_event';
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { ADDITION, ICON } from '@/utils/constant';
+import Card from './base/Card.vue';
+import Input from './base/Input.vue';
+import { ref } from 'vue';
+import Button from './base/Button.vue';
 
 const props = defineProps({
+  visible: { type: Boolean, default: false },
+  
   block: {
     type: Object,
     default() {
       return {
         addition: {
-          link: ''
+          base64: ''
         }
       }
     }
   }
 })
 
-const emits = defineEmits(['c_close', 'c_update'])
+const active = ref(ADDITION.LINK)
+const list = [
+  { key: 1, label: '画布' },
+  { key: 2, label: '行为' },
+  { key: 3, label: '样式' },
+  { key: ADDITION.LINK, label: '链接' },
+  { key: ADDITION.IMAGE, label: '图片' },
+]
 
-const additions = reactive([
-  { key : 'link',  label : '链接', type: 'input', value : props.block.addition.link, placeholder : '请输入一个网址，以http或https开头' },
-  { key : 'image', label : '图片', type: 'image', value : '', base64: '' },
-  { key : 'style', label : '样式', value : '', },
-])
-const active      = ref(additions[0].key)
-const active_item = ref(additions[0])
-const onclick = item => {
-  active.value = item.key
-  active_item.value = additions.find(a => a.key === active.value)
-}
+// 链接
+const link         = ref('')
 
-watch(
-  () => additions,
-  () => emits('c_update', additions),
-  { deep: true }
-)
-
-const upload_btn = ref(null)
-const onupload = e => {
+// 上传图片
+const image_base64 = ref('') 
+const image_file   = ref('')
+const upload_btn   = ref(null)
+const onupload     = e => {
   upload_btn.value.click()
 }
 const onuploadchange = e => {
-  active_item.value.value = e.target.value
-  const reader = new FileReader()
+  image_file.value = e.target.value
+  const reader     = new FileReader()
   reader.onload = function(e) {
     const img = new Image()
     img.onload = function () {
@@ -107,41 +95,16 @@ const onuploadchange = e => {
       canvas.width = width
       canvas.height = height
       ctx.drawImage(img, 0, 0, width, height)
-      const base64String = canvas.toDataURL('image/png', 0.7)
-      active_item.value.base64 = base64String
+      const base64String = canvas.toDataURL('image/png', 1)
+      image_base64.value = base64String
     }
     img.src = e.target.result
   }
   reader.readAsDataURL(e.target.files[0])
 }
-
-const onuploaddelete = () => {
-  active_item.value.value  = ''
-  active_item.value.base64 = ''
+const ondeleteimage = () => {
+  image_base64.value     = ''
+  image_file.value       = ''
+  upload_btn.value.value = ''
 }
-
-const onkeydown = e => {
-  if (e.code === BOARD_KEY.ESC) {
-    emits('c_close')
-  }
-  else if (e.code === BOARD_KEY.RIGHT) {
-    let   index       = additions.findIndex(a => a.key === active.value)
-    index             = Math.min(index + 1, additions.length - 1)
-    active_item.value = additions[index]
-    active.value      = active_item.value.key
-  }
-  else if (e.code === BOARD_KEY.LEFT) {
-    let   index       = additions.findIndex(a => a.key === active.value)
-    index             = Math.max(index - 1, 0)
-    active_item.value = additions[index]
-    active.value      = active_item.value.key
-  }
-  else if (e.code === BOARD_KEY.DONW) {
-
-  }
-  else if (e.code === BOARD_KEY.UP) {
-    
-  }
-}
-use_event(window, 'keydown', onkeydown)
 </script>

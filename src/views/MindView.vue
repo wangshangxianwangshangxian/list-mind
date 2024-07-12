@@ -1,431 +1,369 @@
 <template>
-  <main class="h-screen flex flex-col scrollbar-hide">
-    <header class="h-11 px-8 flex items-center bg-white" style="z-index: 55555;">
-      <div class="h-full flex gap-1 flex-1 items-center">
-        <span id="mind-option" class="cursor-pointer hover:bg-gray-200 w-10 h-10 flex justify-center items-center rounded" @click="onmenu">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-            <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
-          </svg>
-        </span>
-        <input type="text" :placeholder="proxy.$lang('请输入标题')" class="w-6/12 min-w-80 focus:outline-none disabled:bg-white font-bold text-lg" v-model="mind.title" :disabled="!mind.editable"/> 
+  <div class="flex flex-col min-h-screen relative">
+    <header class="bg-white between-center p-4 sticky top-0" style="z-index: 55555;">
+      <div class="start-center">
+        <Button @click="onmenu" id="menu_home" :icon="ICON.MENU"></Button>
+        <Input :disabled="mode !== MODE.COMMON" style="width: 30vw;" class="text-md font-bold min-w-96 border-white" v-model="mind.mind.content" id="mind-title" placeholder="请在这里输入标题"/>
       </div>
-      <div class="flex-1 text-right">
-        <p v-if="MindStore().is_exam_mode()">
-          <span class="cursor-pointer hover:text-red-600" @click="onquizexam">「 退出 」</span>
-          |&nbsp;&nbsp;{{ MindStore().exam_info.message }}
-        </p>
-        <p v-if="show_guest_exit">
-          <span class="cursor-pointer hover:text-red-600" @click="onquizguest">「 退出 」</span>
-        </p>
+      <div class="mr-2">
+        <div v-if="mode === MODE.EXAM" class="flex gap-4 items-center">
+          <p>考试中...... 已用时 {{ exam_time }}</p>
+          <Button>「退出」</Button>
+        </div>
       </div>
     </header>
-    <div class="flex flex-1 overflow-y-hidden" ref="mind_content_box">
-      <div class="flex-1 overflow-x-auto overflow-y-auto p-8 shrink-0">
-        <div class="flex flex-col gap-8 items-center justify-center min-h-full shrink-0">
-          <Block
-            v-for="item in mind.children" 
-            :key             = "item.id" 
-            :block           = "item"
-            :refresh         = "refresh"
-            @block-blur      = "onblockblur"
-            @block-expand    = "onblockexpand"
-            @block-click     = "onblockclick"
-            @block-keydown   = "onblockkeydown"
-            @block-dragstart = "onblockdragstart"
-          ></Block>
-        </div>
+    <div :class="`flex-1 flex justify-center items-center overflow-auto`">
+      <div class="pb-96 pt-56 flex flex-col gap-4 items-center">
+        <Block v-for="block in mind.mind.children" :key="block.id" :block="block" :refresh="refresh"></Block>
       </div>
     </div>
-    <!-- 章节 -->
-    <div class="fixed left-4 h-screen top-0 flex justify-center items-center flex-col p-2 pointer-events-none" style="z-index: 4444;">
-      <div class="flex flex-col gap-2 p-1 rounded-lg bg-white max-w-40 pointer-events-auto">
-        <div v-if="mind.children.length" class="overflow-y-auto rounded-lg" style="max-height: 60vh">
-          <div
-            v-for="(item, index) in mind.children" :key="index"
-            v-html="item.content"
-            :class="['chapter', 'p-2', 'rounded-lg', 'text-center', 'cursor-pointer', 'min-h-10', 'text-sm', 'mb-2', item.style.backgroundColor]"
-          ></div>
-        </div>
-        <div
-          v-if="MindStore().is_common_mode()"
-          class="p-2 min-h-10 rounded-lg cursor-pointer hover:bg-gray-200 bg-gray-100 flex justify-center items-center"
-          @click="onaddchapter"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-            <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-          </svg>
-        </div>
-      </div>
-    </div>
-    <Options 
-      v-if="show_option" 
-      :options = "options"
-      selector = "#mind-option"
-      @cancel  = "onoptioncancel"
-      @select  = "onoptionselect"
-    ></Options>
-    <MoveOption
-      v-if="move_info.show"
-      :block     = "move_info.move_el" 
-      @c_mouseup ="onmouseup"
-    ></MoveOption>
-    <Addition v-if="addition_info.show" :block="addition_info.block" @c_close="onadditionclose" @c_update="onadditionupdate"></Addition>
-    <ShareDialog v-if="show_share" @c_close="onshareclose" :address="mind.address"></ShareDialog>
-  </main>
+  </div>
+  <Addition id="block-addition" :visible="show_addition" />
+  <Chapter :mind="mind" @addchapter="onaddchapter" :editable="mode === MODE.COMMON" />
+  <DragOption :mind="mind" v-if="show_drag" :target_id="target_id" :candidates="candidates" @c_mouseup="onmouseup" />
 </template>
 
 <script setup>
-import MindStore from '@/stores/MindStore';
-import MainData from '@/stores/MainData';
-import utils, { html2image } from '@/utils/utils';
-import { computed, getCurrentInstance, nextTick, onBeforeMount, onMounted, onUnmounted, reactive, ref } from 'vue';
-import Block from '@/components/Block.vue'
-import Options from '@/components/Options.vue'
-import ShareDialog from '@/components/ShareDialog.vue'
-import MoveOption from '@/components/MoveOption.vue'
-import Addition from '@/components/Addition.vue'
-import router from '@/router';
-import { DIRECTION, MESSAGE_TYPE, MODE, OPTIONS, HOT_OPTION } from '@/stores/constant';
-import get_mind from '@/atom/get_mind';
-import save_remote from '@/atom/save_remote';
-import get_url_end_node from '@/utils/get_url_end_node';
-import get_local_mind from '@/atom/get_local_mind';
-import ERRORCODE from '@/utils/ERRORCODE'
-import init_mind from '@/atom/init_mind';
+import block_add_child from '@/atom/block_add_child';
 import get_block from '@/atom/get_block';
-import set_block_content from '@/atom/set_block_content';
+import get_mind from '@/atom/get_mind';
+import save_mind from '@/atom/save_mind';
+import save_mind_remote from '@/atom/save_mind_remote';
+import update_block_attr from '@/atom/update_block_attr';
+import Block from '@/components/Block.vue';
+import router from '@/router';
+import { BLOCK_OPTION, HOT, ICON, MESSAGE, MIND_MENU, MODE, POSITION } from '@/utils/constant';
+import get_url_end_node from '@/utils/get_url_end_node';
+import use_event from '@/utils/use_event';
+import { computed, getCurrentInstance, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, reactive, ref } from 'vue';
+import get from '@/utils/get';
+import get_element_by_parent_chain from '@/utils/get_element_by_parent_chain';
+import delete_block from '@/atom/delete_block';
+import block_is_root from '@/atom/block_is_root';
 import get_direction_block from '@/atom/get_direction_block';
-import save_local from '@/atom/save_local';
-import { get } from '@/utils/network';
-import key_get from '@/atom/key_get';
+import Addition from '@/components/Addition.vue';
+import Chapter from '@/components/Chapter.vue';
+import DragOption from '@/components/DragOption.vue';
+import local_has_key from '@/atom/local_has_key';
+import init_mind_by_mode from '@/atom/init_mind_by_mode';
+import get_block_and_children_and_grachild from '@/atom/get_block_and_children_and_grachild';
+import Button from '@/components/base/Button.vue';
+import get_left_time from '@/utils/get_left_time';
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 const { proxy } = getCurrentInstance()
 const address   = get_url_end_node()
-const mind      = reactive({ children: [] })
+const mind      = ref({ mind: { children: [] } })
+const flag      = local_has_key(address)
+const mode      = ref(flag ? MODE.COMMON : MODE.READER)
+const refresh   = ref(0)
+const update_refresh = () => nextTick(() => refresh.value = Date.now())
 
-// 先加载本地导图，如果没有再加载云端
 onBeforeMount(async () => {
-  const local_info     = get_local_mind(address)
-  const { code, data } = await get('get-mindview-data', { address })
-  
-  if (code === ERRORCODE.NO_PERMISSION) {
-    proxy.$message(proxy.$lang('该导图需要付费才能阅读'))
-    await new Promise(succ => setTimeout(succ, 1000))
-    router.push({ name : 'dashboard', params: { address } })
+  proxy.$loading(true)
+  const resp = await get('get-mind-data', { address })
+  proxy.$loading(false)
+  const local_mind  = get_mind(address)
+  if (local_mind) {
+    mind.value = local_mind
+  }
+
+  const remote_mind = resp.code === 'success' ? resp.data : null
+  if (local_mind && !remote_mind) {
+    mind.value = local_mind
+  }
+  else if (!local_mind && remote_mind) {
+    mind.value = remote_mind
+  }
+  else if (!local_mind && !remote_mind) {
+    return router.push({ name: '404' })
+  }
+  else {
+    mind.value = local_mind.nonce > remote_mind.nonce ? local_mind : remote_mind
+  }
+
+  init_mind_by_mode(mind.value, mode.value)
+})
+
+const focus_el = ref(null)
+use_event(document.body, 'focus', e => focus_el.value = e.target)
+use_event(document.body, 'blur',  e => {
+  focus_el.value = null
+  if (e.target.id.startsWith('block-content-')) {
+    const [a, b, id] = e.target.id.split('-')
+    const block      = get_block(mind.value, id)
+    update_block_attr(block, { content: e.target.innerHTML })
+    update_refresh()
+  }
+})
+
+// 修改标题
+use_event(window, 'keyup', e => {
+  if (e.target.id === 'mind-title') {
+    const block = get_block(mind.value, mind.value.mind.id)
+    update_block_attr(block, { content: e.target.value })
+  }
+})
+
+// 输入时要更新block连接线，否则只靠keydown的话，会一卡一的
+use_event(window, 'input', update_refresh)
+
+// 右键操作
+const contextmenus = [
+  { key: BLOCK_OPTION.ADD_CHILD,   label: '添加子「block」', tips: '在后面添加'},
+  { key: BLOCK_OPTION.DELETE_SELF, label: '删除「block」', tips: '会把自身和其子孙块都删除掉'},
+]
+use_event(window, 'contextmenu', e => {
+  const target = get_element_by_parent_chain(e.target, 'block-content-')
+  if (!target)
+    return
+  e.preventDefault()
+  proxy.$menu({
+    el_id   : target.id,
+    menus   : contextmenus,
+    offset  : [12, -8],
+    position: POSITION.RIGHT_TOP,
+    onsubmit: item => {
+      if (item.key === BLOCK_OPTION.ADD_CHILD) {
+        const [a, b, id] = target.id.split('-')
+        add_child(id)
+      }
+      else if (item.key === BLOCK_OPTION.DELETE_SELF) {
+        const [a, b, id] = target.id.split('-')
+        const block      = delete_block(mind.value, id)
+        nextTick(() => {
+          const p_block = get_block(mind.value, block.pid)
+          if (!p_block || block_is_root(mind.value, p_block.id)) {
+            focus_el.value = null
+            return
+          }
+          focus_el.value = document.getElementById(`block-content-${p_block.id}`)
+          focus_el.value.focus()
+          update_refresh()
+        })
+      }
+    }
+  })
+})
+
+// 左上角菜单栏
+const a = { key: MIND_MENU.HOME,        label: '回到主页',   tips: ''}
+const b = { key: MIND_MENU.SAVE,        label: '保存',      tips: '保存到本地'}
+const c = { key: MIND_MENU.SAVE_REMOTE, label: '保存到云端', tips: '单个导图最大保存「1M」'}
+const d = { key: MIND_MENU.COMMON_MODE, label: '编辑模式',   tips: '拥有私钥的用户'}
+const e = { key: MIND_MENU.READER_MODE, label: '读者模式',   tips: '只读状态'}
+const f = { key: MIND_MENU.EXAM_MODE  , label: '考试模式',   tips: '学生党利器'}
+const menus = computed(() => {
+  const config = []
+  if (mode.value === MODE.COMMON) {
+    config.push(a, b, c, e, f)
+  }
+  else if (mode.value === MODE.READER) {
+    config.push(a, b, d, f)
+  }
+  else if (mode.value === MODE.EXAM) {
+    config.push(a, d)
+  }
+  return config
+})
+const onmenu = () => {
+  proxy.$menu({ 
+    el_id: 'menu_home',
+    menus: menus.value,
+    onsubmit: async item => {
+      if (item.key === MIND_MENU.HOME) {
+        return router.push({ name: 'home' })
+      }
+      else if (item.key === MIND_MENU.SAVE) {
+        proxy.$loading(true)
+        save_mind(mind.value)
+        proxy.$loading(false)
+        proxy.$message('保存成功', MESSAGE.SUCCESS)
+        return
+      }
+      else if (item.key === MIND_MENU.SAVE_REMOTE) {
+        proxy.$loading(true)
+        await save_mind_remote(mind.value)
+        proxy.$loading(false)
+        proxy.$message('保存成功', MESSAGE.SUCCESS)
+      }
+      else if (item.key === MIND_MENU.COMMON_MODE) {
+        mode.value = MODE.COMMON
+        init_mind_by_mode(mind.value, mode.value)
+        update_refresh()
+      }
+      else if (item.key === MIND_MENU.READER_MODE) {
+        mode.value = MODE.READER
+        init_mind_by_mode(mind.value, mode.value)
+        update_refresh()
+      }
+      else if (item.key === MIND_MENU.EXAM_MODE) {
+        mode.value = MODE.EXAM
+        init_mind_by_mode(mind.value, mode.value)
+        update_refresh()
+        start_exam()
+      }
+    }
+  })
+}
+
+// 操作面板
+const show_addition = ref(false)
+use_event(window, 'click', e => {
+  const el = get_element_by_parent_chain(e.target, 'block-addition')
+  if (el) {
     return
   }
 
-  if (!local_info && data.mind) {
-    Object.assign(mind, data.mind)
+  if (!e.target.id.startsWith('block-content-')) {
+    show_addition.value = false
+    return
   }
-  else if (local_info && !data.mind) {
-    Object.assign(mind, local_info)
-  }
-  else if (local_info && data.mind) {
-    const info = data.mind.nonce > local_info.nonce ? data.mind : local_info
-    Object.assign(mind, info)
-  }
-  else if (!local_info && !data.mind) {
-    return router.push({ name: 'not found' })
-  }
-  
-  init_mind(mind)
-  if (key_get(address))
-    return MindStore().switch_mode(MODE.COMMON)
-  MindStore().switch_mode(MODE.GUEST)
+  const [a, b, id] = e.target.id.split('-')
+  show_addition.value = false // true
 })
 
-const refresh   = ref(0)
-const update_refresh = () => refresh.value = Date.now()
-
-const onaddchapter = () => {
-  const child = MindStore().new_block(mind.id)
-  child && nextTick(() => document.getElementById(`block-content-${child.id}`)?.focus())
-}
-
-const onsave = e => {
-  const target = MainData().search_hot_key(e)
-  if (target?.key === HOT_OPTION.SAVE) {
-    const sel = window.getSelection()
-    e.preventDefault()
-    nextTick(() => {
-      save_local()
-      proxy.$message(proxy.$lang("保存成功"))
-    })
-  }
-}
-onMounted(() => window.addEventListener('keydown', onsave))
-onUnmounted(() => window.removeEventListener('keydown', onsave))
-
-const onblockexpand = id => {
-  MindStore().toggle_expand(id)
+// 章节
+use_event(window, 'click', e => {
+  const target = get_element_by_parent_chain(e.target, 'mind-chapter-')
+  if (!target)
+    return
+  const [a, b, id] = target.id.split('-')
+  const block      = get_block(mind.value, id)
+  update_block_attr(block, { show: !block.show })
   update_refresh()
-}
-
-const onblockclick = id => {
-  // 考试模式
-  if (MindStore().is_exam_mode()) {
-    MindStore().toggle_in_exam(id)
-  }
-}
-
-const options = computed(() => {
-  const arrs = []
-  const a    = { key: OPTIONS.HOME,        label: proxy.$lang('回到主页'),   tips: '' }
-  const b    = { key: OPTIONS.SAVE,        label: proxy.$lang('保存'),      tips: `${proxy.$lang('本地保存')} ${MainData().get_hot_info(HOT_OPTION.SAVE)?.keys.join(' + ') || ''}` }
-  const c    = { key: OPTIONS.SAVE_REMOTE, label: proxy.$lang('保存到云端'), tips: proxy.$lang('可在不同设备查看') }
-  const d    = { key: OPTIONS.EXAM,        label: proxy.$lang('考试模式'),   tips: proxy.$lang('学生党利器') }
-  const e    = { key: OPTIONS.GUEST,       label: proxy.$lang('读者模式'),   tips: proxy.$lang('别人看到的状态') }
-  const f    = { key: OPTIONS.SHARE,       label: proxy.$lang('分享'),      tips: proxy.$lang('输出观点 !') }
-  const g    = { key: OPTIONS.ANALYZE,     label: proxy.$lang('数据'),      tips: proxy.$lang('导图商业数据') }
-  const h    = { key: OPTIONS.SPEECH,      label: proxy.$lang('演讲模式'),   tips: proxy.$lang('开会大法宝') }
-  const i    = { key: OPTIONS.HTML2IMAGE,  label: proxy.$lang('导出为图片'), tips: '' }
-  
-  if (MindStore().is_guest_mode()) {
-    arrs.push(...[a, b, d, g, h, i])
-  }
-  else if (MindStore().is_exam_mode()) {
-    arrs.push(...[a])
-  }
-  else {
-    arrs.push(...[a, b, c, d, e, f, g, h, i])
-  }
-  return arrs
 })
+const onaddchapter = block => {
+  nextTick(() => {
+    const el         = document.getElementById(`block-content-${block.id}`)
+    focus_el.value   = el
+    el.focus()
+    update_refresh()
+  })
+}
 
-const show_option = ref(false)
-const onmenu = () => show_option.value = true
-const onoptioncancel = () => show_option.value = false
-const onoptionselect = async item => {
-  show_option.value = false
-  if (item.key === OPTIONS.HOME) {
-    router.push({ name: 'home' })
-  }
-  else if (item.key === OPTIONS.SAVE) {
-    save_local()
-    proxy.$message(proxy.$lang('保存成功'))
-  }
-  else if (item.key === OPTIONS.EXAM) {
-    if (MindStore().is_exam_mode()) {
+// 热键-创建子块
+onMounted  (() => proxy.$add_hots_event(create_child))
+onUnmounted(() => proxy.$remove_hots_event(create_child))
+const create_child = (target, e) => {
+  if (target.key === HOT.CREATE && e.target.id.startsWith('block-content-')) {
+    const [a, b, id] = e.target.id.split('-')
+    const block      = get_block(mind.value, id)
+    if (!block.expand)
       return
-    }
-    MindStore().switch_mode(MODE.EXAM)
-    proxy.$message(proxy.$lang('「 考试模式 」，点击「 块 」显示答案'), MESSAGE_TYPE.INFO, { timeout: 5000 })
-  }
-  else if (item.key === OPTIONS.GUEST) {
-    if (MindStore().is_guest_mode()) {
-      return
-    }
-    MindStore().switch_mode(MODE.GUEST)
-  }
-
-  switch (item.key) {
-    case OPTIONS.SAVE_REMOTE : save_cloud();  break
-    case OPTIONS.SHARE       : share();       break
-    case OPTIONS.ANALYZE     : analyze();     break
-    case OPTIONS.SPEECH      : speech();      break
-    case OPTIONS.HTML2IMAGE  : save_image();  break
+    add_child(id)
   }
 }
-const onquizexam = () => {
-  if (!key_get(address)) {
-    MindStore().switch_mode(MODE.GUEST)
-  }
-  else {
-    MindStore().switch_mode(MODE.COMMON)
-  }
-}
-// 如果当前处于exam模式退出，则清除定时器
-onUnmounted(() => MindStore().switch_mode(null))
 
-const onblockkeydown = (e, id) => {
-  const target = MainData().search_hot_key(e)
-  if (target?.key === HOT_OPTION.DELETE) {
-    MindStore().delete_block(id)
-  }
-  
-  else if (target?.key === HOT_OPTION.CREATE) {
-    e.preventDefault()
-    const child = MindStore().new_block(id)
-    child && nextTick(() => {
-      document.getElementById(`block-content-${child.id}`)?.focus()
+// 热键-删除子块
+onMounted  (() => proxy.$add_hots_event(remove_block))
+onUnmounted(() => proxy.$remove_hots_event(remove_block))
+const remove_block = (target, e) => {
+  if (target.key === HOT.DELETE && e.target.id.startsWith('block-content-')) {
+    const [a, b, id] = e.target.id.split('-')
+    const block      = delete_block(mind.value, id)
+    nextTick(() => {
+      const p_block = get_block(mind.value, block.pid)
+      if (!p_block || block_is_root(mind.value, p_block.id)) {
+        focus_el.value = null
+        return
+      }
+      focus_el.value = document.getElementById(`block-content-${p_block.id}`)
+      focus_el.value.focus()
       update_refresh()
     })
   }
-
-  else if (target?.key === HOT_OPTION.SAVE) {
-    e.preventDefault()
-    const block = get_block(id)
-    const el    = document.getElementById(`block-content-${block.id}`)
-    el.blur()
-  }
-  
-  else if(target?.key === HOT_OPTION.UP) {
-    const target = get_direction_block(id, DIRECTION.UP)
-    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
-    nextTick(update_refresh)
-  }
-
-  else if(target?.key === HOT_OPTION.DOWN) {
-    const target = get_direction_block(id, DIRECTION.DOWN)
-    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
-    nextTick(update_refresh)
-  }
-
-  else if(target?.key === HOT_OPTION.LEFT) {
-    const target = get_direction_block(id, DIRECTION.LEFT)
-    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
-    nextTick(update_refresh)
-  }
-
-  else if(target?.key === HOT_OPTION.RIGHT) {
-    const target = get_direction_block(id, DIRECTION.RIGHT)
-    target && nextTick(() => document.getElementById(`block-content-${target.id}`)?.focus())
-    nextTick(update_refresh)
-  }
-
-  else if (target?.key === HOT_OPTION.MENU) {
-    if (MindStore().is_common_mode()) {
-      e.preventDefault()
-      e.target.blur()
-      addition_info.block = get_block(id)
-      addition_info.show  = true
-    }
-  }
 }
 
-const onblockblur = (id, content) => {
-  update_refresh()
-  set_block_content(id, content)
-}
+// 热键-在block之间移动光标
+onMounted  (() => proxy.$add_hots_event(move))
+onUnmounted(() => proxy.$remove_hots_event(move))
+const move = (target, e) => {
+  if (!e.target.id.startsWith('block-content-'))
+    return
 
-const move_info = reactive({
-  show    : false,
-  move_el : {
-    id      : null,
-    offset_x: 0,
-    offset_y: 0
+  if (![HOT.LEFT, HOT.RIGHT, HOT.UP, HOT.DOWN].includes(target.key))
+    return
+
+  try {
+    const [a, b, id] = e.target.id.split('-')
+    const block      = get_direction_block(mind.value, id, target.key)
+    const el         = document.getElementById(`block-content-${block.id}`)
+    focus_el.value   = el
+    el.focus()
   }
-})
-const onblockdragstart = (id, offset_x, offset_y) => {
-  document.getElementById(`block-content-${id}`).blur()
-  move_info.move_el  = { id, offset_x, offset_y }
-  move_info.show     = true
-}
-const onmouseup = (move_parent_id, move_index) => {
-  move_info.show    = false
-  if (move_index > -1) {
-    MindStore().move(move_info.move_el.id, move_parent_id, move_index)
-    update_refresh()
-  }
-}
-
-const addition_info = reactive({
-  show  : false,
-  block : null
-})
-
-const onadditionclose = () => {
-  addition_info.show = false
-  const el = document.getElementById(`block-content-${addition_info.block.id}`)
-  el.focus()
-  addition_info.block = null
-}
-
-const onadditionupdate = additions => {
-  additions.forEach(a => {
-    if (a.key === 'link') {
-      MindStore().set_link(addition_info.block.id, a.value)
-    }
-    else if (a.key === 'image') {
-      MindStore().set_image(addition_info.block.id, a.base64)
-    }
-  })
-  update_refresh()
-}
-
-const show_guest_exit = computed(() => {
-  if (!MindStore().is_guest_mode()) {
-    return false
-  }
-
-  if (!key_get(address))
-    return false
-
-  // 创作者通过私钥打开的导图，其读者模式肯定从读者入口来的，所以肯定显示
-  if (key_get(address)) {
-    return true
-  }
-
-  return false
-})
-const onquizguest = () => {
-  if (key_get(address))
-    return MindStore().switch_mode(MODE.COMMON)
-  MindStore().switch_mode(MODE.GUEST)
-}
-
-const show_share = ref(false)
-const share = async () => {
-  const resp = await get_mind(mind.address)
-  if (resp.code === ERRORCODE.SUCCESS) {
-    show_share.value = true
+  catch (e) {
     return
   }
-  proxy.$message(proxy.$lang('请先保存到云端'), MESSAGE_TYPE.WARN)
-}
-const onshareclose = () => {
-  show_share.value = false
 }
 
-const analyze = () => {
-  const address = MindStore().mind?.address || null
-  if (!address)
-    return proxy.$message(proxy.$lang('找不到 address'), MESSAGE_TYPE.ERROR)
-  router.push({
-    name: 'dashboard',
-    params: { address }
-  })
-}
-
-const speech = () => {
-  proxy.$message(proxy.$lang('暂未开放，敬请期待，这个模式很棒，灵感来自「 xMind 」💗'), MESSAGE_TYPE.INFO)
-  proxy.$message(proxy.$lang('它可以像 PPT 一样播放你的导图，开会前再也不担心麻烦的 PPT 了！'), MESSAGE_TYPE.INFO, { timeout: 10000 })
-}
-
-const mind_content_box = ref(null)
-const save_image = () => {
-  html2image(mind_content_box.value, true, mind.title)
-  .then(img_base64 => {
-    if (!img_base64)
-      return proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
-      proxy.$message(proxy.$lang('保存成功，已下载到本地'))
-  })
-}
-
-const save_cloud = async () => {
-  const resp = await get_mind(mind.address)
-  if (resp.code !== ERRORCODE.SUCCESS) {
-    save_local()
-    router.push({
-      name: 'dashboard',
-      params: { address }
-    })
+// 热键-保存
+onMounted  (() => proxy.$add_hots_event(save_local))
+onUnmounted(() => proxy.$remove_hots_event(save_local))
+const save_local = (target, e) => {
+  if (target.key !== HOT.SAVE)
+    return
+  if (focus_el.value) {
+    focus_el.value.blur()
+    focus_el.value = null
   }
-  else {
-    const resp = await save_remote(mind)
-    if (resp.code === ERRORCODE.SUCCESS) {
-      const message = `${proxy.$lang('成功保存到云端，')}<a href="#/dashboard/${address}" class="border-b border-black hover:border-white hover:text-white">${proxy.$lang('点我查看商业数据')}</a>`
-      return proxy.$message(message, MESSAGE_TYPE.SUCCESS, { use_html: true })
-    }
-    proxy.$message(proxy.$lang('保存失败'), MESSAGE_TYPE.ERROR)
-  }
+  proxy.$loading(true)
+  save_mind(mind.value)
+  proxy.$loading(false)
+  proxy.$message('保存成功', MESSAGE.SUCCESS)
+}
+
+// 考试模式
+use_event(window, 'click', e => {
+  if (mode.value !== MODE.EXAM)
+    return
+
+  const target = get_element_by_parent_chain(e.target, 'block-l-')
+  if (!target)
+    return
+  const [a, b, id] = e.target.id.split('-')
+  const block      = get_block(mind.value, id)
+  update_block_attr(block, { visible: !block.visible })
+})
+
+// 移动「block」
+const show_drag  = ref(false)
+const target_id  = ref('')
+const candidates = ref([])
+use_event(window, 'mousedown', e => {
+  if (!e.target.id.startsWith('block-l-'))
+    return
+  target_id.value       = e.target.id
+  const [a, b, id]      = e.target.id.split('-')
+  const blocks          = get_block_and_children_and_grachild(mind.value, id).map(a => a.id)
+  candidates.value      = get_block_and_children_and_grachild(mind.value, mind.value.mind.id, false)
+                            .filter(a => a.show && !blocks.includes(a.id)) // 过滤掉 不显示的 & 自身 & 其子块
+                            .map(a => `block-l-${a.id}`)
+  show_drag.value       = true
+})
+
+const onmouseup = () => {
+  show_drag.value       = false
+  update_refresh()
+}
+
+// 考试模式
+const exam_time   = ref('00:00:00')
+let   timer, start_timestamp
+const start_exam  = () => {
+  start_timestamp = Date.now()
+  timer = setInterval(() => exam_time.value = get_left_time(start_timestamp, 'hh:mm:ss'), 10)
+}
+const end_exam    = () => {
+  clearInterval(timer)
+}
+onBeforeUnmount(end_exam)
+///////////////////////////////////////////////////////////////////////////////////////////////
+const add_child = id => {
+  const child      = block_add_child(mind.value, id)
+  nextTick(() => {
+    focus_el.value = document.getElementById(`block-content-${child.id}`)
+    focus_el.value.focus()
+    update_refresh()
+  })
 }
 </script>
-
-<style scoped>
-.chapter:last-child {
-  margin-bottom: 0;
-}
-</style>

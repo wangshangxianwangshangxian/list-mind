@@ -1,5 +1,5 @@
-import { PUBLIC_LEN } from "@/stores/constant"
 import { ec } from "elliptic"
+import { PUBLIC_LEN } from "./constant"
 
 export default (key, zip = true) => {
   const curve   = new ec('secp256k1')

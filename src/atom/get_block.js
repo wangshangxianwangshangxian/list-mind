@@ -1,5 +1,24 @@
-import MindStore from "@/stores/MindStore";
+export default (mind, block_id) => {
+  if (mind.mind.id === block_id)
+      return mind.mind
 
-export default (id, blocks = MindStore().blocks) => {
-  return blocks.find(a => a.id === id)
+  let target
+  const handle = (children) => {
+    if (target) {
+      return
+    }
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i]
+      if (child.id === block_id) {
+        target = child
+        break
+      }
+      if (child.children.length) {
+        handle(child.children)
+      } 
+    }
+  }
+
+  handle(mind.mind.children)
+  return target
 }

@@ -1,7 +1,6 @@
-import { get } from "@/utils/network"
-
-const get_mind = async address => {
-  return await get('get-mind-data', { address })
+export default address => {
+  const temp = localStorage.getItem(`mind_${address}`)
+  if (!temp)
+    return null
+  return JSON.parse(temp)
 }
-
-export default get_mind

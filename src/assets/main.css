@@ -1,5 +1,35 @@
 @import './tailwind.css';
-@import url(./animation.css);
+
+.center-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.end-center {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.start-center {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.center-center-v {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 ::-webkit-scrollbar {
   display: none;
@@ -13,4 +43,14 @@
 
 .remove-arrows {
   appearance: textfield;
+}
+
+
+@keyframes in_1 {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

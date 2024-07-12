@@ -1,29 +1,13 @@
-# list-mind
+2024-07-09
+优化：每个章节都是各自居中的，不跟随其他章节的布局。
 
-This template should help get you started developing with Vue 3 in Vite.
+2024-07-06
+功能
+1. 快捷键插件初版
 
-## Recommended IDE Setup
+缺陷
+1. 「移动端暂不能访问」路由设置错误
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+优化
+1. 保存成功 的提示类型应该是success状态，而不是info
+2. 组件彩色字

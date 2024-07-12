@@ -1,9 +1,7 @@
-import MindStore from "@/stores/MindStore"
-import delete_key from "./delete_key"
+import generate_address from "@/utils/generate_address"
+import is_address from "./is_address"
 
-export default address => {
-  MindStore().mind = null
-  MindStore().blocks.length = 0
-  delete_key(address)
+export default key => {
+  const address = is_address(key) ? key : generate_address(key)
   localStorage.removeItem(`mind_${address}`)
 }

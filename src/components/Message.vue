@@ -1,12 +1,15 @@
 <template>
   <div :class="box_classes" style="z-index: 7777777;">
+    <!-- <Icon :name="ICON.HOME" /> -->
+
     <p v-if="props.options.use_html" v-html="props.message"></p>
     <p v-else>{{ props.message }}</p>
   </div>
 </template>
 
 <script setup>
-import { MESSAGE_TYPE } from '@/stores/constant';
+import { BG_COLOR, BORDER_COLOR, ICON, MESSAGE } from '@/utils/constant';
+import Icon from './base/Icon.vue'
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -17,7 +20,7 @@ const props = defineProps({
 
   type: {
     type: String,
-    default: MESSAGE_TYPE.SUCCESS
+    default: MESSAGE.INFO
   },
 
   options: {
@@ -31,18 +34,18 @@ const props = defineProps({
 })
 
 const box_classes = computed(() => {
-  const arrs = ['p-2', 'rounded', 'min-w-60', 'text-center', 'inline-block']
-  if (props.type === MESSAGE_TYPE.SUCCESS) {
-    arrs.push('bg-green-300')
+  const arrs = ['flex gap-2 p-2 items-center rounded w-80']
+  if (props.type === MESSAGE.INFO) {
+    arrs.push(`${BG_COLOR.GRAY} border ${BORDER_COLOR.GRAY}`)
   }
-  else if (props.type === MESSAGE_TYPE.WARN) {
-    arrs.push('bg-yellow-300')
+  else if (props.type === MESSAGE.SUCCESS) {
+    arrs.push(`${BG_COLOR.GREEN} border ${BORDER_COLOR.GREEN}`)
   }
-  else if (props.type === MESSAGE_TYPE.INFO) {
-    arrs.push('bg-gray-100')
+  else if (props.type === MESSAGE.WARN) {
+    arrs.push(`${BG_COLOR.YELLOW} border ${BORDER_COLOR.YELLOW}`)
   }
-  else if (props.type === MESSAGE_TYPE.ERROR) {
-    arrs.push('bg-red-300')
+  else if (props.type === MESSAGE.ERROR) {
+    arrs.push(`${BG_COLOR.RED} border ${BORDER_COLOR.RED}`)
   }
   return arrs
 })
